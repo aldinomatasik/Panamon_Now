@@ -390,6 +390,20 @@ input[type="checkbox"]:checked + .shift-button {
     color: rgba(255, 255, 255, 0.3) !important;
 }
 
+.form-select {
+    background-color: #1f2a44;   /* background gelap */
+    color: #e0e1dd;              /* text */
+    border: 1px solid #5c7cfa;   /* WARNA SAMA KAYAK LINE */
+}
+
+.form-select:focus {
+    background-color: #1f2a44;
+    color: #ffffff;
+    border-color: #5c7cfa;
+    box-shadow: 0 0 0 0.15rem rgba(92,124,250,0.35);
+}
+
+
 </style>
 
 <div class="filter-area-with-lines">    
@@ -407,25 +421,32 @@ input[type="checkbox"]:checked + .shift-button {
                     </select>
                 </div>
 
-                <div class="d-flex align-items-center gap-2">
-                    <label class="mb-0">Month</label>
-                    <select class="form-select" style="width: 110px;" id="SelectedMonth" name="SelectedMonth" asp-for="SelectedMonth">
-                        @for (int i = 1; i <= 12; i++)
-                        {
-                          <option value="@i">@System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(i)</option>
-                        }
-                    </select>
-                </div>
+<div class="d-flex align-items-center gap-2">
+    <label class="mb-0">Start</label>
+    <div class="position-relative">
+        <input type="text"
+               class="form-control datepicker"
+               style="width: 140px; padding-right: 32px;"
+               id="StartDate"
+               name="StartDate">
+        <i class="fas fa-calendar position-absolute" 
+           style="right: 14px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.6); pointer-events: none; font-size: 12px;"></i>
+    </div>
+</div>
 
-                <div class="d-flex align-items-center gap-2">
-                    <label class="mb-0">Year</label>
-                    <select class="form-select" style="width: 80px;" id="SelectedYear" name="SelectedYear" asp-for="SelectedYear">
-                    @for (int i = DateTime.Now.Year - 3; i <= DateTime.Now.Year + 5; i++)
-                        {
-                          <option value="@i">@i</option>
-                        }
-                    </select>
-                </div>
+<div class="d-flex align-items-center gap-2">
+    <label class="mb-0">End</label>
+    <div class="position-relative">
+        <input type="text"
+               class="form-control datepicker"
+               style="width: 140px; padding-right: 32px;"
+               id="EndDate"
+               name="EndDate">
+        <i class="fas fa-calendar position-absolute" 
+           style="right: 14px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.6); pointer-events: none; font-size: 12px;"></i>
+    </div>
+</div>
+
                 <div class="d-flex align-items-center gap-2">
                     <label class="mb-0">Shift</label>
                             <div class="d-flex gap-2 shift-buttons-container">
@@ -806,9 +827,9 @@ LOSS TIME SUMMARY - COMPACT & MODERN
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
-    </div>
+    </div
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="~/js/chart.umd.min.js"></script>
 <script>
     // Global Config for Dark Mode
@@ -913,6 +934,18 @@ LOSS TIME SUMMARY - COMPACT & MODERN
                     }
                 }
             });
+            const today = new Date().toISOString().split('T')[0];
+
+const startInput = document.getElementById('StartDate');
+const endInput = document.getElementById('EndDate');
+
+if (startInput && !startInput.value) {
+    startInput.value = today;
+}
+
+if (endInput && !endInput.value) {
+    endInput.value = today;
+}
         }
 
         // 2. RENDER DAILY LOSS CHART
@@ -995,5 +1028,19 @@ LOSS TIME SUMMARY - COMPACT & MODERN
                 modalBodyText.textContent = (reason && reason.trim() !== '') ? reason : 'No detailed reason provided.';
             });
         }
-    });
+          flatpickr("#StartDate", {
+            dateFormat: "Y-m-d",
+            defaultDate: "today",
+            maxDate: "today"
+        });
+
+        flatpickr("#EndDate", {
+            dateFormat: "Y-m-d",
+            defaultDate: "today",
+            maxDate: "today"
+        });
+
+    }); // ← INI AKHIR DOMContentLoaded
+
+   
 </script>

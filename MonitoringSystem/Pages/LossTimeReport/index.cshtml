@@ -375,11 +375,11 @@ table.table-bordered > :not(caption) > * {
 }
 
 .table-secondary {
-    background-color: rgba(255, 255, 255, 0.15) !important;
+    background-color: rgba(255, 255, 255, 0.20) !important;
 }
 
 .table-secondary td:first-child {
-    background-color: rgba(255, 255, 255, 0.15) !important;
+    background-color: rgba(255, 255, 255, 0.20) !important;
     font-weight: 700;
     box-shadow: 3px 0 8px rgba(0, 0, 0, 0.3);
 }
@@ -470,6 +470,39 @@ main.pb-5 {
     background: rgba(0, 0, 0, 0.4);
     border-radius: 1px;
 }
+/* ALTERNATING ROW COLORS - SEMUA KOLOM DALAM 1 BARIS HARUS SAMA WARNA */
+
+/* Baris GANJIL - Warna Terang */
+.table tbody tr:not(.table-secondary):not(.table-dark):nth-of-type(odd) {
+    background-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.table tbody tr:not(.table-secondary):not(.table-dark):nth-of-type(odd) td {
+    background-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Baris GENAP - Warna Gelap */
+.table tbody tr:not(.table-secondary):not(.table-dark):nth-of-type(even) {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.table tbody tr:not(.table-secondary):not(.table-dark):nth-of-type(even) td {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Kolom Pertama (sticky) - ikut warna barisnya tapi sedikit lebih gelap */
+.table tbody tr:not(.table-secondary):not(.table-dark):nth-of-type(odd) td:first-child {
+    background-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.table tbody tr:not(.table-secondary):not(.table-dark):nth-of-type(even) td:first-child {
+    background-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+/* Hover effect */
+.table tbody tr:not(.table-secondary):not(.table-dark):hover td {
+    background-color: rgba(100, 181, 246, 0.15) !important;
+}
 </style>
 
 <div id="reportContainer">
@@ -497,7 +530,7 @@ main.pb-5 {
                 <div class="d-flex align-items-center gap-2">
                     <label class="mb-0 text-white small">Line</label>
                     <select name="MachineLine" class="form-select form-select-sm" style="width: 90px;" asp-for="MachineLine">
-                        <option value="All">All Lines</option>
+                        <option value="All">All</option>
                         <option value="MCH1-01">CU</option>
                         <option value="MCH1-02">CS</option>
                     </select>
@@ -508,7 +541,7 @@ main.pb-5 {
                 </button>
 
                 <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#uploadModal">
-                    <i class="fas fa-file-excel me-2"></i>Manage BP
+                    <i class="fas fa-file-excel me-2"></i>Upload BP
                 </button>
             </form>
         </div>
@@ -568,7 +601,7 @@ main.pb-5 {
                     <th rowspan="2" class="align-middle toggle-header" id="toggleExtraRows">
                         <div class="d-flex align-items-center">
                             <i id="toggleIcon" class="bi bi-chevron-down me-2"></i>
-                            <span>Loss Category</span>
+                            <span>Loss Category<br>(Min)</span>
                         </div>
                     </th>
                         @foreach (var m in months)
@@ -654,7 +687,7 @@ main.pb-5 {
                             <option value="MCH1-01">MCH1-01 (CU)</option>
                             <option value="MCH1-02">MCH1-02 (CS)</option>
                         </select>
-                        <div class="form-text text-muted">You must specify which machine this file belongs to.</div>
+                        <div class="form-text text-white">You must specify which machine this file belongs to.</div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">2. Choose Excel File</label>
@@ -785,23 +818,29 @@ datasets.push({
                     }
                 },
                 plugins: {
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                        titleColor: '#ffffff',
-                        bodyColor: '#ffffff',
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.dataset.label || '';
-                                if (label) label += ': ';
-                                if (context.parsed.y !== null) {
-                                    label += context.parsed.y;
-                                    if (context.dataset.yAxisID === 'y_ratio') label += '%';
-                                }
-                                return label;
-                            }
-                        }
-                    },
+                   tooltip: {
+    mode: 'index',
+    intersect: false,
+    titleColor: '#ffffff',
+    bodyColor: '#ffffff',
+    callbacks: {
+        label: function(context) {
+            let label = context.dataset.label || '';
+
+            // Filter: hanya tampilkan yang mengandung '(Act)' atau 'Actual'
+            if (!label.includes('(Act)') && !label.includes('Actual')) {
+                return null; // Tidak ditampilkan di tooltip
+            }
+
+            if (label) label += ': ';
+            if (context.parsed.y !== null) {
+                label += context.parsed.y;
+                if (context.dataset.yAxisID === 'y_ratio') label += '%';
+            }
+            return label;
+        }
+    }
+},
 legend: { 
     labels: { 
         color: '#ffffff',

@@ -186,6 +186,7 @@
     white-space: nowrap;
     word-wrap: break-word;
     vertical-align: middle;
+     font-weight: 700 !important;
 }
 
 /* STICKY HEADER - HEADER TETAP SAAT SCROLL */
@@ -230,10 +231,10 @@
 }
 
 /* Row table-secondary tetap proper */
-.table-secondary td:first-child {
+@*.table-secondary td:first-child {
     background-color: rgba(255, 255, 255, 0.15) !important;
     font-weight: 700;
-}
+}*@
 .extra-row {
     display: none;
 }
@@ -535,8 +536,8 @@ input[type="checkbox"]:checked + .shift-button {
 /* ========================================
    BODY ROWS BACKGROUND (UPDATE)
    ======================================== */
-.table tbody td:first-child {
-    background-color: rgba(255, 255, 255, 0.15) !important;
+@*.table tbody td:first-child {
+    background-color: rgba(255, 255, 255, 0.08) !important;
 }
 
 /* Kolom kedua tetap ada background berbeda karena sticky */
@@ -548,7 +549,7 @@ input[type="checkbox"]:checked + .shift-button {
 .table tbody tr td:not(:first-child):not(:nth-child(2)) {
     background-color: rgba(255, 255, 255, 0.08) !important;
 }
-
+*@
 
 /* GELAPIN BARIS TOTAL ACTUAL & TOTAL PLAN */
 .table tbody tr:nth-child(3) td,  /* Total Plan */
@@ -566,6 +567,52 @@ input[type="checkbox"]:checked + .shift-button {
 }
 
 /* Override untuk kolom tanggal (3 dst) di baris Total - lebih gelap */
+.table tbody tr:nth-child(3) td:nth-child(n+3),
+.table tbody tr:nth-child(6) td:nth-child(n+3) {
+    background-color: rgba(255, 255, 255, 0.25) !important;
+}
+.table tbody tr:nth-of-type(odd) td {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: #eaeaea !important;
+}
+
+/* Baris GENAP - Warna Gelap */
+.table tbody tr:nth-of-type(even) td {
+    background-color: rgba(255, 255, 255, 0.03) !important;
+    color: #eaeaea !important;
+}
+
+/* Kolom Pertama (sticky) - ikut warna barisnya tapi sedikit lebih terang untuk depth */
+.table tbody tr:nth-of-type(odd) td:first-child {
+    background-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.table tbody tr:nth-of-type(even) td:first-child {
+    background-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+/* Kolom Kedua (sticky) - ikut warna barisnya tapi sedikit lebih terang */
+.table tbody tr:nth-of-type(odd) td:nth-child(2) {
+    background-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+.table tbody tr:nth-of-type(even) td:nth-child(2) {
+    background-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+/* Hover effect */
+.table tbody tr:hover td {
+    background-color: rgba(100, 181, 246, 0.15) !important;
+    transition: background-color 0.2s ease;
+}
+
+/* OVERRIDE UNTUK BARIS TOTAL - TETAP LEBIH GELAP (PRIORITAS TINGGI) */
+.table tbody tr:nth-child(3) td,  /* Total Plan */
+.table tbody tr:nth-child(6) td {  /* Total Actual */
+    background-color: rgba(255, 255, 255, 0.30) !important;
+    font-weight: 700;
+}
+
 .table tbody tr:nth-child(3) td:nth-child(n+3),
 .table tbody tr:nth-child(6) td:nth-child(n+3) {
     background-color: rgba(255, 255, 255, 0.25) !important;
@@ -672,7 +719,7 @@ input[type="checkbox"]:checked + .shift-button {
         </div>
 
         <button type="submit" name="submitButton" value="search" class="btn btn-sm btn-primary">Search</button>
-        <button type="submit" name="submitButton" value="reset" class="btn btn-sm btn-danger">Reset</button>
+        @*<button type="submit" name="submitButton" value="reset" class="btn btn-sm btn-danger">Reset</button>*@
 
         <div class="ms-auto d-flex gap-2">
     <button type="button" id="downloadPdfButton" class="btn btn-sm btn-danger">
@@ -789,7 +836,7 @@ input[type="checkbox"]:checked + .shift-button {
                             if (plan > 0)
                             {
                                 double ratio = Math.Round(((double)totalActual / (double)plan) * 100, 2);
-                                ratioDisplay = ratio.ToString("0.##") + "%";
+                                ratioDisplay = ratio.ToString("0.#") + "%";
                             }
                             else if (totalActual > 0)
                             {
@@ -1016,7 +1063,15 @@ input[type="checkbox"]:checked + .shift-button {
                             if (dropdownValue) {
                                 dropdown.classList.add('selected');
                             }
-                        } else if (dropdown.name === 'MachineLine') {
+
+                            }  else if (dropdownId === 'SelectedMonth') {
+                if (dropdownValue) {
+                    dropdown.classList.add('selected');
+                } else {
+                    dropdown.classList.remove('selected');
+                }
+            }
+                        else if (dropdown.name === 'MachineLine') {
                             if (dropdownValue && dropdownValue !== 'All') {
                                 dropdown.classList.add('selected');
                             } else {
@@ -1089,5 +1144,10 @@ input[type="checkbox"]:checked + .shift-button {
             });
         });
     });
+        flatpickr(".datepicker", {
+        dateFormat: "Y-m-d",
+        allowInput: true
+    });
+
         </script>
 }

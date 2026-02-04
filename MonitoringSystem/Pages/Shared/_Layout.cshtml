@@ -11,7 +11,6 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
     <title>@ViewData["Title"] - MonitoringSystem</title>
 
     <!-- CSS -->
@@ -20,7 +19,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/sweetalert2.css" />
 
-    <!-- Custom CSS - Refactored -->
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Sidebar.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Navbar.css" asp-append-version="true" />
@@ -28,10 +27,15 @@
     <link rel="stylesheet" href="~/MonitoringSystem.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/background-style.css?v=999" />
 
+    <!-- Flatpickr LOCAL -->
+    <link href="~/lib/flatpickr/flatpickr.min.css" rel="stylesheet">
+    <link href="~/lib/flatpickr/dark.css" rel="stylesheet">
+
     <!-- JavaScript Libraries -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/chartjs/dist/chart.umd.js"></script>
+    <script src="~/lib/flatpickr/flatpickr.min.js"></script>  <!-- ✅ LOCAL -->
 </head>
 
 <body class="reusable-bg">
@@ -64,24 +68,6 @@
         <span class="nav-label">Home</span>
     </a>
 </li>
-                <li class="nav-item">
-                    <a href="/Summary/index">
-                        <i class="fa-solid fa-chart-pie"></i>
-                        <span class="nav-label">Summary</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/Perfomance/index">
-                        <i class="fa-solid fa-chart-line"></i>
-                        <span class="nav-label">Performance</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/Quality/index">
-                        <i class="fa-solid fa-check-circle"></i>
-                        <span class="nav-label">Quality</span>
-                    </a>
-                </li>
                  <li class="nav-item">
                     <a href="/ProductionReport/index">
                         <i class="fa-solid fa-industry"></i>
@@ -104,6 +90,25 @@
                     <a href="#" data-bs-toggle="modal" data-bs-target="#breakTimeFilterModal">
                         <i class="fa-solid fa-clock"></i>
                         <span class="nav-label">Break Time</span>
+                    </a>
+                </li>
+
+                <li class="nav-item">
+                    <a href="/Summary/index">
+                        <i class="fa-solid fa-chart-pie"></i>
+                        <span class="nav-label">Summary</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/Perfomance/index">
+                        <i class="fa-solid fa-chart-line"></i>
+                        <span class="nav-label">Performance</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/Quality/index">
+                        <i class="fa-solid fa-check-circle"></i>
+                        <span class="nav-label">Quality</span>
                     </a>
                 </li>
                 <li class="nav-item">
