@@ -543,6 +543,9 @@ main.pb-5 {
                 <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#uploadModal">
                     <i class="fas fa-file-excel me-2"></i>Upload BP
                 </button>
+                 <button type="button" id="toggleBPButton" class="btn btn-sm btn-success">
+              <i class="fas fa-eye me-2"></i>Hide BP  <!-- ✅ BENAR - icon eye -->
+        </button>
             </form>
         </div>
     </div>
@@ -730,75 +733,80 @@ main.pb-5 {
         var ctx = document.getElementById('monthlyLossChart').getContext('2d');
 
         const barColors = [
-            '#4e73df', '#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b',
+            '#4e73df', 'rgba(255, 99, 132, 0.95)', '#36b9cc', '#f6c23e', '#e74a3b',
             '#858796', '#b5b9c2', '#fd7e14', '#20c997', '#6f42c1'
         ];
 
-let datasets = [];
-let colorIdx = 0;
+        let datasets = [];
+        let colorIdx = 0;
+        let bpDatasetIndices = []; // 👈 SIMPAN INDEX BP DATASETS
 
-// LOOP KATEGORI - CUMA ACT & PLAN
-// LOOP KATEGORI - ACT & PLAN
-if(chartData.Categories){
-    chartData.Categories.forEach((cat) => {
-        let color = barColors[colorIdx % barColors.length];
+        // LOOP KATEGORI - ACT & PLAN
+        if(chartData.Categories){
+            chartData.Categories.forEach((cat) => {
+                let color = barColors[colorIdx % barColors.length];
 
+                // ACT
+                datasets.push({
+                    type: 'bar',
+                    label: cat + ' (Act)',
+                    data: chartData.Actuals[cat],
+                    backgroundColor: color,
+                    borderColor: color,
+                    barThickness: 40,
+                    stack: 'Actual',
+                    order: 2,
+                    yAxisID: 'y'
+                });
+
+                // PLAN (BP) - DEFAULTNYA HIDDEN
+                bpDatasetIndices.push(datasets.length); // 👈 SIMPAN INDEX
+                datasets.push({
+                    type: 'bar',
+                    label: cat + ' (Plan)',
+                    data: chartData.Plans[cat],
+                    backgroundColor: color,
+                    borderColor: color,
+                    barThickness: 40,
+                    stack: 'Plan',
+                    order: 2,
+                    yAxisID: 'y',
+                    hidden: false  // 👈 DEFAULT HIDDEN
+                });
+
+                colorIdx++;
+            });
+        }
+
+        // RATIO LINES
         datasets.push({
-            type: 'bar',  // 👈 TAMBAH INI
-            label: cat + ' (Act)',
-            data: chartData.Actuals[cat],
-            backgroundColor: color,
-            borderColor: color,
-            barThickness: 40,
-            stack: 'Actual',
-            order: 2,
-            yAxisID: 'y'
+            type: 'line',
+            label: 'Actual Ratio (%)',
+            data: chartData.RatioActual,
+            borderColor: '#e74a3b',
+            backgroundColor: 'rgba(231, 74, 59, 0.7)',
+            borderWidth: 3,
+            pointRadius: 4,
+            tension: 0.1,
+            yAxisID: 'y_ratio',
+            order: 0
         });
 
         datasets.push({
-            type: 'bar',  // 👈 TAMBAH INI
-            label: cat + ' (Plan)',
-            data: chartData.Plans[cat],
-            backgroundColor: color,
-            borderColor: color,
-            barThickness: 40,
-            stack: 'Plan',
-            order: 2,
-            yAxisID: 'y'
+            type: 'line',
+            label: 'Plan Ratio (%)',
+            data: chartData.RatioPlan,
+            borderColor: '#4e73df',
+            backgroundColor: 'rgba(78, 115, 223, 0.7)',
+            borderWidth: 2,
+            borderDash: [5, 5],
+            pointRadius: 3,
+            tension: 0.1,
+            yAxisID: 'y_ratio',
+            order: 0
         });
-        colorIdx++;
-    });
-}
 
-// RATIO LINES
-datasets.push({
-    type: 'line',
-    label: 'Actual Ratio (%)',
-    data: chartData.RatioActual,
-    borderColor: '#e74a3b',
-    backgroundColor: 'rgba(231, 74, 59, 0.2)',
-    borderWidth: 3,
-    pointRadius: 4,
-    tension: 0.1,
-    yAxisID: 'y_ratio',
-    order: 0
-});
-
-datasets.push({
-    type: 'line',
-    label: 'Plan Ratio (%)',
-    data: chartData.RatioPlan,
-    borderColor: '#4e73df',
-    backgroundColor: 'rgba(78, 115, 223, 0.2)',
-    borderWidth: 2,
-    borderDash: [5, 5],  // 👈 INI BIKIN GARIS PUTUS-PUTUS
-    pointRadius: 3,
-    tension: 0.1,
-    yAxisID: 'y_ratio',
-    order: 0
-});
-
-        new Chart(ctx, {
+        const monthlyChart = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: chartData.Labels,
@@ -809,7 +817,7 @@ datasets.push({
                 responsive: true,
                 maintainAspectRatio: false,
                 animation: { duration: 500 },
-               layout: {
+                layout: {
                     padding: {
                         bottom: 0,
                         top: 10,
@@ -818,61 +826,66 @@ datasets.push({
                     }
                 },
                 plugins: {
-                   tooltip: {
-    mode: 'index',
-    intersect: false,
-    titleColor: '#ffffff',
-    bodyColor: '#ffffff',
-    callbacks: {
-        label: function(context) {
-            let label = context.dataset.label || '';
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        titleColor: '#ffffff',
+                        bodyColor: '#ffffff',
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
 
-            // Filter: hanya tampilkan yang mengandung '(Act)' atau 'Actual'
-            if (!label.includes('(Act)') && !label.includes('Actual')) {
-                return null; // Tidak ditampilkan di tooltip
-            }
+                                // Filter: hanya tampilkan yang mengandung '(Act)' atau 'Actual'
+                                if (!label.includes('(Act)') && !label.includes('Actual')) {
+                                    return null;
+                                }
 
-            if (label) label += ': ';
-            if (context.parsed.y !== null) {
-                label += context.parsed.y;
-                if (context.dataset.yAxisID === 'y_ratio') label += '%';
-            }
-            return label;
-        }
-    }
-},
-legend: { 
-    labels: { 
-        color: '#ffffff',
-        usePointStyle: false,  // 👈 TAMBAH INI - FALSE = kotak
-        generateLabels: function(chart) {
-            // Ambil default label generator dari Chart.js
-            const original = Chart.defaults.plugins.legend.labels.generateLabels;
-            const labels = original.call(this, chart);
+                                if (label) label += ': ';
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y;
+                                    if (context.dataset.yAxisID === 'y_ratio') label += '%';
+                                }
+                                return label;
+                            }
+                        }
+                    },
+                    legend: { 
+                        labels: { 
+                            color: '#ffffff',
+                            usePointStyle: false,
+                          generateLabels: function(chart) {
+    const original = Chart.defaults.plugins.legend.labels.generateLabels;
+    const labels = original.call(this, chart);
 
-            // Filter cuma Act + Ratio
-            return labels.filter(label => 
-                label.text.includes('(Act)') || 
-                label.text.includes('Ratio')
-            );
-        }
-    },
-    onClick: function(e, legendItem, legend) {
-        const index = legendItem.datasetIndex;
-        const chart = legend.chart;
-        if (chart.isDatasetVisible(index)) {
-            chart.hide(index);
-        } else {
-            chart.show(index);
-        }
-    },
-    onHover: function(e, legendItem, legend) {
-        e.native.target.style.cursor = 'pointer';
-    },
-    onLeave: function(e, legendItem, legend) {
-        e.native.target.style.cursor = 'default';
-    }
+    // Filter cuma Act + Ratio, hilangkan "(Act)"
+    const filtered = labels.filter(label => 
+        label.text.includes('(Act)') || 
+        label.text.includes('Ratio')
+    ).map(label => {
+        label.text = label.text.replace(' (Act)', '');
+        return label;
+    });
+
+    // ✅ Ambil cuma 13 item pertama (2 baris)
+    return filtered.slice(0, 13);
 }
+                        },
+                        onClick: function(e, legendItem, legend) {
+                            const index = legendItem.datasetIndex;
+                            const chart = legend.chart;
+                            if (chart.isDatasetVisible(index)) {
+                                chart.hide(index);
+                            } else {
+                                chart.show(index);
+                            }
+                        },
+                        onHover: function(e, legendItem, legend) {
+                            e.native.target.style.cursor = 'pointer';
+                        },
+                        onLeave: function(e, legendItem, legend) {
+                            e.native.target.style.cursor = 'default';
+                        }
+                    }
                 },
                 scales: {
                     x: {
@@ -905,9 +918,41 @@ legend: {
                 }
             }
         });
+
+        // 👇 TOGGLE BP BUTTON FUNCTIONALITY
+        let bpVisible = true;
+        const toggleBPBtn = document.getElementById('toggleBPButton');
+
+        toggleBPBtn?.addEventListener('click', function() {
+            bpVisible = !bpVisible;
+
+            // Toggle semua BP datasets
+            bpDatasetIndices.forEach(index => {
+                if (bpVisible) {
+                    monthlyChart.show(index);
+                } else {
+                    monthlyChart.hide(index);
+                }
+            });
+
+            // Update button text & icon
+           if (bpVisible) {
+    // BP sedang VISIBLE → tombol untuk HIDE
+    toggleBPBtn.innerHTML = '<i class="fas fa-eye me-1"></i> Hide BP';  // ✅ BENAR
+    toggleBPBtn.style.borderColor = 'rgba(231, 74, 59, 0.6)';
+    toggleBPBtn.style.color = 'rgba(231, 74, 59, 1)';
+} else {
+    // BP sedang HIDDEN → tombol untuk SHOW
+    toggleBPBtn.innerHTML = '<i class="fas fa-eye-slash me-1"></i> Show BP';  // ✅ BENAR
+    toggleBPBtn.style.borderColor = 'rgba(100, 181, 246, 0.6)';
+    toggleBPBtn.style.color = 'rgba(100, 181, 246, 1)';
+}
+            monthlyChart.update();
+        });
     });
+
+    // Dropdown styling
     document.addEventListener('DOMContentLoaded', function() {
-        // Function untuk set bold pada dropdown yang sudah dipilih
         function updateDropdownStyle() {
             const dropdowns = document.querySelectorAll('.filter-content .form-select-sm');
 
@@ -915,14 +960,11 @@ legend: {
                 const dropdownId = dropdown.id;
                 const dropdownValue = dropdown.value;
 
-                // Logic untuk masing-masing dropdown
                 if (dropdownId === 'SelectedYear') {
-                    // Year selalu bold setelah dipilih
                     if (dropdownValue) {
                         dropdown.classList.add('selected');
                     }
                 } else if (dropdown.name === 'MachineLine') {
-                    // Machine Line bold jika bukan "All"
                     if (dropdownValue && dropdownValue !== 'All') {
                         dropdown.classList.add('selected');
                     } else {
@@ -932,10 +974,8 @@ legend: {
             });
         }
 
-        // Jalankan saat halaman load
         updateDropdownStyle();
 
-        // Jalankan saat dropdown berubah
         const dropdowns = document.querySelectorAll('.filter-content .form-select-sm');
         dropdowns.forEach(dropdown => {
             dropdown.addEventListener('change', updateDropdownStyle);

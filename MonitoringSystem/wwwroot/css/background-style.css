@@ -1,5 +1,5 @@
 ﻿html {
-    background: url('/assets/BackgroundPanamon.png') no-repeat center center fixed !important;
+    background: url('../assets/BackgroundPanamon.png') no-repeat center center fixed !important;
     background-size: cover !important;
     min-height: 100vh !important;
     margin: 0 !important;

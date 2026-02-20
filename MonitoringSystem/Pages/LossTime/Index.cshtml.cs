@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Data.SqlClient;
 using ClosedXML.Excel;
@@ -146,15 +146,18 @@ namespace MonitoringSystem.Pages.LossTime
 
         public IActionResult OnPostFilter()
         {
+            _cachedBreakTimes = null; // ✅ Clear cache
             CurrentPage = 1;
             PageSize = SelectedPageSize;
             SetDatesFromMonthYear();
-            if (SelectedShifts == null || !SelectedShifts.Any()) SelectedShifts = new List<string> { "1", "2", "3" };
+            if (SelectedShifts == null || !SelectedShifts.Any())
+                SelectedShifts = new List<string> { "1", "2", "3" };
             LoadBreakTimeForToday();
             IsFiltering = true;
             LoadData();
             return Page();
         }
+
 
         public IActionResult OnPostChangePage(int pageNumber, int pageSize, int selectedMonth, int selectedYear,
             string machineLine, List<string> selectedShifts,
@@ -178,6 +181,7 @@ namespace MonitoringSystem.Pages.LossTime
 
         public IActionResult OnPostReset()
         {
+            _cachedBreakTimes = null; // ✅ Clear cache
             ModelState.Clear();
             SelectedMonth = DateTime.Today.Month;
             SelectedYear = DateTime.Today.Year;
@@ -192,7 +196,6 @@ namespace MonitoringSystem.Pages.LossTime
             LoadData();
             return Page();
         }
-
         private void LoadBreakTimeForToday()
         {
             var today = DateTime.Today;
@@ -206,7 +209,7 @@ namespace MonitoringSystem.Pages.LossTime
             }
         }
 
-        private List<(TimeSpan Start, TimeSpan End)> GetAllBreakTimes()
+       /*private List<(TimeSpan Start, TimeSpan End)> GetAllBreakTimes()
         {
             var breakTimes = new List<(TimeSpan Start, TimeSpan End)>();
             breakTimes.AddRange(FixedBreakTimes);
@@ -215,7 +218,7 @@ namespace MonitoringSystem.Pages.LossTime
             if (!string.IsNullOrEmpty(AdditionalBreakTime2Start) && !string.IsNullOrEmpty(AdditionalBreakTime2End))
                 if (TryParseTimeSpan(AdditionalBreakTime2Start, out TimeSpan start2) && TryParseTimeSpan(AdditionalBreakTime2End, out TimeSpan end2)) breakTimes.Add((start2, end2));
             return breakTimes;
-        }
+        } */
 
         private bool TryParseTimeSpan(string timeString, out TimeSpan result)
         {
@@ -234,32 +237,75 @@ namespace MonitoringSystem.Pages.LossTime
 
         private void LoadData()
         {
-            var breakTimes = GetAllBreakTimes();
+            var sw = System.Diagnostics.Stopwatch.StartNew();
 
-            var currentRecords = GetLossTimeRecords(StartSelectedDate, EndSelectedDate, breakTimes);
+            var breakTimes = GetAllBreakTimes();
+            Console.WriteLine($"GetAllBreakTimes: {sw.ElapsedMilliseconds}ms");
+            sw.Restart();
 
             DateTime prevMonthDate = StartSelectedDate.AddMonths(-1);
             DateTime lastMonthStart = new DateTime(prevMonthDate.Year, prevMonthDate.Month, 1);
             DateTime lastMonthEnd = lastMonthStart.AddMonths(1).AddDays(-1);
-            var lastMonthRecords = GetLossTimeRecords(lastMonthStart, lastMonthEnd, breakTimes);
+
+            var allRecords = GetCombinedRecords(
+                lastMonthStart, lastMonthEnd,
+                StartSelectedDate, EndSelectedDate,
+                breakTimes
+            );
+            Console.WriteLine($"GetCombinedRecords: {sw.ElapsedMilliseconds}ms");
+            sw.Restart();
+
+            var lastMonthRecords = allRecords.Where(r => r.Date >= lastMonthStart && r.Date <= lastMonthEnd).ToList();
+            var currentRecords = allRecords.Where(r => r.Date >= StartSelectedDate && r.Date <= EndSelectedDate).ToList();
 
             PrepareSummaryChartData(currentRecords, lastMonthRecords);
+            Console.WriteLine($"PrepareSummaryChartData: {sw.ElapsedMilliseconds}ms");
+            sw.Restart();
 
             PrepareDailyChartData(currentRecords);
+            Console.WriteLine($"PrepareDailyChartData: {sw.ElapsedMilliseconds}ms");
+            sw.Restart();
 
             LoadPaginatedData(breakTimes);
+            Console.WriteLine($"LoadPaginatedData: {sw.ElapsedMilliseconds}ms");
+            sw.Restart();
+
+            Console.WriteLine($"TOTAL LoadData: {sw.ElapsedMilliseconds}ms");
         }
 
-        private List<LossTimeRecord> GetLossTimeRecords(DateTime start, DateTime end, List<(TimeSpan Start, TimeSpan End)> breakTimes)
+        // Method baru untuk gabung query
+        private List<LossTimeRecord> GetCombinedRecords(
+            DateTime lastStart, DateTime lastEnd,
+            DateTime currStart, DateTime currEnd,
+            List<(TimeSpan Start, TimeSpan End)> breakTimes)
         {
             var records = new List<LossTimeRecord>();
-            string query = BuildQueryBase();
+            string query = BuildQueryForDateRange();
+
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    AddQueryParameters(command, start, end);
+                    command.Parameters.AddWithValue("@StartDate", lastStart.Date);
+                    command.Parameters.AddWithValue("@EndDate", currEnd.Date);
+
+                    bool isHistorical = currEnd.Date < DateTime.Today;
+                    command.Parameters.AddWithValue("@IsHistorical", isHistorical ? 1 : 0);
+
+                    // ✅ Selalu set @CurrentTime (tidak boleh NULL)
+                    if (isHistorical)
+                    {
+                        command.Parameters.AddWithValue("@CurrentTime", new TimeSpan(23, 59, 59)); // Dummy
+                    }
+                    else
+                    {
+                        command.Parameters.AddWithValue("@CurrentTime", DateTime.Now.TimeOfDay);
+                    }
+
+                    if (!string.IsNullOrEmpty(MachineLine) && MachineLine != "All")
+                        command.Parameters.AddWithValue("@MachineLine", MachineLine);
+
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
@@ -268,14 +314,24 @@ namespace MonitoringSystem.Pages.LossTime
                             TimeSpan endTime = reader.GetTimeSpan(reader.GetOrdinal("EndTime"));
                             if (IsInBreakTime(startTime, endTime, breakTimes)) continue;
 
-                            string reason = reader.IsDBNull(reader.GetOrdinal("Reason")) ? string.Empty : reader.GetString(reader.GetOrdinal("Reason"));
+                            string reason = reader.IsDBNull(reader.GetOrdinal("Reason")) ?
+                                string.Empty : reader.GetString(reader.GetOrdinal("Reason"));
+
                             records.Add(new LossTimeRecord
                             {
                                 Date = reader.GetDateTime(reader.GetOrdinal("Date")),
                                 LossTime = reason,
-                                Duration = reader.IsDBNull(reader.GetOrdinal("LossTime")) ? 0 : reader.GetInt32(reader.GetOrdinal("LossTime")),
-                                Shift = reader.IsDBNull(reader.GetOrdinal("Shift")) ? string.Empty : reader.GetString(reader.GetOrdinal("Shift")),
-                                Category = CategorizeReason(reason)
+                                Start = startTime,
+                                End = endTime,
+                                Duration = reader.IsDBNull(reader.GetOrdinal("LossTime")) ?
+                                    0 : reader.GetInt32(reader.GetOrdinal("LossTime")),
+                                Location = reader.IsDBNull(reader.GetOrdinal("MachineCode")) ?
+                                    string.Empty : reader.GetString(reader.GetOrdinal("MachineCode")),
+                                Shift = reader.IsDBNull(reader.GetOrdinal("Shift")) ?
+                                    string.Empty : reader.GetString(reader.GetOrdinal("Shift")),
+                                Category = CategorizeReason(reason),
+                                DetailedReason = reader.IsDBNull(reader.GetOrdinal("DetailedReason")) ?
+                                    null : reader.GetString(reader.GetOrdinal("DetailedReason"))
                             });
                         }
                     }
@@ -283,7 +339,35 @@ namespace MonitoringSystem.Pages.LossTime
             }
             return records;
         }
-       
+
+        private string BuildQueryForDateRange()
+        {
+            string query = @"
+        SELECT Date, Reason, DetailedReason, MachineCode,
+               CAST(Time AS TIME) AS StartTime, 
+               CAST(EndDateTime AS TIME) AS EndTime, 
+               LossTime, 
+               CASE 
+                   WHEN CAST(Time AS TIME) >= '07:00:00' AND CAST(Time AS TIME) < '15:45:00' THEN '1'
+                   WHEN CAST(Time AS TIME) >= '15:45:00' AND CAST(Time AS TIME) < '23:15:00' THEN '2'
+                   ELSE '3' 
+               END AS Shift
+        FROM AssemblyLossTime 
+        WHERE (
+            (Date = @StartDate AND CAST(Time AS TIME) >= '07:00:00')
+            OR
+            (Date > @StartDate AND Date < @EndDate)
+            OR
+            (@IsHistorical = 1 AND Date = DATEADD(DAY, 1, @EndDate) AND CAST(Time AS TIME) < '07:00:00')
+            OR
+            (@IsHistorical = 0 AND Date = @EndDate AND CAST(Time AS TIME) <= @CurrentTime)
+        )";
+
+            if (!string.IsNullOrEmpty(MachineLine) && MachineLine != "All")
+                query += " AND MachineCode = @MachineLine";
+
+            return query;
+        }
         private void PrepareSummaryChartData(List<LossTimeRecord> currentRecords, List<LossTimeRecord> lastMonthRecords)
         {
             try
@@ -303,22 +387,32 @@ namespace MonitoringSystem.Pages.LossTime
                 var chartData = new
                 {
                     labels = sortedStats
-                    .Select(x => CategoryAbbreviations.ContainsKey(x.Name)
-                        ? CategoryAbbreviations[x.Name]
-                        : x.Name)
-                    .ToArray(),
-
-                                fullLabels = sortedStats
-                    .Select(x => x.Name)
-                    .ToArray(),
+                        .Select(x => CategoryAbbreviations.ContainsKey(x.Name)
+                            ? CategoryAbbreviations[x.Name]
+                            : x.Name)
+                        .ToArray(),
+                    fullLabels = sortedStats
+                        .Select(x => x.Name)
+                        .ToArray(),
                     shift1Data = sortedStats.Select(x => Math.Round(x.S1 / 60.0, 2)).ToArray(),
                     shift2Data = sortedStats.Select(x => Math.Round(x.S2 / 60.0, 2)).ToArray(),
                     shift3Data = sortedStats.Select(x => Math.Round(x.S3 / 60.0, 2)).ToArray(),
                     lastMonthData = sortedStats.Select(x => Math.Round(x.TotalLast / 60.0, 2)).ToArray()
                 };
-                ChartDataJson = JsonSerializer.Serialize(chartData);
+
+                // ✅ UBAH INI - Tambah options untuk tidak escape HTML
+                var options = new JsonSerializerOptions
+                {
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                };
+                ChartDataJson = JsonSerializer.Serialize(chartData, options);
+                Console.WriteLine($"📊 ChartDataJson: {ChartDataJson}");
             }
-            catch (Exception) { ChartDataJson = "{}"; }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error in PrepareSummaryChartData: {ex.Message}");
+                ChartDataJson = "{}";
+            }
         }
 
         private void PrepareDailyChartData(List<LossTimeRecord> currentRecords)
@@ -350,9 +444,18 @@ namespace MonitoringSystem.Pages.LossTime
                     datasets = datasets
                 };
 
-                DailyChartDataJson = JsonSerializer.Serialize(dailyChartData);
+                // ✅ UBAH INI - Tambah options untuk tidak escape HTML
+                var options = new JsonSerializerOptions
+                {
+                    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+                };
+                DailyChartDataJson = JsonSerializer.Serialize(dailyChartData, options);
             }
-            catch (Exception) { DailyChartDataJson = "{}"; }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error in PrepareDailyChartData: {ex.Message}");
+                DailyChartDataJson = "{}";
+            }
         }
 
         private void LoadPaginatedData(List<(TimeSpan Start, TimeSpan End)> breakTimes)
@@ -396,65 +499,193 @@ namespace MonitoringSystem.Pages.LossTime
                 }
             }
         }
-
-        private void CalculateAllDataSummary(List<(TimeSpan Start, TimeSpan End)> breakTimes) => PrepareDailyChartData(GetLossTimeRecords(StartSelectedDate, EndSelectedDate, breakTimes));
-
-        private string BuildQueryBase()
+        // Tambahkan method ini (belum ada di code)
+        private List<LossTimeRecord> GetLossTimeRecords(DateTime start, DateTime end, List<(TimeSpan Start, TimeSpan End)> breakTimes)
         {
-            string query = @"
-                SELECT Id, Date, Reason, DetailedReason, CAST(Time AS TIME) AS StartTime, CAST(EndDateTime AS TIME) AS EndTime, LossTime, MachineCode, 
-                       CASE WHEN (DATEPART(HOUR, Time) = 7 AND DATEPART(MINUTE, Time) >= 0) OR (DATEPART(HOUR, Time) > 7 AND DATEPART(HOUR, Time) < 15) OR (DATEPART(HOUR, Time) = 15 AND DATEPART(MINUTE, Time) <= 45) THEN '1'
-                           WHEN (DATEPART(HOUR, Time) = 15 AND DATEPART(MINUTE, Time) > 45) OR (DATEPART(HOUR, Time) > 15 AND DATEPART(HOUR, Time) < 23) OR (DATEPART(HOUR, Time) = 23 AND DATEPART(MINUTE, Time) <= 15) THEN '2'
-                           ELSE '3' END AS Shift
-                FROM AssemblyLossTime WHERE [Date] >= @StartDate AND [Date] <= @EndDate";
-            if (!string.IsNullOrEmpty(MachineLine) && MachineLine != "All") query += " AND MachineCode = @MachineLine";
-            if (SelectedShifts != null && SelectedShifts.Any() && SelectedShifts.Count < 3)
-            {
-                query += " AND (";
-                List<string> shiftConditions = new List<string>();
-                foreach (var shift in SelectedShifts)
-                {
-                    if (shift == "1") shiftConditions.Add("((DATEPART(HOUR, Time) = 7 AND DATEPART(MINUTE, Time) >= 0) OR (DATEPART(HOUR, Time) > 7 AND DATEPART(HOUR, Time) < 15) OR (DATEPART(HOUR, Time) = 15 AND DATEPART(MINUTE, Time) <= 45))");
-                    else if (shift == "2") shiftConditions.Add("((DATEPART(HOUR, Time) = 15 AND DATEPART(MINUTE, Time) > 45) OR (DATEPART(HOUR, Time) > 15 AND DATEPART(HOUR, Time) < 23) OR (DATEPART(HOUR, Time) = 23 AND DATEPART(MINUTE, Time) <= 15))");
-                    else if (shift == "3") shiftConditions.Add("((DATEPART(HOUR, Time) = 23 AND DATEPART(MINUTE, Time) > 15) OR (DATEPART(HOUR, Time) >= 0 AND DATEPART(HOUR, Time) < 7))");
-                }
-                query += string.Join(" OR ", shiftConditions);
-                query += ")";
-            }
-            return query;
-        }
+            var records = new List<LossTimeRecord>();
+            string query = BuildQueryForDateRange();
 
-        private void AddQueryParameters(SqlCommand command, DateTime start, DateTime end)
-        {
-            command.Parameters.AddWithValue("@StartDate", start);
-            command.Parameters.AddWithValue("@EndDate", end);
-            if (!string.IsNullOrEmpty(MachineLine) && MachineLine != "All") command.Parameters.AddWithValue("@MachineLine", MachineLine);
-        }
-
-        private int GetTotalRecords(List<(TimeSpan Start, TimeSpan End)> breakTimes)
-        {
-            int count = 0;
-            string query = BuildQueryBase();
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    AddQueryParameters(command, StartSelectedDate, EndSelectedDate);
+                    command.Parameters.AddWithValue("@StartDate", start.Date);
+                    command.Parameters.AddWithValue("@EndDate", end.Date);
+
+                    bool isHistorical = end.Date < DateTime.Today;
+                    command.Parameters.AddWithValue("@IsHistorical", isHistorical ? 1 : 0);
+
+                    if (isHistorical)
+                    {
+                        command.Parameters.AddWithValue("@CurrentTime", new TimeSpan(23, 59, 59));
+                    }
+                    else
+                    {
+                        command.Parameters.AddWithValue("@CurrentTime", DateTime.Now.TimeOfDay);
+                    }
+
+                    if (!string.IsNullOrEmpty(MachineLine) && MachineLine != "All")
+                        command.Parameters.AddWithValue("@MachineLine", MachineLine);
+
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
                         {
                             TimeSpan startTime = reader.GetTimeSpan(reader.GetOrdinal("StartTime"));
                             TimeSpan endTime = reader.GetTimeSpan(reader.GetOrdinal("EndTime"));
-                            if (!IsInBreakTime(startTime, endTime, breakTimes)) count++;
+                            if (IsInBreakTime(startTime, endTime, breakTimes)) continue;
+
+                            string reason = reader.IsDBNull(reader.GetOrdinal("Reason")) ?
+                                string.Empty : reader.GetString(reader.GetOrdinal("Reason"));
+
+                            records.Add(new LossTimeRecord
+                            {
+                                Date = reader.GetDateTime(reader.GetOrdinal("Date")),
+                                LossTime = reason,
+                                Start = startTime,
+                                End = endTime,
+                                Duration = reader.IsDBNull(reader.GetOrdinal("LossTime")) ?
+                                    0 : reader.GetInt32(reader.GetOrdinal("LossTime")),
+                                Shift = reader.IsDBNull(reader.GetOrdinal("Shift")) ?
+                                    string.Empty : reader.GetString(reader.GetOrdinal("Shift")),
+                                Category = CategorizeReason(reason)
+                            });
                         }
                     }
                 }
             }
-            return count;
+            return records;
+        }
+        private void CalculateAllDataSummary(List<(TimeSpan Start, TimeSpan End)> breakTimes) => PrepareDailyChartData(GetLossTimeRecords(StartSelectedDate, EndSelectedDate, breakTimes));
+
+        private string BuildQueryBase()
+        {
+            bool isHistorical = EndSelectedDate.Date < DateTime.Today;
+
+            string query = @"
+        SELECT Id, Date, Reason, DetailedReason, 
+               CAST(Time AS TIME) AS StartTime, 
+               CAST(EndDateTime AS TIME) AS EndTime, 
+               LossTime, MachineCode, 
+               CASE 
+                   WHEN CAST(Time AS TIME) >= '07:00:00' AND CAST(Time AS TIME) < '15:45:00' THEN '1'
+                   WHEN CAST(Time AS TIME) >= '15:45:00' AND CAST(Time AS TIME) < '23:15:00' THEN '2'
+                   ELSE '3' 
+               END AS Shift
+        FROM AssemblyLossTime 
+        WHERE (
+            (Date = @StartDate AND CAST(Time AS TIME) >= '07:00:00')
+            OR
+            (Date > @StartDate AND Date < @EndDate)
+            OR
+            (@IsHistorical = 1 AND Date = DATEADD(DAY, 1, @EndDate) AND CAST(Time AS TIME) < '07:00:00')
+            OR
+            (@IsHistorical = 0 AND Date = @EndDate AND CAST(Time AS TIME) <= @CurrentTime)
+        )";
+
+            if (!string.IsNullOrEmpty(MachineLine) && MachineLine != "All")
+                query += " AND MachineCode = @MachineLine";
+
+            if (SelectedShifts != null && SelectedShifts.Any() && SelectedShifts.Count < 3)
+            {
+                var shiftConditions = new List<string>();
+
+                if (SelectedShifts.Contains("1"))
+                    shiftConditions.Add("(CAST(Time AS TIME) >= '07:00:00' AND CAST(Time AS TIME) < '15:45:00')");
+
+                if (SelectedShifts.Contains("2"))
+                    shiftConditions.Add("(CAST(Time AS TIME) >= '15:45:00' AND CAST(Time AS TIME) < '23:15:00')");
+
+                if (SelectedShifts.Contains("3"))
+                    shiftConditions.Add("(CAST(Time AS TIME) >= '23:15:00' OR CAST(Time AS TIME) < '07:00:00')");
+
+                if (shiftConditions.Any())
+                    query += " AND (" + string.Join(" OR ", shiftConditions) + ")";
+            }
+
+            return query;
         }
 
+        private void AddQueryParameters(SqlCommand command, DateTime start, DateTime end)
+        {
+            bool isHistorical = end.Date < DateTime.Today;
+
+            command.Parameters.AddWithValue("@StartDate", start.Date);
+            command.Parameters.AddWithValue("@EndDate", end.Date);
+            command.Parameters.AddWithValue("@IsHistorical", isHistorical ? 1 : 0);
+
+            // ✅ Selalu set @CurrentTime (tidak boleh NULL)
+            if (isHistorical)
+            {
+                command.Parameters.AddWithValue("@CurrentTime", new TimeSpan(23, 59, 59)); // Dummy
+            }
+            else
+            {
+                command.Parameters.AddWithValue("@CurrentTime", DateTime.Now.TimeOfDay);
+            }
+
+            if (!string.IsNullOrEmpty(MachineLine) && MachineLine != "All")
+                command.Parameters.AddWithValue("@MachineLine", MachineLine);
+        }
+
+        private int GetTotalRecords(List<(TimeSpan Start, TimeSpan End)> breakTimes)
+        {
+            string baseQuery = BuildQueryBase(); // ✅ Sudah benar sekarang
+
+            // Tambah filter break time
+            foreach (var (start, end) in breakTimes)
+            {
+                baseQuery += $" AND NOT (CAST(Time AS TIME) BETWEEN '{start}' AND '{end}')";
+            }
+
+            string countQuery = $"SELECT COUNT(*) FROM ({baseQuery}) AS CountQuery";
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(countQuery, connection))
+                {
+                    AddQueryParameters(command, StartSelectedDate, EndSelectedDate); // ✅ Pakai method yang sudah di-update
+                    return (int)command.ExecuteScalar();
+                }
+            }
+        }
+        // Tambah di class properties
+        private List<(TimeSpan Start, TimeSpan End)> _cachedBreakTimes = null;
+
+        // Ganti method GetAllBreakTimes
+        private List<(TimeSpan Start, TimeSpan End)> GetAllBreakTimes()
+        {
+            // Kalau udah ada cache, return langsung
+            if (_cachedBreakTimes != null)
+                return _cachedBreakTimes;
+
+            var breakTimes = new List<(TimeSpan Start, TimeSpan End)>();
+            breakTimes.AddRange(FixedBreakTimes);
+
+            if (!string.IsNullOrEmpty(AdditionalBreakTime1Start) && !string.IsNullOrEmpty(AdditionalBreakTime1End))
+            {
+                if (TryParseTimeSpan(AdditionalBreakTime1Start, out TimeSpan start1) &&
+                    TryParseTimeSpan(AdditionalBreakTime1End, out TimeSpan end1))
+                {
+                    breakTimes.Add((start1, end1));
+                }
+            }
+
+            if (!string.IsNullOrEmpty(AdditionalBreakTime2Start) && !string.IsNullOrEmpty(AdditionalBreakTime2End))
+            {
+                if (TryParseTimeSpan(AdditionalBreakTime2Start, out TimeSpan start2) &&
+                    TryParseTimeSpan(AdditionalBreakTime2End, out TimeSpan end2))
+                {
+                    breakTimes.Add((start2, end2));
+                }
+            }
+
+            // Simpan ke cache
+            _cachedBreakTimes = breakTimes;
+            return breakTimes;
+        }
         private void EnsureValidCurrentPage() { if (TotalRecords == 0) { CurrentPage = 1; return; } int maxPages = (int)Math.Ceiling((double)TotalRecords / PageSize); if (CurrentPage > maxPages) CurrentPage = maxPages; else if (CurrentPage < 1) CurrentPage = 1; }
 
         private string CategorizeReason(string reason)
@@ -481,30 +712,48 @@ namespace MonitoringSystem.Pages.LossTime
             LoadBreakTimeForToday();
             SetDatesFromMonthYear();
             var breakTimes = GetAllBreakTimes();
-            string query = BuildQueryBase();
-            query += " ORDER BY [Date] DESC, Time";
-            var exportData = GetLossTimeRecords(StartSelectedDate, EndSelectedDate, breakTimes);
+
+            // ✅ Pakai GetCombinedRecords yang sudah ada
+            var exportData = GetCombinedRecords(
+                StartSelectedDate, StartSelectedDate,
+                StartSelectedDate, EndSelectedDate,
+                breakTimes
+            ).OrderByDescending(x => x.Date).ToList();
 
             using (var workbook = new XLWorkbook())
             {
                 var worksheet = workbook.Worksheets.Add("Loss Time Data");
-                worksheet.Cell(1, 1).Value = "No"; worksheet.Cell(1, 2).Value = "Date"; worksheet.Cell(1, 3).Value = "Category";
-                worksheet.Cell(1, 4).Value = "Start Time"; worksheet.Cell(1, 5).Value = "End Time"; worksheet.Cell(1, 6).Value = "Duration (Sec)";
-                worksheet.Cell(1, 7).Value = "Location"; worksheet.Cell(1, 8).Value = "Shift"; worksheet.Cell(1, 9).Value = "Detailed Reason";
+                worksheet.Cell(1, 1).Value = "No";
+                worksheet.Cell(1, 2).Value = "Date";
+                worksheet.Cell(1, 3).Value = "Category";
+                worksheet.Cell(1, 4).Value = "Start Time";
+                worksheet.Cell(1, 5).Value = "End Time";
+                worksheet.Cell(1, 6).Value = "Duration (Sec)";
+                worksheet.Cell(1, 7).Value = "Location";
+                worksheet.Cell(1, 8).Value = "Shift";
+                worksheet.Cell(1, 9).Value = "Detailed Reason";
 
                 int row = 2; int index = 1;
                 foreach (var item in exportData)
                 {
-                    worksheet.Cell(row, 1).Value = index++; worksheet.Cell(row, 2).Value = item.Date; worksheet.Cell(row, 3).Value = item.Category;
-                    worksheet.Cell(row, 4).Value = item.Start.ToString(@"hh\:mm\:ss"); worksheet.Cell(row, 5).Value = item.End.ToString(@"hh\:mm\:ss");
-                    worksheet.Cell(row, 6).Value = item.Duration; worksheet.Cell(row, 7).Value = item.Location;
-                    worksheet.Cell(row, 8).Value = item.Shift; worksheet.Cell(row, 9).Value = item.DetailedReason;
+                    worksheet.Cell(row, 1).Value = index++;
+                    worksheet.Cell(row, 2).Value = item.Date;
+                    worksheet.Cell(row, 3).Value = item.Category;
+                    worksheet.Cell(row, 4).Value = item.Start.ToString(@"hh\:mm\:ss");
+                    worksheet.Cell(row, 5).Value = item.End.ToString(@"hh\:mm\:ss");
+                    worksheet.Cell(row, 6).Value = item.Duration;
+                    worksheet.Cell(row, 7).Value = item.Location;
+                    worksheet.Cell(row, 8).Value = item.Shift;
+                    worksheet.Cell(row, 9).Value = item.DetailedReason;
                     row++;
                 }
+
                 using (var stream = new MemoryStream())
                 {
                     workbook.SaveAs(stream);
-                    return File(stream.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"LossTime_{StartSelectedDate:yyyyMMdd}-{EndSelectedDate:yyyyMMdd}.xlsx");
+                    return File(stream.ToArray(),
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                        $"LossTime_{StartSelectedDate:yyyyMMdd}-{EndSelectedDate:yyyyMMdd}.xlsx");
                 }
             }
         }

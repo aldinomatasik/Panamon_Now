@@ -421,7 +421,7 @@ input[type="checkbox"]:checked + .shift-button {
                     </select>
                 </div>
 
-<div class="d-flex align-items-center gap-2">
+@*<div class="d-flex align-items-center gap-2">
     <label class="mb-0">Start</label>
     <div class="position-relative">
         <input type="text"
@@ -445,8 +445,28 @@ input[type="checkbox"]:checked + .shift-button {
         <i class="fas fa-calendar position-absolute" 
            style="right: 14px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.6); pointer-events: none; font-size: 12px;"></i>
     </div>
+</div> *@
+<div class="d-flex align-items-center gap-2">
+    <label class="mb-0">Month</label>
+    <select class="form-select" style="width: 110px;" 
+            id="SelectedMonth" name="SelectedMonth" asp-for="SelectedMonth">
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                <option value="@i">@CultureInfo.GetCultureInfo("en-US").DateTimeFormat.GetMonthName(i)</option>
+                    }
+    </select>
 </div>
 
+<div class="d-flex align-items-center gap-2">
+    <label class="mb-0">Year</label>
+    <select class="form-select" style="width: 80px;" 
+            id="SelectedYear" name="SelectedYear" asp-for="SelectedYear">
+                    @for (int i = DateTime.Now.Year; i >= 2020; i--)
+                    {
+                <option value="@i">@i</option>
+                    }
+    </select>
+</div>
                 <div class="d-flex align-items-center gap-2">
                     <label class="mb-0">Shift</label>
                             <div class="d-flex gap-2 shift-buttons-container">
@@ -829,39 +849,48 @@ LOSS TIME SUMMARY - COMPACT & MODERN
         </div>
     </div
 </div>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="~/js/chart.umd.min.js"></script>
 <script>
-    // Global Config for Dark Mode
+    console.log("🚀 Script START");
+    console.log("📦 Chart available?", typeof Chart !== 'undefined' ? 'YES' : 'NO');
+
+    // Global Config
     const chartTextColor = '#ffffff';
     const chartGridColor = 'rgba(255, 255, 255, 0.1)';
 
-    let summaryChartData;
+    // Parse data dari server
+    let summaryChartData = null;
+    let dailyChartData = null;
+
     try {
-        summaryChartData = @Html.Raw(Json.Serialize(Model.ChartDataJson));
-        if (typeof summaryChartData === 'string') summaryChartData = JSON.parse(summaryChartData);
-    } catch (error) {
-        console.error("Error parsing summary chart data:", error);
-        summaryChartData = { labels: [], shift1Data: [], shift2Data: [], shift3Data: [], lastMonthData: [] };
+        const rawSummary = '@Html.Raw(Model.ChartDataJson)';
+        console.log("📊 Raw Summary:", rawSummary.substring(0, 100) + "...");
+        summaryChartData = JSON.parse(rawSummary);
+        console.log("✅ Summary parsed:", summaryChartData);
+    } catch (e) {
+        console.error("❌ Parse Summary Error:", e);
+        summaryChartData = {labels:[], fullLabels:[], shift1Data:[], shift2Data:[], shift3Data:[], lastMonthData:[]};
     }
 
-    let dailyChartData;
     try {
-        dailyChartData = @Html.Raw(Json.Serialize(Model.DailyChartDataJson));
-        if (typeof dailyChartData === 'string') dailyChartData = JSON.parse(dailyChartData);
-    } catch (error) {
-        console.error("Error parsing daily chart data:", error);
-        dailyChartData = { labels: [], datasets: [] };
+        const rawDaily = '@Html.Raw(Model.DailyChartDataJson)';
+        console.log("📊 Raw Daily:", rawDaily.substring(0, 100) + "...");
+        dailyChartData = JSON.parse(rawDaily);
+        console.log("✅ Daily parsed:", dailyChartData);
+    } catch (e) {
+        console.error("❌ Parse Daily Error:", e);
+        dailyChartData = {labels:[], datasets:[]};
     }
 
-    // ✅ PINDAHIN FUNCTION KELUAR DARI DOMCONTENTLOADED
-    function updateDropdownStyle() {
+    // Update dropdown style function
+   // Update dropdown style function
+function updateDropdownStyle() {
+    try {
         const dropdowns = document.querySelectorAll('.filter-content .form-select');
         dropdowns.forEach(dropdown => {
             const dropdownName = dropdown.name;
             const dropdownValue = dropdown.value;
 
-            // KHUSUS LINE: Bold kalau bukan "All"
+            // ✅ KHUSUS LINE: Bold kalau bukan "All"
             if (dropdownName === 'MachineLine') {
                 if (dropdownValue && dropdownValue !== 'All') {
                     dropdown.classList.add('selected');
@@ -869,178 +898,240 @@ LOSS TIME SUMMARY - COMPACT & MODERN
                     dropdown.classList.remove('selected');
                 }
             }
-            // KHUSUS MONTH: Bold kalau bukan bulan sekarang
+            // ✅ KHUSUS MONTH: Selalu bold (user pasti pilih sesuatu)
             else if (dropdownName === 'SelectedMonth') {
-                const currentMonth = new Date().getMonth() + 1;
-                if (dropdownValue && parseInt(dropdownValue) !== currentMonth) {
+                if (dropdownValue) {
                     dropdown.classList.add('selected');
                 } else {
                     dropdown.classList.remove('selected');
                 }
             }
-            // KHUSUS YEAR: Bold kalau bukan tahun sekarang
+            // ✅ KHUSUS YEAR: Selalu bold (user pasti pilih sesuatu)
             else if (dropdownName === 'SelectedYear') {
-                const currentYear = new Date().getFullYear();
-                if (dropdownValue && parseInt(dropdownValue) !== currentYear) {
+                if (dropdownValue) {
                     dropdown.classList.add('selected');
                 } else {
                     dropdown.classList.remove('selected');
                 }
             }
         });
+    } catch (e) {
+        console.error("❌ Dropdown error:", e);
     }
+}
+    // Function to initialize charts
+    function initializeCharts() {
+        console.log("🎯 initializeCharts called");
+        console.log("📦 Chart available?", typeof Chart !== 'undefined' ? 'YES' : 'NO');
 
-    // ===== SATU-SATUNYA DOM CONTENT LOADED =====
-    document.addEventListener('DOMContentLoaded', function() {
-        // 1. RENDER LOSS TIME CHART
-        const ctxSummary = document.getElementById('lossTimeChart').getContext('2d');
-        if (ctxSummary) {
-            new Chart(ctxSummary, {
-                type: 'bar',
-                data: {
-                    labels: summaryChartData.labels,
-                    datasets: [
-                        { label: 'Last Month', data: summaryChartData.lastMonthData, backgroundColor: 'rgba(201, 203, 207, 0.95)', stack: 'last' },
-                        { label: 'Shift 1', data: summaryChartData.shift1Data, backgroundColor: 'rgba(255, 99, 132, 0.95)', stack: 'current' },
-                        { label: 'Shift 2', data: summaryChartData.shift2Data, backgroundColor: 'rgba(54, 162, 235, 0.95)', stack: 'current' },
-                        { label: 'Shift 3', data: summaryChartData.shift3Data, backgroundColor: 'rgba(75, 192, 192, 0.95)', stack: 'current' }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { labels: { color: chartTextColor } },
-                        tooltip: {
-                            callbacks: {
-                                title: function (context) {
-                                    return summaryChartData.fullLabels[context[0].dataIndex];
-                                },
-                                label: function (c) {
-                                    return `${c.dataset.label}: ${c.raw} min`;
+        if (typeof Chart === 'undefined') {
+            console.error("❌ Chart.js NOT LOADED!");
+            return;
+        }
+
+        try {
+            // ============ SUMMARY CHART ============
+            console.log("📍 Looking for lossTimeChart...");
+            const ctxSummary = document.getElementById('lossTimeChart');
+
+            if (ctxSummary) {
+                console.log("✅ Canvas found!");
+                console.log("📊 Creating chart with data:", summaryChartData);
+
+                const summaryChart = new Chart(ctxSummary, {
+                    type: 'bar',
+                    data: {
+                        labels: summaryChartData.labels || [],
+                        datasets: [
+                            { 
+                                label: 'Last Month', 
+                                data: summaryChartData.lastMonthData || [], 
+                                backgroundColor: 'rgba(201, 203, 207, 0.95)', 
+                                stack: 'last' 
+                            },
+                            { 
+                                label: 'Shift 1', 
+                                data: summaryChartData.shift1Data || [], 
+                                backgroundColor: 'rgba(255, 99, 132, 0.95)', 
+                                stack: 'current' 
+                            },
+                            { 
+                                label: 'Shift 2', 
+                                data: summaryChartData.shift2Data || [], 
+                                backgroundColor: 'rgba(54, 162, 235, 0.95)', 
+                                stack: 'current' 
+                            },
+                            { 
+                                label: 'Shift 3', 
+                                data: summaryChartData.shift3Data || [], 
+                                backgroundColor: 'rgba(75, 192, 192, 0.95)', 
+                                stack: 'current' 
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { labels: { color: chartTextColor } },
+                            tooltip: {
+                                callbacks: {
+                                    title: function (context) {
+                                        return summaryChartData.fullLabels[context[0].dataIndex] || '';
+                                    },
+                                    label: function (c) {
+                                        return `${c.dataset.label}: ${c.raw} min`;
+                                    }
                                 }
                             }
-                        }
-                    },
-                    scales: {
-                        x: { stacked: true, ticks: { color: chartTextColor }, grid: { color: chartGridColor } },
-                        y: {
-                            beginAtZero: true,
-                            stacked: true,
-                            ticks: { color: chartTextColor },
-                            grid: { color: chartGridColor },
-                            title: { display: true, text: 'Duration (Min)', color: chartTextColor }
-                        }
-                    }
-                }
-            });
-            const today = new Date().toISOString().split('T')[0];
-
-const startInput = document.getElementById('StartDate');
-const endInput = document.getElementById('EndDate');
-
-if (startInput && !startInput.value) {
-    startInput.value = today;
-}
-
-if (endInput && !endInput.value) {
-    endInput.value = today;
-}
-        }
-
-        // 2. RENDER DAILY LOSS CHART
-        const ctxDaily = document.getElementById('dailyLossChart').getContext('2d');
-        if (ctxDaily) {
-            new Chart(ctxDaily, {
-                type: 'bar',
-                data: dailyChartData,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'top', labels: { color: chartTextColor } },
-                        tooltip: {
-                            mode: 'index',
-                            intersect: false,
-                            callbacks: { label: function(c) { return `${c.dataset.label}: ${c.raw} min`; } }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            stacked: true,
-                            ticks: { color: chartTextColor },
-                            grid: { color: chartGridColor },
-                            title: { display: true, text: 'Day of Month', color: chartTextColor }
                         },
-                        y: {
-                            beginAtZero: true,
-                            stacked: true,
-                            ticks: { color: chartTextColor },
-                            grid: { color: chartGridColor },
-                            title: { display: true, text: 'Duration (Minutes)', color: chartTextColor }
+                        scales: {
+                            x: { 
+                                stacked: true, 
+                                ticks: { color: chartTextColor }, 
+                                grid: { color: chartGridColor } 
+                            },
+                            y: {
+                                beginAtZero: true,
+                                stacked: true,
+                                ticks: { color: chartTextColor },
+                                grid: { color: chartGridColor },
+                                title: { display: true, text: 'Duration (Min)', color: chartTextColor }
+                            }
                         }
                     }
-                }
-            });
-        }
+                });
 
-        // 3. RESTORE SHIFT BUTTON STATES
-        const shiftCheckboxes = document.querySelectorAll('input[name="SelectedShifts"]');
-        shiftCheckboxes.forEach(checkbox => {
-            const button = document.querySelector(`label[for="${checkbox.id}"]`);
-            if (checkbox.checked && button) {
-                button.classList.add('active');
+                console.log("✅ Summary Chart created!", summaryChart);
+            } else {
+                console.error("❌ Canvas 'lossTimeChart' NOT FOUND!");
             }
-        });
 
-        // 4. HANDLE SHIFT BUTTON CLICKS
-        const shiftButtons = document.querySelectorAll('.shift-button');
-        shiftButtons.forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const checkbox = document.getElementById(this.getAttribute('for'));
-                if (checkbox) {
-                    checkbox.checked = !checkbox.checked;
-                    this.classList.toggle('active', checkbox.checked);
+            // ============ DAILY CHART ============
+            console.log("📍 Looking for dailyLossChart...");
+            const ctxDaily = document.getElementById('dailyLossChart');
+
+            if (ctxDaily) {
+                console.log("✅ Daily canvas found!");
+                console.log("📊 Creating daily chart with data:", dailyChartData);
+
+                const dailyChart = new Chart(ctxDaily, {
+                    type: 'bar',
+                    data: dailyChartData,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'top', labels: { color: chartTextColor } },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false,
+                                callbacks: { 
+                                    label: function(c) { 
+                                        return `${c.dataset.label}: ${c.raw} min`; 
+                                    } 
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                stacked: true,
+                                ticks: { color: chartTextColor },
+                                grid: { color: chartGridColor },
+                                title: { display: true, text: 'Day of Month', color: chartTextColor }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                stacked: true,
+                                ticks: { color: chartTextColor },
+                                grid: { color: chartGridColor },
+                                title: { display: true, text: 'Duration (Minutes)', color: chartTextColor }
+                            }
+                        }
+                    }
+                });
+
+                console.log("✅ Daily Chart created!", dailyChart);
+            } else {
+                console.error("❌ Canvas 'dailyLossChart' NOT FOUND!");
+            }
+
+        } catch (error) {
+            console.error("❌ Chart creation error:", error);
+            console.error("Error stack:", error.stack);
+        }
+    }
+
+    // Wait for everything to load
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("🎯 DOM Ready via addEventListener");
+            setTimeout(initializeCharts, 100); // Delay 100ms buat pastiin Chart.js loaded
+            initializeOtherFeatures();
+        });
+    } else {
+        console.log("🎯 DOM already ready");
+        setTimeout(initializeCharts, 100);
+        initializeOtherFeatures();
+    }
+
+    function initializeOtherFeatures() {
+        console.log("🔧 Initializing other features...");
+
+        // ============ SHIFT BUTTONS ============
+        try {
+            const shiftCheckboxes = document.querySelectorAll('input[name="SelectedShifts"]');
+            shiftCheckboxes.forEach(checkbox => {
+                const button = document.querySelector(`label[for="${checkbox.id}"]`);
+                if (checkbox.checked && button) {
+                    button.classList.add('active');
                 }
             });
-        });
 
-        // 5. UPDATE DROPDOWN STYLE - JALANIN SETELAH PAGE LOAD PENUH
-        // ✅ Paksa delay biar asp-for binding kelar dulu
-        setTimeout(function() {
-            updateDropdownStyle();
-        }, 50);
-
-        // Event listener untuk perubahan manual
-        const dropdowns = document.querySelectorAll('.filter-content .form-select');
-        dropdowns.forEach(dropdown => {
-            dropdown.addEventListener('change', updateDropdownStyle);
-        });
-
-        // 6. DETAILED REASON MODAL
-        const detailedReasonModal = document.getElementById('detailedReasonModal');
-        if (detailedReasonModal) {
-            detailedReasonModal.addEventListener('show.bs.modal', function (event) {
-                var button = event.relatedTarget;
-                var reason = button.getAttribute('data-reason');
-                var modalBodyText = this.querySelector('.modal-body p#detailedReasonText');
-                modalBodyText.textContent = (reason && reason.trim() !== '') ? reason : 'No detailed reason provided.';
+            const shiftButtons = document.querySelectorAll('.shift-button');
+            shiftButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const checkbox = document.getElementById(this.getAttribute('for'));
+                    if (checkbox) {
+                        checkbox.checked = !checkbox.checked;
+                        this.classList.toggle('active', checkbox.checked);
+                    }
+                });
             });
+            console.log("✅ Shift buttons OK");
+        } catch (e) {
+            console.error("❌ Shift error:", e);
         }
-          flatpickr("#StartDate", {
-            dateFormat: "Y-m-d",
-            defaultDate: "today",
-            maxDate: "today"
-        });
 
-        flatpickr("#EndDate", {
-            dateFormat: "Y-m-d",
-            defaultDate: "today",
-            maxDate: "today"
-        });
+        // ============ DROPDOWN STYLE ============
+        try {
+            setTimeout(updateDropdownStyle, 50);
+            const dropdowns = document.querySelectorAll('.filter-content .form-select');
+            dropdowns.forEach(dropdown => {
+                dropdown.addEventListener('change', updateDropdownStyle);
+            });
+            console.log("✅ Dropdowns OK");
+        } catch (e) {
+            console.error("❌ Dropdown error:", e);
+        }
 
-    }); // ← INI AKHIR DOMContentLoaded
+        // ============ MODAL ============
+        try {
+            const detailedReasonModal = document.getElementById('detailedReasonModal');
+            if (detailedReasonModal) {
+                detailedReasonModal.addEventListener('show.bs.modal', function (event) {
+                    var button = event.relatedTarget;
+                    var reason = button.getAttribute('data-reason');
+                    var modalBodyText = this.querySelector('.modal-body p#detailedReasonText');
+                    modalBodyText.textContent = (reason && reason.trim() !== '') ? reason : 'No detailed reason provided.';
+                });
+                console.log("✅ Modal OK");
+            }
+        } catch (e) {
+            console.error("❌ Modal error:", e);
+        }
 
-   
+        console.log("🎉 All features initialized!");
+    }
 </script>

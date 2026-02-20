@@ -617,6 +617,70 @@ input[type="checkbox"]:checked + .shift-button {
 .table tbody tr:nth-child(6) td:nth-child(n+3) {
     background-color: rgba(255, 255, 255, 0.25) !important;
 }
+
+/* ========================================
+   WARNA GRUP BARIS - PLAN FORECAST VS ACTUAL
+   ======================================== */
+
+/* GRUP PLAN FORECAST (Lebih Terang) */
+.table tbody tr:nth-child(1) td,
+.table tbody tr:nth-child(2) td,
+.table tbody tr:nth-child(3) td,
+.table tbody tr:nth-child(7) td,
+.table tbody tr:nth-child(8) td,
+.table tbody tr:nth-child(9) td,
+.table tbody tr:nth-child(10) td
+{
+    background-color: rgba(255, 255, 255, 0.15) !important; /* Lebih Terang */
+}
+
+/* GRUP ACTUAL (Lebih Gelap) */
+.table tbody tr:nth-child(4) td,
+.table tbody tr:nth-child(5) td,
+.table tbody tr:nth-child(6) td,
+.table tbody tr:nth-child(11) td,
+.table tbody tr:nth-child(12) td,
+.table tbody tr:nth-child(13) td,
+.table tbody tr:nth-child(14) td
+{
+    background-color: rgba(255, 255, 255, 0.05) !important; /* Lebih Gelap */
+}
+
+/* Override untuk kolom sticky (Plan Forecast group) */
+.table tbody tr:nth-child(1) td:first-child,
+.table tbody tr:nth-child(1) td:nth-child(2),
+.table tbody tr:nth-child(2) td:first-child,
+.table tbody tr:nth-child(2) td:nth-child(2),
+.table tbody tr:nth-child(3) td:first-child,
+.table tbody tr:nth-child(3) td:nth-child(2),
+.table tbody tr:nth-child(7) td:first-child,
+.table tbody tr:nth-child(7) td:nth-child(2),
+.table tbody tr:nth-child(8) td:first-child,
+.table tbody tr:nth-child(8) td:nth-child(2),
+.table tbody tr:nth-child(9) td:first-child,
+.table tbody tr:nth-child(9) td:nth-child(2),
+.table tbody tr:nth-child(10) td:first-child,
+.table tbody tr:nth-child(10) td:nth-child(2) {
+    background-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+/* Override untuk kolom sticky (Actual group) */
+.table tbody tr:nth-child(4) td:first-child,
+.table tbody tr:nth-child(4) td:nth-child(2),
+.table tbody tr:nth-child(5) td:first-child,
+.table tbody tr:nth-child(5) td:nth-child(2),
+.table tbody tr:nth-child(6) td:first-child,
+.table tbody tr:nth-child(6) td:nth-child(2),
+.table tbody tr:nth-child(11) td:first-child,
+.table tbody tr:nth-child(11) td:nth-child(2),
+.table tbody tr:nth-child(12) td:first-child,
+.table tbody tr:nth-child(12) td:nth-child(2),
+.table tbody tr:nth-child(13) td:first-child,
+.table tbody tr:nth-child(13) td:nth-child(2),
+.table tbody tr:nth-child(14) td:first-child,
+.table tbody tr:nth-child(14) td:nth-child(2) {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+}
 /* ========================================
    HAPUS/COMMENT CSS YANG LAMA INI (HAPUS)
    ======================================== */
@@ -983,9 +1047,10 @@ input[type="checkbox"]:checked + .shift-button {
                             { type: 'line', label: 'Rasio Plan (%)', data: ratioPlanData, borderColor: '#FFFFFF', backgroundColor: 'rgba(255, 255, 255, 0.2)', tension: 0.1, yAxisID: 'y1' },
                             { label: 'SAP Plan', data: originalPlanData, backgroundColor: '#3cb9fc', borderColor: '#3cb9fc', barThickness: 15, stack: 'OriginalPlan', yAxisID: 'y' },
                             { label: 'Change Plan', data: planData, backgroundColor: '#a32ca3', borderColor: '#a32ca3', barThickness: 15, stack: 'Plan', yAxisID: 'y' },
-                            { label: 'Normal', data: normalData, backgroundColor: '#35FF00', borderColor: '#35FF00', barThickness: 15, stack: 'Actual', yAxisID: 'y' },
-                            { label: 'Overtime', data: overtimeData, backgroundColor: '#006330', borderColor: '#006330', barThickness: 15, stack: 'Actual', yAxisID: 'y' },
-                            { label: 'Overtime Plan', data: planOvertimeData, backgroundColor: '#6a1b9a', borderColor: '#6a1b9a', barThickness: 15, stack: 'Plan', yAxisID: 'y' }
+                            { label: 'Overtime Plan', data: planOvertimeData, backgroundColor: '#6a1b9a', borderColor: '#6a1b9a', barThickness: 15, stack: 'Plan', yAxisID: 'y' },
+                            { label: 'Act Normal', data: normalData, backgroundColor: '#35FF00', borderColor: '#35FF00', barThickness: 15, stack: 'Actual', yAxisID: 'y' },
+                            { label: 'Act Overtime', data: overtimeData, backgroundColor: '#006330', borderColor: '#006330', barThickness: 15, stack: 'Actual', yAxisID: 'y' }
+                            
                         ]
                     },
                     options: {

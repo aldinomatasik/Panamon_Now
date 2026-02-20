@@ -46,6 +46,9 @@ namespace MonitoringSystem.Pages.ProductionReport
             public TimeSpan Shift2_EndTime { get; set; }
             public decimal Shift3_Unit { get; set; }
             public TimeSpan Shift3_EndTime { get; set; }
+            public decimal NonShift_Unit { get; set; }
+            public TimeSpan NonShift_EndTime { get; set; }
+
 
             // Overtime data (Mode Shift OFF)
             public decimal Overtime_Unit { get; set; } = 0;
@@ -136,14 +139,21 @@ namespace MonitoringSystem.Pages.ProductionReport
             string dateFilter = isCurrentMonthView ? "AND CAST(SDate AS DATE) <= @TodayDate" : "";
             this.DaysInMonth = DateTime.DaysInMonth(SelectedYear, SelectedMonth);
             var combinedData = Enumerable.Range(1, this.DaysInMonth).Select(day => new DailyData { Day = day }).ToList();
-
             string shiftSelectionSql = "";
             if (!SelectedShifts.Contains("All") && SelectedShifts.Any())
             {
                 var shiftConditions = new List<string>();
                 foreach (var shift in SelectedShifts)
                 {
-                    shiftConditions.Add($"ShiftMode = 'SHIFT {shift}'"); // ← SHIFT huruf besar
+                    // ⭐ TAMBAHKAN HANDLER UNTUK "NS"
+                    if (shift == "NS" || shift == "ns")
+                    {
+                        shiftConditions.Add($"ShiftMode = 'NON-SHIFT'");
+                    }
+                    else
+                    {
+                        shiftConditions.Add($"ShiftMode = 'SHIFT {shift}'");
+                    }
                 }
                 shiftSelectionSql = $"WHERE ({string.Join(" OR ", shiftConditions)})";
             }
@@ -189,7 +199,7 @@ END as IsOvertimeFlag
 ),
 ShiftDataFiltered AS (
     SELECT * FROM ShiftData
-    {shiftSelectionSql}  -- Sekarang jadi: WHERE (ShiftMode = 'Shift 1')
+    {shiftSelectionSql}
 ),
 DailyAggregates AS (
     SELECT ReportDate,
@@ -202,6 +212,11 @@ MAX(CASE WHEN ShiftMode = 'SHIFT 2' THEN CAST(SDate AS TIME) END) as S2_Time,
 
 MAX(CASE WHEN ShiftMode = 'SHIFT 3' THEN TotalUnit END) as S3_Unit,
 MAX(CASE WHEN ShiftMode = 'SHIFT 3' THEN CAST(SDate AS TIME) END) as S3_Time,
+
+-- ⭐ TAMBAH 2 BARIS INI
+MAX(CASE WHEN ShiftMode = 'NON-SHIFT' THEN TotalUnit END) as NS_Unit,
+MAX(CASE WHEN ShiftMode = 'NON-SHIFT' THEN CAST(SDate AS TIME) END) as NS_Time,
+
         -- Overtime data (OVERTIME)
 MAX(CASE WHEN ShiftMode = 'OVERTIME' THEN TotalUnit END) as OT_Unit,
 MAX(CASE WHEN ShiftMode = 'OVERTIME' THEN CAST(SDate AS TIME) END) as OT_Time,
@@ -263,6 +278,10 @@ SELECT DAY(ReportDate) as Day, * FROM DailyAggregates";
                                     d.Shift3_Unit = reader["S3_Unit"] != DBNull.Value ? (decimal)reader["S3_Unit"] : 0;
                                     d.Shift3_EndTime = reader["S3_Time"] != DBNull.Value ? (TimeSpan)reader["S3_Time"] : TimeSpan.Zero;
 
+                                    // ⭐ TAMBAH 2 BARIS INI
+                                    d.NonShift_Unit = reader["NS_Unit"] != DBNull.Value ? (decimal)reader["NS_Unit"] : 0;
+                                    d.NonShift_EndTime = reader["NS_Time"] != DBNull.Value ? (TimeSpan)reader["NS_Time"] : TimeSpan.Zero;
+
                                     d.Overtime_Unit = reader["OT_Unit"] != DBNull.Value ? (decimal)reader["OT_Unit"] : 0;
                                     d.Overtime_EndTime = reader["OT_Time"] != DBNull.Value ? (TimeSpan)reader["OT_Time"] : TimeSpan.Zero;
 
@@ -287,7 +306,7 @@ SELECT DAY(ReportDate) as Day, * FROM DailyAggregates";
 
                 int totalOtMinutes = 0;
 
-                // CASE 1: Mode Shift OFF (NS)
+                // CASE 1: Mode Shift OFF (NS atau OVERTIME)
                 if (data.Overtime_Unit > 0)
                 {
                     TimeSpan workStart = new TimeSpan(7, 0, 0);
@@ -301,6 +320,11 @@ SELECT DAY(ReportDate) as Day, * FROM DailyAggregates";
                         int minutesAfterMidnight = (int)data.Overtime_EndTime.TotalMinutes;
                         totalOtMinutes = minutesToMidnight + minutesAfterMidnight;
                     }
+                }
+                // ⭐ TAMBAH CASE BARU: NON-SHIFT yang overtime (lewat jam 16:00)
+                else if (data.NonShift_Unit > 0 && data.NonShift_EndTime > new TimeSpan(16, 0, 0))
+                {
+                    totalOtMinutes = (int)(data.NonShift_EndTime - new TimeSpan(16, 0, 0)).TotalMinutes;
                 }
                 // CASE 2: Mode Shift ON
                 else
@@ -333,6 +357,10 @@ SELECT DAY(ReportDate) as Day, * FROM DailyAggregates";
 
                 OvertimeMinutes.Add(totalOtMinutes);
 
+                int overtimeOpCount = (totalOtMinutes > 0 || data.Overtime_Unit > 0)
+    ? data.NoOfOperator
+    : 0;
+                OvertimeOperators.Add(overtimeOpCount);
                 // ✅ UNIT CALCULATION
                 decimal normalUnits = 0;
                 decimal overtimeUnits = 0;
@@ -346,7 +374,7 @@ SELECT DAY(ReportDate) as Day, * FROM DailyAggregates";
                 else
                 {
                     // Mode Shift ON → NORMAL (biru)
-                    normalUnits = data.Shift1_Unit + data.Shift2_Unit + data.Shift3_Unit;
+                    normalUnits = data.Shift1_Unit + data.Shift2_Unit + data.Shift3_Unit + data.NonShift_Unit;
                     overtimeUnits = 0;
                 }
 
