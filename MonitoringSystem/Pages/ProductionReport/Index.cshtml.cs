@@ -357,29 +357,34 @@ SELECT DAY(ReportDate) as Day, * FROM DailyAggregates";
 
                 OvertimeMinutes.Add(totalOtMinutes);
 
-                int overtimeOpCount = (totalOtMinutes > 0 || data.Overtime_Unit > 0)
-    ? data.NoOfOperator
-    : 0;
+                // ✅ FIX: Overtime operator hanya kalau benar-benar ada overtime
+                int overtimeOpCount = (data.Overtime_Unit > 0 || totalOtMinutes > 0)
+                    ? (data.Overtime_Unit > 0
+                        ? data.NoOfOperator  // Murni OVERTIME mode
+                        : data.NoOfOperator) // Shift biasa yang lembur
+                    : 0;
                 OvertimeOperators.Add(overtimeOpCount);
                 // ✅ UNIT CALCULATION
                 decimal normalUnits = 0;
                 decimal overtimeUnits = 0;
-
-                if (data.Overtime_Unit > 0)
+                // ✅ FIX: NON-SHIFT = Normal, OVERTIME = Overtime
+                if (data.Overtime_Unit > 0 && data.Shift1_Unit == 0 && data.Shift2_Unit == 0 && data.Shift3_Unit == 0 && data.NonShift_Unit == 0)
                 {
-                    // Mode Shift OFF (NS) → OVERTIME (hijau)
+                    // Murni OVERTIME saja
                     normalUnits = 0;
                     overtimeUnits = data.Overtime_Unit;
                 }
                 else
                 {
-                    // Mode Shift ON → NORMAL (biru)
+                    // NON-SHIFT + SHIFT biasa = Normal (biru)
                     normalUnits = data.Shift1_Unit + data.Shift2_Unit + data.Shift3_Unit + data.NonShift_Unit;
-                    overtimeUnits = 0;
+
+                    // Jika ada OVERTIME di hari yang sama dengan shift normal
+                    overtimeUnits = data.Overtime_Unit;
                 }
 
-                NormalData.Add(normalUnits);      // BIRU
-                OvertimeData.Add(overtimeUnits);  // HIJAU
+                NormalData.Add(normalUnits);   // BIRU
+                OvertimeData.Add(overtimeUnits); // HIJAUAU
 
                 NoOfDirectWorkers.Add(data.NoOfOperator);
 

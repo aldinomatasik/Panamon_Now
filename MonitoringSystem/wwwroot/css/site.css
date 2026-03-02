@@ -461,17 +461,17 @@ body.reusable-bg .sticky-bottom {
     pointer-events: auto !important;
 }
 
+.modal-content {
+    pointer-events: auto !important;
+}
+
+.modal-dialog {
+    pointer-events: auto !important;
+}
+
 body.modal-open #bdSidebar {
     pointer-events: none !important;
     opacity: 0.5;
-}
-
-#exportModal .modal-content,
-.modal-content {
-    background: linear-gradient(180deg, #2d3548 0%, #1f2533 100%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    border-radius: 15px !important;
-    color: white;
 }
 
 /* ====================================================
@@ -905,4 +905,173 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
     }
 }
 
-    
+/* ====================================================
+   QUALITY PAGE THEME FIX
+   Tambahkan ini di bagian BAWAH site.css
+   (setelah section 16. RESPONSIVE ADJUSTMENTS)
+   ==================================================== */
+
+/* ====================================================
+   17. QUALITY PAGE - DARK MODE (DEFAULT)
+   ==================================================== */
+
+/* Grid Border Boxes */
+body.reusable-bg .grid-border {
+    background: rgba(255, 255, 255, 0.10) !important;
+    border: 2px solid rgba(255, 255, 255, 0.25) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Section Title */
+body.reusable-bg .section-title {
+    color: rgba(255, 255, 255, 0.9) !important;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Button Inactive */
+body.reusable-bg .btn-outline-inactive {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+    body.reusable-bg .btn-outline-inactive:hover {
+        background-color: rgba(255, 255, 255, 0.15) !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+
+/* KPI Box */
+body.reusable-bg .kpi-box {
+    background: rgba(255, 255, 255, 0.10) !important;
+    border: 2px solid rgba(255, 255, 255, 0.25) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+    overflow: hidden !important;
+}
+
+/* KPI Header */
+body.reusable-bg .kpi-header {
+    background-color: rgba(61, 121, 176, 0.75) !important;
+    color: #ffffff !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+/* KPI Value */
+body.reusable-bg .kpi-value {
+    background-color: transparent !important;
+    color: #ffffff !important;
+}
+
+/* Date inputs inside filter */
+body.reusable-bg .dashboard-container .form-control[type="date"] {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+    border-radius: 8px !important;
+}
+
+    body.reusable-bg .dashboard-container .form-control[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(1);
+    }
+
+body.reusable-bg .dashboard-container label.fw-bold.text-muted {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* ====================================================
+   17b. QUALITY PAGE - LIGHT MODE OVERRIDE
+   ==================================================== */
+
+body.light-mode .grid-border {
+    background: #ffffff !important;
+    border: 1px solid var(--panasonic-blue) !important;
+    border-radius: 5px !important;
+    box-shadow: none !important;
+}
+
+body.light-mode .section-title {
+    color: var(--panasonic-blue) !important;
+    border-bottom: 2px solid var(--panasonic-blue) !important;
+}
+
+body.light-mode .btn-outline-inactive {
+    background-color: white !important;
+    color: #6c757d !important;
+    border: 2px solid #6c757d !important;
+}
+
+body.light-mode .kpi-box {
+    background: #ffffff !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 5px !important;
+    box-shadow: none !important;
+}
+
+body.light-mode .kpi-header {
+    background-color: var(--panasonic-blue) !important;
+    color: #ffffff !important;
+}
+
+body.light-mode .kpi-value {
+    background-color: #ffffff !important;
+    color: var(--text-dark) !important;
+}
+
+body.light-mode .dashboard-container .form-control[type="date"] {
+    background-color: #ffffff !important;
+    border: 1px solid #ced4da !important;
+    color: #333 !important;
+}
+
+body.light-mode .dashboard-container label.fw-bold.text-muted {
+    color: #6c757d !important;
+}
+
+/* ====================================================
+   QUALITY PAGE - TARGET MODAL THEMING
+   ==================================================== */
+
+/* Dark mode modal */
+body.reusable-bg .modal-content {
+    background: linear-gradient(180deg, #2d3548 0%, #1f2533 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+}
+
+    body.reusable-bg .modal-content label,
+    body.reusable-bg .modal-content h4 {
+        color: #ffffff !important;
+    }
+
+    body.reusable-bg .modal-content input.form-control {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        color: #ffffff !important;
+    }
+
+        body.reusable-bg .modal-content input.form-control::placeholder {
+            color: rgba(255, 255, 255, 0.4) !important;
+        }
+
+    body.reusable-bg .modal-content hr {
+        border-color: rgba(255, 255, 255, 0.2) !important;
+    }
+
+/* Light mode modal */
+body.light-mode .modal-content {
+    background: #ffffff !important;
+    border: 1px solid rgba(0,0,0,0.2) !important;
+    color: #333 !important;
+}
+
+    body.light-mode .modal-content label,
+    body.light-mode .modal-content h4 {
+        color: #333 !important;
+    }
+
+    body.light-mode .modal-content input.form-control {
+        background-color: #ffffff !important;
+        border: 1px solid #ced4da !important;
+        color: #333 !important;
+    }

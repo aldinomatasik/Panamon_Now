@@ -1,4 +1,4 @@
-﻿html {
+﻿html:not(.light-mode) {
     background: url('../assets/BackgroundPanamon.png') no-repeat center center fixed !important;
     background-size: cover !important;
     min-height: 100vh !important;

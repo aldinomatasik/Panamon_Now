@@ -854,9 +854,32 @@ LOSS TIME SUMMARY - COMPACT & MODERN
     console.log("📦 Chart available?", typeof Chart !== 'undefined' ? 'YES' : 'NO');
 
     // Global Config
-    const chartTextColor = '#ffffff';
-    const chartGridColor = 'rgba(255, 255, 255, 0.1)';
+    const isLightModeActive = () => document.body.classList.contains('light-mode');
 
+    const getChartColors = () => {
+        if (isLightModeActive()) {
+            return {
+                textColor: '#1a1a2e',
+                gridColor: 'rgba(0, 0, 0, 0.1)',
+                legendColor: '#1a1a2e',
+                tooltipBg: 'rgba(255, 255, 255, 0.9)',
+                tooltipBorder: 'rgba(0, 0, 0, 0.2)'
+            };
+        } else {
+            return {
+                textColor: '#ffffff',
+                gridColor: 'rgba(255, 255, 255, 0.1)',
+                legendColor: '#ffffff',
+                tooltipBg: 'rgba(0, 0, 0, 0.8)',
+                tooltipBorder: 'rgba(255, 255, 255, 0.2)'
+            };
+        }
+    };
+
+    // Global Config
+   const isLightMode = document.body.classList.contains('light-mode');
+const chartTextColor = isLightMode ? '#1a1a2e' : '#ffffff';
+const chartGridColor = isLightMode ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)';
     // Parse data dari server
     let summaryChartData = null;
     let dailyChartData = null;
@@ -930,6 +953,7 @@ function updateDropdownStyle() {
         }
 
         try {
+             const colors = getChartColors();
             // ============ SUMMARY CHART ============
             console.log("📍 Looking for lossTimeChart...");
             const ctxSummary = document.getElementById('lossTimeChart');
@@ -973,8 +997,17 @@ function updateDropdownStyle() {
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: { labels: { color: chartTextColor } },
+                            legend: { 
+                                labels: { 
+                                    color: colors.legendColor,
+                                    font: { size: 12 }
+                                } 
+                            },
                             tooltip: {
+                                bodyColor: colors.textColor,
+                                titleColor: colors.textColor,
+                                borderColor: colors.tooltipBorder,
+                                backgroundColor: colors.tooltipBg,
                                 callbacks: {
                                     title: function (context) {
                                         return summaryChartData.fullLabels[context[0].dataIndex] || '';
@@ -987,21 +1020,29 @@ function updateDropdownStyle() {
                         },
                         scales: {
                             x: { 
-                                stacked: true, 
-                                ticks: { color: chartTextColor }, 
-                                grid: { color: chartGridColor } 
+                                stacked: true,
+                                ticks: { color: colors.textColor }, 
+                                grid: { color: colors.gridColor },
+                                title: {
+                                    display: true,
+                                    text: 'Categories',
+                                    color: colors.textColor
+                                }
                             },
                             y: {
                                 beginAtZero: true,
                                 stacked: true,
-                                ticks: { color: chartTextColor },
-                                grid: { color: chartGridColor },
-                                title: { display: true, text: 'Duration (Min)', color: chartTextColor }
+                                ticks: { color: colors.textColor },
+                                grid: { color: colors.gridColor },
+                                title: { 
+                                    display: true, 
+                                    text: 'Duration (Min)', 
+                                    color: colors.textColor 
+                                }
                             }
                         }
                     }
-                });
-
+                      });
                 console.log("✅ Summary Chart created!", summaryChart);
             } else {
                 console.error("❌ Canvas 'lossTimeChart' NOT FOUND!");
@@ -1018,12 +1059,22 @@ function updateDropdownStyle() {
                 const dailyChart = new Chart(ctxDaily, {
                     type: 'bar',
                     data: dailyChartData,
-                    options: {
+                  options: {
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: { position: 'top', labels: { color: chartTextColor } },
+                            legend: { 
+                                position: 'top', 
+                                labels: { 
+                                    color: colors.legendColor,
+                                    font: { size: 12 }
+                                } 
+                            },
                             tooltip: {
+                                bodyColor: colors.textColor,
+                                titleColor: colors.textColor,
+                                borderColor: colors.tooltipBorder,
+                                backgroundColor: colors.tooltipBg,
                                 mode: 'index',
                                 intersect: false,
                                 callbacks: { 
@@ -1036,16 +1087,24 @@ function updateDropdownStyle() {
                         scales: {
                             x: {
                                 stacked: true,
-                                ticks: { color: chartTextColor },
-                                grid: { color: chartGridColor },
-                                title: { display: true, text: 'Day of Month', color: chartTextColor }
+                                ticks: { color: colors.textColor },
+                                grid: { color: colors.gridColor },
+                                title: { 
+                                    display: true, 
+                                    text: 'Day of Month', 
+                                    color: colors.textColor 
+                                }
                             },
                             y: {
                                 beginAtZero: true,
                                 stacked: true,
-                                ticks: { color: chartTextColor },
-                                grid: { color: chartGridColor },
-                                title: { display: true, text: 'Duration (Minutes)', color: chartTextColor }
+                                ticks: { color: colors.textColor },
+                                grid: { color: colors.gridColor },
+                                title: { 
+                                    display: true, 
+                                    text: 'Duration (Minutes)', 
+                                    color: colors.textColor 
+                                }
                             }
                         }
                     }

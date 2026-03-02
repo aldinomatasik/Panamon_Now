@@ -7,8 +7,6 @@
 }
 
 <style>
-/* FILTER AREA WITH LINES - SUPER COMPACT */
-/* FILTER AREA WITH LINES - SUPER COMPACT */
 .filter-area-with-lines {
     position: relative;
     padding: 1px 0;
@@ -23,9 +21,8 @@
 .panamon-bottom-line,
 .panamon-bottomm-line {
     position: absolute !important;
-    left: 7px !important;  /* ← Ke container, bukan ke page */
+    left: 7px !important;
     right: 7px !important;
-   
     height: 2px !important;
     background: rgba(255, 255, 255, 0.04) !important;
     z-index: 999 !important;
@@ -36,13 +33,11 @@
     top: 0 !important;
     border-top: 2px solid rgba(255, 255, 255, 0.08) !important;
 }
-
 .panamon-bottomm-line {
     bottom: 0 !important;
     border-bottom: 2px solid rgba(255, 255, 255, 0.08) !important;
 }
 
-/* FILTER CONTENT - SUPER COMPACT */
 .filter-content {
     position: relative;
     z-index: 2;
@@ -51,29 +46,38 @@
     margin-left: 7px;
     margin-right: 7px;
 }
-/* Bold style untuk dropdown yang sudah dipilih */
+
 .filter-content .form-select-sm.selected {
     font-weight: 700 !important;
 }
 
 .filter-content .form-select-sm {
     height: 28px;
-    padding: 0 22px 0 8px;
+    padding: 0;
+    padding-left: 12px;
+    padding-right: 28px;
+    padding-top: -2px;
     font-size: 12px;
-    line-height: 20px;
+    line-height: 16px;
     border-radius: 999px;
     background-color: rgba(255, 255, 255, 0.05);
     border: 2px solid rgba(255, 255, 255, 0.5);
     color: #ffffff;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
-    background-position: right 0.5rem center;
-    background-size: 12px 12px;
+    background-position: right 8px center;
+    background-size: 10px 10px;
+    text-align: center;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .filter-content label {
     color: rgba(255, 255, 255, 0.85);
-
 }
 
 .filter-content .form-select-sm option {
@@ -81,10 +85,6 @@
     color: #ffffff;
     font-size: 12px;
     padding: 8px;
-}
-
-.filter-content .form-select-sm option:hover {
-    background-color: rgba(70, 85, 110, 0.95);
 }
 
 .filter-content .form-select:focus {
@@ -112,31 +112,6 @@
     min-height: 20px;
     font-size: 12px;
     line-height: 20px;
-}
-
-.filter-content .form-select-sm {
-    height: 28px;
-    padding: 0;
-    padding-left: 12px;
-    padding-right: 28px;
-    padding-top: -2px;
-    font-size: 12px;
-    line-height: 16px;
-    border-radius: 999px;
-    background-color: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(255, 255, 255, 0.5);
-    color: #ffffff;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 8px center;
-    background-size: 10px 10px;
-    text-align: center;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .filter-content .btn-sm {
@@ -189,7 +164,6 @@
     border-color: rgba(255, 255, 255, 0.7) !important;
 }
 
-/* CHART CONTAINER - SUPER COMPACT - SAMA PERSIS */
 .chart-box {
     position: relative;
     width: calc(100% - 14px);
@@ -201,7 +175,7 @@
     margin-right: 7px;
     background: rgba(255, 255, 255, 0.20);
     border-radius: 12px;
-    padding: 5px 12px 5px 12px; 
+    padding: 5px 12px 5px 12px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     border: 2px solid rgba(255, 255, 255, 0.3) !important;
     overflow: visible !important;
@@ -225,8 +199,6 @@
     box-sizing: border-box;
 }
 
-/* TABLE STYLING - COMPACT DENGAN SMOOTH HORIZONTAL SCROLL */
-/* TABLE STYLING - COMPACT DENGAN SMOOTH HORIZONTAL SCROLL */
 .table-responsive {
     width: calc(100% - 14px) !important;
     max-width: calc(100% - 14px) !important;
@@ -241,12 +213,11 @@
     scroll-behavior: smooth !important;
     padding-bottom: 2px !important;
     margin-bottom: 3px !important;
-    box-sizing: border-box !important;  /* 👈 TAMBAH INI */
+    box-sizing: border-box !important;
     scrollbar-width: auto;
     scrollbar-color: #64b5f6 rgba(0, 0, 0, 0.5);
 }
 
-/* SCROLLBAR HORIZONTAL - LEBIH TEBAL & JELAS */
 .table-responsive::-webkit-scrollbar {
     height: 14px;
     width: 12px;
@@ -278,7 +249,7 @@
     border-radius: 7px;
 }
 
-.table th,  
+.table th,
 .table td {
     font-size: 12px;
     padding: 0.1rem;
@@ -287,7 +258,6 @@
     vertical-align: middle;
 }
 
-/* STICKY FIRST COLUMN - DENGAN SHADOW GRADIENT */
 .table th:first-child,
 .table td:first-child {
     min-width: 70px !important;
@@ -310,18 +280,15 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.25) !important;
 }
 
-/* Sticky header first column dengan cursor pointer untuk yang clickable */
-/* TABLE HEADER - SOLID BACKGROUND GAK TEMBUS PANDANG */
 table.table thead th {
-    background-color: rgba(30, 40, 60, 1) !important;  /* SOLID 100% - GAK TRANSPARAN */
+    background-color: rgba(30, 40, 60, 1) !important;
     color: #ffffff !important;
     font-weight: 600;
     border-bottom: 2px solid rgba(100, 181, 246, 0.5) !important;
 }
 
-/* Sticky header first column dengan cursor pointer */
 .table thead th:first-child {
-    background-color: rgba(20, 30, 50, 1) !important;  /* SOLID & lebih gelap */
+    background-color: rgba(20, 30, 50, 1) !important;
     z-index: 11;
     font-weight: 700;
 }
@@ -331,15 +298,13 @@ table.table thead th {
     user-select: none;
 }
 
-/* FIX LEBAR KOLOM BP & ACT - SEMUA SAMA */
-/* Target hanya row kedua header (BP/Act) dan semua tbody cells */
 .table thead tr:nth-child(2) th {
-     min-width: 38px !important;
+    min-width: 38px !important;
     max-width: 38px !important;
     width: 38px !important;
-    text-align: center !important;  /* 👈 TAMBAH */
-    vertical-align: middle !important;  /* 👈 TAMBAH */
-    padding: 0.1rem !important;  /* 👈 TAMBAH - pastikan padding sama */
+    text-align: center !important;
+    vertical-align: middle !important;
+    padding: 0.1rem !important;
 }
 
 .table tbody td:not(:first-child) {
@@ -348,15 +313,9 @@ table.table thead th {
     width: 38px !important;
 }
 
-/* TABLE BACKGROUND - SAMA PERSIS */
 .table.table {
     background-color: rgba(255, 255, 255, 0.20) !important;
 }
-
-@*table.table thead th {
-    background-color: rgba(0, 0, 0, 0.7) !important;
-    color: #ffffff !important;
-}*@
 
 table.table tbody td {
     background-color: transparent !important;
@@ -384,12 +343,10 @@ table.table-bordered > :not(caption) > * {
     box-shadow: 3px 0 8px rgba(0, 0, 0, 0.3);
 }
 
-/* EXTRA ROW - HIDDEN BY DEFAULT */
 .extra-row {
     display: none;
 }
 
-/* CRITICAL OVERFLOW CONTROL - SAMA PERSIS */
 html, body {
     height: 100vh;
     margin: 0;
@@ -444,14 +401,12 @@ main.pb-5 {
     padding-right: 1px !important;
 }
 
-/* HEADER DI DALAM BOX */
 .chart-box-header {
     position: relative;
     padding-bottom: 6px;
     margin-bottom: 6px;
 }
 
-/* TEKS JUDUL */
 .chart-box-title {
     font-size: 0.85rem;
     font-weight: 700;
@@ -460,7 +415,6 @@ main.pb-5 {
     padding-left: 2px;
 }
 
-/* GARIS BAWAH */
 .chart-box-line {
     position: absolute;
     left: 0;
@@ -470,9 +424,7 @@ main.pb-5 {
     background: rgba(0, 0, 0, 0.4);
     border-radius: 1px;
 }
-/* ALTERNATING ROW COLORS - SEMUA KOLOM DALAM 1 BARIS HARUS SAMA WARNA */
 
-/* Baris GANJIL - Warna Terang */
 .table tbody tr:not(.table-secondary):not(.table-dark):nth-of-type(odd) {
     background-color: rgba(255, 255, 255, 0.12) !important;
 }
@@ -481,7 +433,6 @@ main.pb-5 {
     background-color: rgba(255, 255, 255, 0.12) !important;
 }
 
-/* Baris GENAP - Warna Gelap */
 .table tbody tr:not(.table-secondary):not(.table-dark):nth-of-type(even) {
     background-color: rgba(255, 255, 255, 0.05) !important;
 }
@@ -490,7 +441,6 @@ main.pb-5 {
     background-color: rgba(255, 255, 255, 0.05) !important;
 }
 
-/* Kolom Pertama (sticky) - ikut warna barisnya tapi sedikit lebih gelap */
 .table tbody tr:not(.table-secondary):not(.table-dark):nth-of-type(odd) td:first-child {
     background-color: rgba(255, 255, 255, 0.12) !important;
 }
@@ -499,23 +449,36 @@ main.pb-5 {
     background-color: rgba(255, 255, 255, 0.07) !important;
 }
 
-/* Hover effect */
 .table tbody tr:not(.table-secondary):not(.table-dark):hover td {
     background-color: rgba(100, 181, 246, 0.15) !important;
 }
+/* ========== PASTIKAN MODAL TIDAK KENA STYLE TABLE ========== */
+.modal table.table tbody td {
+    background-color: unset !important;
+}
+
+.modal-content {
+    background-color: rgba(30, 40, 60, 0.97) !important;
+}
+
+.modal-body {
+    background-color: rgba(30, 40, 60, 0.97) !important;
+}
+
+.modal-footer {
+    background-color: rgba(20, 30, 50, 0.9) !important;
+}
+
 </style>
 
 <div id="reportContainer">
     <div class="container-fluid">
-        <!-- FILTER AREA WITH HORIZONTAL LINES -->
-        <div class="filter-area-with-lines">    
-            <!-- GARIS HORIZONTAL - ALWAYS SHOW -->
+        <div class="filter-area-with-lines">
             <div class="panamon-bottom-line"></div>
             <div class="panamon-bottomm-line"></div>
 
             <div class="filter-content">
                 <form method="get" id="filterForm" class="d-flex flex-wrap align-items-center gap-3">
-                <!-- YEAR -->
                 <div class="d-flex align-items-center gap-2">
                     <label class="mb-0 text-white small">Year</label>
                     <select class="form-select form-select-sm" style="width: 80px;" id="SelectedYear" name="SelectedYear" asp-for="SelectedYear">
@@ -526,7 +489,6 @@ main.pb-5 {
                     </select>
                 </div>
 
-                <!-- MACHINE LINE -->
                 <div class="d-flex align-items-center gap-2">
                     <label class="mb-0 text-white small">Line</label>
                     <select name="MachineLine" class="form-select form-select-sm" style="width: 90px;" asp-for="MachineLine">
@@ -536,91 +498,89 @@ main.pb-5 {
                     </select>
                 </div>
 
-               <button type="submit" class="btn btn-sm btn-primary">
+                <button type="submit" class="btn btn-sm btn-primary">
                     <i class="fas fa-filter me-2"></i>Apply
                 </button>
 
                 <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#uploadModal">
                     <i class="fas fa-file-excel me-2"></i>Upload BP
                 </button>
-                 <button type="button" id="toggleBPButton" class="btn btn-sm btn-success">
-              <i class="fas fa-eye me-2"></i>Hide BP  <!-- ✅ BENAR - icon eye -->
-        </button>
-            </form>
-        </div>
-    </div>
 
-    <!-- TOAST NOTIFICATIONS -->
-    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100">
+                <button type="button" id="toggleBPButton" class="btn btn-sm btn-success">
+                    <i class="fas fa-eye me-2"></i>Hide BP
+                </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1100">
             @if (TempData["Error"] != null)
             {
-                    <div id="errorToast" class="toast align-items-center text-bg-danger border-0 shadow" role="alert">
-                        <div class="d-flex">
-                            <div class="toast-body">
-                                <i class="fas fa-exclamation-triangle me-2"></i>
+                        <div id="errorToast" class="toast align-items-center text-bg-danger border-0 shadow" role="alert">
+                            <div class="d-flex">
+                                <div class="toast-body">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
                             @TempData["Error"]
+                                </div>
+                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
                             </div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
                         </div>
-                    </div>
             }
             @if (TempData["Success"] != null)
             {
-                    <div id="successToast" class="toast align-items-center text-bg-success border-0 shadow" role="alert">
-                        <div class="d-flex">
-                            <div class="toast-body">
-                                <i class="fas fa-check-circle me-2"></i>
+                        <div id="successToast" class="toast align-items-center text-bg-success border-0 shadow" role="alert">
+                            <div class="d-flex">
+                                <div class="toast-body">
+                                    <i class="fas fa-check-circle me-2"></i>
                             @TempData["Success"]
+                                </div>
+                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
                             </div>
-                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
                         </div>
-                    </div>
             }
-    </div>
+        </div>
 
-    <!-- CHART WITH BOX - SAMA PERSIS DENGAN PRODUCTION REPORT -->
-   <div class="chart-box">
-    <div class="chart-box-header">
-        <span class="chart-box-title">
-            Actual vs BP : @(Model.MachineLine == "All" ? "All Lines Combined" : Model.MachineLine)
-            (Apr @Model.SelectedYear - Mar @(Model.SelectedYear + 1))
-        </span>
-        <div class="chart-box-line"></div>
-    </div>
+        <div class="chart-box">
+            <div class="chart-box-header">
+                <span class="chart-box-title">
+                    Actual vs BP : @(Model.MachineLine == "All" ? "All Lines Combined" : Model.MachineLine)
+                    (Apr @Model.SelectedYear - Mar @(Model.SelectedYear + 1))
+                </span>
+                <div class="chart-box-line"></div>
+            </div>
             @if (Model.ChartDataJson == "{}" || !Model.Categories.Any())
             {
-                    <div class="alert alert-warning text-center mt-2" style="font-size: 0.75rem;">
-                        No data found for Fiscal Year @Model.SelectedYear. Please check if data exists in database.
-                    </div>
-            }
-        <canvas id="monthlyLossChart" class="chart-canvas"></canvas>
-    </div>
-
-    <!-- TABLE - DENGAN TOGGLE FEATURE -->
-    <div class="table-responsive">
-        <table class="table table-bordered text-center align-middle w-100 mb-0" id="lossTimeTable">
-            <thead class="sticky-top">
-                <tr>
-                    <th rowspan="2" class="align-middle toggle-header" id="toggleExtraRows">
-                        <div class="d-flex align-items-center">
-                            <i id="toggleIcon" class="bi bi-chevron-down me-2"></i>
-                            <span>Loss Category<br>(Min)</span>
+                        <div class="alert alert-warning text-center mt-2" style="font-size: 0.75rem;">
+                            No data found for Fiscal Year @Model.SelectedYear. Please check if data exists in database.
                         </div>
-                    </th>
+            }
+            <canvas id="monthlyLossChart" class="chart-canvas"></canvas>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered text-center align-middle w-100 mb-0" id="lossTimeTable">
+                <thead class="sticky-top">
+                    <tr>
+                        <th rowspan="2" class="align-middle toggle-header" id="toggleExtraRows">
+                            <div class="d-flex align-items-center">
+                                <i id="toggleIcon" class="bi bi-chevron-down me-2"></i>
+                                <span>Loss Category<br>(Min)</span>
+                            </div>
+                        </th>
                         @foreach (var m in months)
                         {
-                                <th colspan="2">@m</th>
+                                    <th colspan="2">@m</th>
                         }
-                </tr>
-                <tr>
+                    </tr>
+                    <tr>
                         @for (int i = 0; i < 12; i++)
                         {
-                                <th class="fw-bold small">BP</th>
-                                <th class="fw-bold small">Act</th>
+                                    <th class="fw-bold small">BP</th>
+                                    <th class="fw-bold small">Act</th>
                         }
-                </tr>
-            </thead>
-            <tbody>
+                    </tr>
+                </thead>
+                <tbody>
                     @if (Model.Categories.Any())
                     {
                         string currentGroup = "";
@@ -633,42 +593,41 @@ main.pb-5 {
 
                             if (groupName != currentGroup)
                             {
-                                                    <tr class="table-secondary @rowClass">
-                                                        <td colspan="25" class="text-center fw-bold text-uppercase " style="letter-spacing: 1px;">
+                                                        <tr class="table-secondary @rowClass">
+                                                            <td colspan="25" class="text-center fw-bold text-uppercase" style="letter-spacing: 1px;">
                                         @groupName
-                                                        </td>
-                                                    </tr>
+                                                            </td>
+                                                        </tr>
                                 currentGroup = groupName;
                             }
 
-                                        <tr class="@rowClass">
-                                            <td class="text-start fw-bold">@cat</td>
+                                            <tr class="@rowClass">
+                                                <td class="text-start fw-bold">@cat</td>
                                 @for (int i = 0; i < 12; i++)
                                 {
                                     var planVal = Model.DetailPlans.ContainsKey(cat) ? Model.DetailPlans[cat][i] : 0;
                                     var actVal = Model.DetailActuals.ContainsKey(cat) ? Model.DetailActuals[cat][i] : 0;
-
-                                                        <td class="text-center fw-bold">@planVal</td>
-                                                        <td class="text-center fw-bold">@actVal</td>
+                                                            <td class="text-center fw-bold">@planVal</td>
+                                                            <td class="text-center fw-bold">@actVal</td>
                                 }
-                                        </tr>
+                                            </tr>
                         }
-                            <tr class="table-dark fw-bold extra-row">
-                                <td class="text-start">TOTAL LOSS</td>
+                                <tr class="table-dark fw-bold extra-row">
+                                    <td class="text-start">TOTAL LOSS</td>
                             @for (int i = 0; i < 12; i++)
                             {
-                                            <td>@Model.TotalPlanPerMonth[i].ToString("N1")</td>
-                                            <td>@Model.TotalActualPerMonth[i].ToString("N1")</td>
+                                                <td>@Model.TotalPlanPerMonth[i].ToString("N1")</td>
+                                                <td>@Model.TotalActualPerMonth[i].ToString("N1")</td>
                             }
-                            </tr>
+                                </tr>
                     }
                     else
                     {
-                            <tr><td colspan="25">No Data Available</td></tr>
+                                <tr><td colspan="25">No Data Available</td></tr>
                     }
-            </tbody>
-        </table>
-    </div>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -715,20 +674,41 @@ main.pb-5 {
 
 <script src="~/js/chart.umd.min.js"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // TOGGLE EXTRA ROWS FUNCTIONALITY
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // ============================================================
+        // TOGGLE EXTRA ROWS
+        // ============================================================
         document.getElementById('toggleExtraRows')?.addEventListener('click', function () {
             const extraRows = document.querySelectorAll('.extra-row');
             const icon = document.getElementById('toggleIcon');
             const isVisible = extraRows[0]?.style.display === 'table-row';
-
             extraRows.forEach(row => row.style.display = isVisible ? 'none' : 'table-row');
-
             icon?.classList.toggle('bi-chevron-down', isVisible);
             icon?.classList.toggle('bi-chevron-up', !isVisible);
         });
 
-        // CHART RENDERING
+        // ============================================================
+        // ✅ HELPER: CEK LIGHT MODE DI <html> ATAU <body>
+        // Karena theme toggle bisa apply class ke html atau body
+        // ============================================================
+        const isLightModeActive = () =>
+            document.documentElement.classList.contains('light-mode') ||
+            document.body.classList.contains('light-mode');
+
+        const getChartColors = () => {
+            const isLight = isLightModeActive();
+            return {
+                textColor:     isLight ? '#1a1a2e'                    : '#ffffff',
+                gridColor:     isLight ? 'rgba(26, 26, 46, 0.12)'     : 'rgba(255, 255, 255, 0.15)',
+                tooltipBg:     isLight ? 'rgba(240, 245, 255, 0.97)'  : 'rgba(0, 0, 0, 0.82)',
+                tooltipBorder: isLight ? 'rgba(26, 26, 46, 0.15)'     : 'rgba(255, 255, 255, 0.15)'
+            };
+        };
+
+        // ============================================================
+        // BUILD DATASETS
+        // ============================================================
         var chartData = @Html.Raw(Model.ChartDataJson);
         var ctx = document.getElementById('monthlyLossChart').getContext('2d');
 
@@ -739,107 +719,70 @@ main.pb-5 {
 
         let datasets = [];
         let colorIdx = 0;
-        let bpDatasetIndices = []; // 👈 SIMPAN INDEX BP DATASETS
+        let bpDatasetIndices = [];
 
-        // LOOP KATEGORI - ACT & PLAN
-        if(chartData.Categories){
+        if (chartData.Categories) {
             chartData.Categories.forEach((cat) => {
                 let color = barColors[colorIdx % barColors.length];
 
-                // ACT
                 datasets.push({
-                    type: 'bar',
-                    label: cat + ' (Act)',
+                    type: 'bar', label: cat + ' (Act)',
                     data: chartData.Actuals[cat],
-                    backgroundColor: color,
-                    borderColor: color,
-                    barThickness: 40,
-                    stack: 'Actual',
-                    order: 2,
-                    yAxisID: 'y'
+                    backgroundColor: color, borderColor: color,
+                    barThickness: 40, stack: 'Actual', order: 2, yAxisID: 'y'
                 });
 
-                // PLAN (BP) - DEFAULTNYA HIDDEN
-                bpDatasetIndices.push(datasets.length); // 👈 SIMPAN INDEX
+                bpDatasetIndices.push(datasets.length);
                 datasets.push({
-                    type: 'bar',
-                    label: cat + ' (Plan)',
+                    type: 'bar', label: cat + ' (Plan)',
                     data: chartData.Plans[cat],
-                    backgroundColor: color,
-                    borderColor: color,
-                    barThickness: 40,
-                    stack: 'Plan',
-                    order: 2,
-                    yAxisID: 'y',
-                    hidden: false  // 👈 DEFAULT HIDDEN
+                    backgroundColor: color, borderColor: color,
+                    barThickness: 40, stack: 'Plan', order: 2, yAxisID: 'y', hidden: false
                 });
 
                 colorIdx++;
             });
         }
 
-        // RATIO LINES
         datasets.push({
-            type: 'line',
-            label: 'Actual Ratio (%)',
+            type: 'line', label: 'Actual Ratio (%)',
             data: chartData.RatioActual,
-            borderColor: '#e74a3b',
-            backgroundColor: 'rgba(231, 74, 59, 0.7)',
-            borderWidth: 3,
-            pointRadius: 4,
-            tension: 0.1,
-            yAxisID: 'y_ratio',
-            order: 0
+            borderColor: '#e74a3b', backgroundColor: 'rgba(231,74,59,0.7)',
+            borderWidth: 3, pointRadius: 4, tension: 0.1, yAxisID: 'y_ratio', order: 0
         });
 
         datasets.push({
-            type: 'line',
-            label: 'Plan Ratio (%)',
+            type: 'line', label: 'Plan Ratio (%)',
             data: chartData.RatioPlan,
-            borderColor: '#4e73df',
-            backgroundColor: 'rgba(78, 115, 223, 0.7)',
-            borderWidth: 2,
-            borderDash: [5, 5],
-            pointRadius: 3,
-            tension: 0.1,
-            yAxisID: 'y_ratio',
-            order: 0
+            borderColor: '#4e73df', backgroundColor: 'rgba(78,115,223,0.7)',
+            borderWidth: 2, borderDash: [5, 5], pointRadius: 3,
+            tension: 0.1, yAxisID: 'y_ratio', order: 0
         });
+
+        // ============================================================
+        // ✅ AMBIL WARNA SAAT INI (saat halaman load)
+        // ============================================================
+        const c0 = getChartColors();
 
         const monthlyChart = new Chart(ctx, {
             type: 'bar',
-            data: {
-                labels: chartData.Labels,
-                datasets: datasets
-            },
+            data: { labels: chartData.Labels, datasets: datasets },
             options: {
                 devicePixelRatio: 3,
                 responsive: true,
                 maintainAspectRatio: false,
                 animation: { duration: 500 },
-                layout: {
-                    padding: {
-                        bottom: 0,
-                        top: 10,
-                        left: 5,
-                        right: 5
-                    }
-                },
+                layout: { padding: { bottom: 0, top: 10, left: 5, right: 5 } },
                 plugins: {
                     tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                        titleColor: '#ffffff',
-                        bodyColor: '#ffffff',
+                        mode: 'index', intersect: false,
+                        titleColor: c0.textColor, bodyColor: c0.textColor,
+                        backgroundColor: c0.tooltipBg,
+                        borderColor: c0.tooltipBorder, borderWidth: 1,
                         callbacks: {
-                            label: function(context) {
+                            label: function (context) {
                                 let label = context.dataset.label || '';
-
-                                // Filter: hanya tampilkan yang mengandung '(Act)' atau 'Actual'
-                                if (!label.includes('(Act)') && !label.includes('Actual')) {
-                                    return null;
-                                }
-
+                                if (!label.includes('(Act)') && !label.includes('Actual')) return null;
                                 if (label) label += ': ';
                                 if (context.parsed.y !== null) {
                                     label += context.parsed.y;
@@ -849,136 +792,92 @@ main.pb-5 {
                             }
                         }
                     },
-                    legend: { 
-                        labels: { 
-                            color: '#ffffff',
+                    legend: {
+                        labels: {
+                            color: c0.textColor,
                             usePointStyle: false,
-                          generateLabels: function(chart) {
-    const original = Chart.defaults.plugins.legend.labels.generateLabels;
-    const labels = original.call(this, chart);
-
-    // Filter cuma Act + Ratio, hilangkan "(Act)"
-    const filtered = labels.filter(label => 
-        label.text.includes('(Act)') || 
-        label.text.includes('Ratio')
-    ).map(label => {
-        label.text = label.text.replace(' (Act)', '');
-        return label;
-    });
-
-    // ✅ Ambil cuma 13 item pertama (2 baris)
-    return filtered.slice(0, 13);
-}
-                        },
-                        onClick: function(e, legendItem, legend) {
-                            const index = legendItem.datasetIndex;
-                            const chart = legend.chart;
-                            if (chart.isDatasetVisible(index)) {
-                                chart.hide(index);
-                            } else {
-                                chart.show(index);
+                            generateLabels: function (chart) {
+                                const original = Chart.defaults.plugins.legend.labels.generateLabels;
+                                const labels = original.call(this, chart);
+                                return labels.filter(l => l.text.includes('(Act)') || l.text.includes('Ratio'))
+                                    .map(l => { l.text = l.text.replace(' (Act)', ''); return l; })
+                                    .slice(0, 13);
                             }
                         },
-                        onHover: function(e, legendItem, legend) {
-                            e.native.target.style.cursor = 'pointer';
+                        onClick: (e, item, legend) => {
+                            const chart = legend.chart;
+                            if (chart.isDatasetVisible(item.datasetIndex)) chart.hide(item.datasetIndex);
+                            else chart.show(item.datasetIndex);
                         },
-                        onLeave: function(e, legendItem, legend) {
-                            e.native.target.style.cursor = 'default';
-                        }
+                        onHover: (e) => { e.native.target.style.cursor = 'pointer'; },
+                        onLeave: (e) => { e.native.target.style.cursor = 'default'; }
                     }
                 },
                 scales: {
                     x: {
                         stacked: true,
-                        title: { display: true, text: 'Fiscal Month', color: '#ffffff' },
-                        ticks: { color: '#ffffff' }
+                        title: { display: true, text: 'Fiscal Month', color: c0.textColor },
+                        ticks: { color: c0.textColor },
+                        grid:  { color: c0.gridColor }
                     },
                     y: {
-                        type: 'linear',
-                        display: true,
-                        position: 'left',
-                        stacked: true,
-                        title: { display: true, text: 'Loss Time (Minutes)', color: '#ffffff' },
-                        ticks: { color: '#ffffff' }
+                        type: 'linear', display: true, position: 'left', stacked: true,
+                        title: { display: true, text: 'Loss Time (Minutes)', color: c0.textColor },
+                        ticks: { color: c0.textColor },
+                        grid:  { color: c0.gridColor }
                     },
                     y_ratio: {
-                        type: 'linear',
-                        display: true,
-                        position: 'right',
-                        grid: {
-                            drawOnChartArea: false
-                        },
-                        title: { display: true, text: 'Ratio (%)', color: '#ffffff' },
-                        ticks: {
-                            color: '#ffffff',
-                            callback: function(value) { return value + "%" }
-                        },
+                        type: 'linear', display: true, position: 'right',
+                        grid: { drawOnChartArea: false },
+                        title: { display: true, text: 'Ratio (%)', color: c0.textColor },
+                        ticks: { color: c0.textColor, callback: v => v + '%' },
                         suggestedMax: 5
                     }
                 }
             }
         });
 
-        // 👇 TOGGLE BP BUTTON FUNCTIONALITY
+
+
+        // ============================================================
+        // TOGGLE BP BUTTON
+        // ============================================================
         let bpVisible = true;
         const toggleBPBtn = document.getElementById('toggleBPButton');
 
-        toggleBPBtn?.addEventListener('click', function() {
+        toggleBPBtn?.addEventListener('click', function () {
             bpVisible = !bpVisible;
+            bpDatasetIndices.forEach(i => { if (bpVisible) monthlyChart.show(i); else monthlyChart.hide(i); });
 
-            // Toggle semua BP datasets
-            bpDatasetIndices.forEach(index => {
-                if (bpVisible) {
-                    monthlyChart.show(index);
-                } else {
-                    monthlyChart.hide(index);
-                }
-            });
-
-            // Update button text & icon
-           if (bpVisible) {
-    // BP sedang VISIBLE → tombol untuk HIDE
-    toggleBPBtn.innerHTML = '<i class="fas fa-eye me-1"></i> Hide BP';  // ✅ BENAR
-    toggleBPBtn.style.borderColor = 'rgba(231, 74, 59, 0.6)';
-    toggleBPBtn.style.color = 'rgba(231, 74, 59, 1)';
-} else {
-    // BP sedang HIDDEN → tombol untuk SHOW
-    toggleBPBtn.innerHTML = '<i class="fas fa-eye-slash me-1"></i> Show BP';  // ✅ BENAR
-    toggleBPBtn.style.borderColor = 'rgba(100, 181, 246, 0.6)';
-    toggleBPBtn.style.color = 'rgba(100, 181, 246, 1)';
-}
+            if (bpVisible) {
+                toggleBPBtn.innerHTML = '<i class="fas fa-eye me-1"></i> Hide BP';
+                toggleBPBtn.style.borderColor = 'rgba(231, 74, 59, 0.6)';
+                toggleBPBtn.style.color       = 'rgba(231, 74, 59, 1)';
+            } else {
+                toggleBPBtn.innerHTML = '<i class="fas fa-eye-slash me-1"></i> Show BP';
+                toggleBPBtn.style.borderColor = 'rgba(100, 181, 246, 0.6)';
+                toggleBPBtn.style.color       = 'rgba(100, 181, 246, 1)';
+            }
             monthlyChart.update();
         });
-    });
 
-    // Dropdown styling
-    document.addEventListener('DOMContentLoaded', function() {
+    }); // END DOMContentLoaded
+
+    // ============================================================
+    // DROPDOWN STYLING
+    // ============================================================
+    document.addEventListener('DOMContentLoaded', function () {
         function updateDropdownStyle() {
-            const dropdowns = document.querySelectorAll('.filter-content .form-select-sm');
-
-            dropdowns.forEach(dropdown => {
-                const dropdownId = dropdown.id;
-                const dropdownValue = dropdown.value;
-
-                if (dropdownId === 'SelectedYear') {
-                    if (dropdownValue) {
-                        dropdown.classList.add('selected');
-                    }
+            document.querySelectorAll('.filter-content .form-select-sm').forEach(dropdown => {
+                if (dropdown.id === 'SelectedYear') {
+                    if (dropdown.value) dropdown.classList.add('selected');
                 } else if (dropdown.name === 'MachineLine') {
-                    if (dropdownValue && dropdownValue !== 'All') {
-                        dropdown.classList.add('selected');
-                    } else {
-                        dropdown.classList.remove('selected');
-                    }
+                    if (dropdown.value && dropdown.value !== 'All') dropdown.classList.add('selected');
+                    else dropdown.classList.remove('selected');
                 }
             });
         }
-
         updateDropdownStyle();
-
-        const dropdowns = document.querySelectorAll('.filter-content .form-select-sm');
-        dropdowns.forEach(dropdown => {
-            dropdown.addEventListener('change', updateDropdownStyle);
-        });
+        document.querySelectorAll('.filter-content .form-select-sm').forEach(d => d.addEventListener('change', updateDropdownStyle));
     });
 </script>

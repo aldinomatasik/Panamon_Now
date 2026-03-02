@@ -25,7 +25,8 @@
     <link rel="stylesheet" href="~/css/Navbar.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site-identity.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MonitoringSystem.styles.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/background-style.css?v=999" />
+    <link rel="stylesheet" href="~/css/background-style.css?v=1000" />
+    <link rel="stylesheet" href="~/css/background-style-light.css" asp-append-version="true" /> <!-- ← TAMBAH INI -->
 
     <!-- Flatpickr LOCAL -->
     <link href="~/lib/flatpickr/flatpickr.min.css" rel="stylesheet">
@@ -134,6 +135,20 @@
                     </div>
                 </li>
             </ul>
+            <div class="align-items-center center">
+    <button id="themeToggle" title="Toggle Theme" style="
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        color: #ffffff;
+        font-size: 12px;
+        padding: 4px 8px;
+        width: 100%;
+    ">
+        <i id="themeIcon" class="fa-solid fa-sun"></i>
+        <span class="nav-label">Theme</span>
+    </button>
+</div>
 
             <!-- Logout Section -->
             <div class="align-items-center center">

@@ -1,0 +1,668 @@
+﻿/* ========================================
+   MACHINE PAGE CSS
+   ======================================== */
+
+/* FILTER AREA WITH LINES */
+.filter-area-with-lines {
+    position: relative;
+    padding: 1px 0;
+    margin-bottom: 8px;
+    margin-top: -20px;
+    min-height: 10px;
+    width: calc(100% - 14px);
+    margin-left: 7px;
+    margin-right: 7px;
+}
+
+.panamon-bottom-line,
+.panamon-bottomm-line {
+    position: absolute !important;
+    left: 7px !important;
+    right: 7px !important;
+    width: calc(100% - 14px) !important;
+    height: 2px !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    z-index: 999 !important;
+    pointer-events: none !important;
+    display: block !important;
+}
+
+.panamon-bottom-line {
+    top: 0 !important;
+    border-top: 2px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.panamon-bottomm-line {
+    bottom: 0 !important;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* FILTER CONTENT */
+.filter-content {
+    position: relative;
+    z-index: 2;
+    padding: 6px 7px;
+}
+
+    .filter-content label {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 12px;
+    }
+
+    /* DATE INPUT */
+    .filter-content .datepicker {
+        height: 28px;
+        padding: 0 30px 0 10px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 999px;
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        color: #ffffff;
+        outline: none;
+        width: 118px;
+        text-align: center;
+        cursor: pointer;
+        transition: border-color 0.2s ease;
+        colorscheme: dark;
+    }
+
+        .filter-content .datepicker:focus {
+            border-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255, 255, 255, 0.08);
+        }
+
+        .filter-content .datepicker::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 11px;
+        }
+
+/* DATE WRAPPER + ICON */
+.date-input-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.date-icon {
+    position: absolute;
+    right: 10px;
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition: color 0.2s ease;
+    pointer-events: all;
+}
+
+    .date-icon:hover {
+        color: #ffffff;
+    }
+
+/* BUTTON */
+.filter-content .btn {
+    border-radius: 999px !important;
+    height: 28px;
+    padding: 0 14px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.filter-content .btn-primary {
+    background-color: rgba(8, 65, 150, 0.95);
+    border: 2px solid rgba(100, 181, 246, 1);
+    color: rgba(100, 181, 246, 1);
+}
+
+    .filter-content .btn-primary:hover {
+        background-color: rgba(5, 45, 110, 1);
+        border-color: rgba(144, 202, 249, 1);
+        color: rgba(144, 202, 249, 1);
+    }
+
+/* ========================================
+   FACTORY MAP
+   ======================================== */
+.factory-map-wrapper {
+    position: relative;
+    width: calc(47% - 14px);
+    max-height: none;
+    margin: 0 7px 8px 7px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(158, 163, 174, 0.5);
+    background-color: #14223D;
+}
+
+.factory-map-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+}
+
+/* SVG OVERLAY */
+#line-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.connector-line {
+    stroke: rgba(255, 255, 255, 0.6);
+    stroke-width: 1.5;
+    stroke-dasharray: 4 2;
+    marker-end: url(#arrowhead);
+}
+
+/* BALLOON */
+.info-balloon {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.25);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    color: #ffffff;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    min-width: 60px;
+    max-width: 150px;
+    max-height: 40px;
+    padding: 6px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: max-width 0.4s ease, max-height 0.4s ease, background-color 0.3s, padding 0.4s ease;
+    cursor: default;
+}
+
+.balloon-title {
+    font-size: 0.45rem;
+    font-weight: bold;
+    text-align: center;
+    white-space: nowrap;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.balloon-details {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    font-size: 0.45rem;
+    transition: max-height 0.4s ease, opacity 0.3s ease;
+    width: 100%;
+}
+
+.info-balloon::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 18px solid rgba(255, 255, 255, 0.25);
+    transition: border-color 0.3s;
+}
+
+.info-balloon.tacked-from-top::after {
+    top: auto;
+    bottom: 100%;
+    border-top: none;
+    border-bottom: 18px solid rgba(255, 255, 255, 0.25);
+}
+
+.alert-balloon {
+    background-color: rgba(217, 4, 41, 0.5);
+    border-color: rgba(217, 4, 41, 0.9);
+    cursor: pointer;
+}
+
+    .alert-balloon::after {
+        border-top-color: rgba(217, 4, 41, 0.5);
+    }
+
+    .alert-balloon.tacked-from-top::after {
+        border-bottom-color: rgba(217, 4, 41, 0.5);
+    }
+
+.info-balloon.expanded {
+    max-width: 280px;
+    max-height: 220px;
+    z-index: 20;
+    align-items: flex-start;
+    padding: 12px 15px;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+    .info-balloon.expanded .balloon-details {
+        max-height: 160px;
+        opacity: 1;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+/* POSISI BALLOON - SAMA PERSIS KAYAK DASHBOARD */
+#machine-300t-new {
+    top: 75%;
+    left: 88%;
+}
+
+#machine-300t {
+    top: 47%;
+    left: 90%;
+}
+
+#machine-200t {
+    top: 37%;
+    left: 88%;
+}
+
+#machine-400t {
+    top: 60%;
+    left: 88%;
+}
+
+#machine-110t-amada {
+    top: 26%;
+    left: 73%;
+}
+
+#machine-110t-komatsu {
+    top: 26%;
+    left: 85%;
+}
+
+#machine-sf-250 {
+    top: 4%;
+    left: 68%;
+}
+
+#machine-fix-80 {
+    top: 4%;
+    left: 58%;
+}
+
+#machine-fix-36 {
+    top: 4%;
+    left: 39%;
+}
+
+#machine-fix-12 {
+    top: 4%;
+    left: 50%;
+}
+
+#machine-kyoshin {
+    top: 29%;
+    left: 63%;
+}
+
+#machine-kyoshin-ori {
+    top: 29%;
+    left: 38%;
+}
+
+#machine-li-chin {
+    top: 25%;
+    left: 52%;
+}
+
+#machine-14-row {
+    top: 4%;
+    left: 78%;
+}
+
+#machine-7-row {
+    top: 4%;
+    left: 88%;
+}
+
+#outdoor-unit-marker {
+    top: 17%;
+    left: 20%;
+    max-width: 175px;
+}
+
+#indoor-unit-marker {
+    top: 17%;
+    left: 2%;
+    max-width: 175px;
+}
+
+#oven {
+    top: 42%;
+    left: 58%;
+}
+
+#evap {
+    top: 53%;
+    left: 56%;
+}
+
+#cond {
+    top: 54%;
+    left: 70%;
+}
+
+/* LAYOUT */
+.container-fluid {
+    max-width: 100%;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.main-content-wrapper {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+    .main-content-wrapper .p-4 {
+        padding-left: 1px !important;
+        padding-right: 1px !important;
+    }
+
+#machineContainer {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+    #machineContainer > .container-fluid {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+/* ========================================
+   MACHINE LAYOUT ROW (denah + tabel)
+   ======================================== */
+.machine-layout-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    width: calc(100% - 14px);
+    margin: 0 7px 8px 7px;
+}
+
+    /* override factory-map-wrapper biar ga ada margin sendiri */
+    .machine-layout-row .factory-map-wrapper {
+        width: 55%;
+        flex-shrink: 0;
+        margin: 0;
+    }
+
+/* ========================================
+   TABEL KANAN
+   ======================================== */
+.machine-table-wrapper {
+    flex: 1;
+    min-width: 0;
+}
+
+.machine-table-box {
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.machine-table-header {
+    padding: 8px 12px 6px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+.machine-table-title {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.3px;
+}
+
+.machine-table-scroll {
+    overflow-y: auto;
+    max-height: calc(100vh - 160px);
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.2) transparent;
+}
+
+.machine-eff-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    color: #eaeaea;
+}
+
+    .machine-eff-table thead th {
+        position: sticky;
+        top: 0;
+        background-color: rgba(30, 40, 60, 1);
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 11px;
+        padding: 7px 8px;
+        text-align: center;
+        border-bottom: 2px solid rgba(100, 181, 246, 0.4);
+        white-space: nowrap;
+    }
+
+        .machine-eff-table thead th:first-child {
+            text-align: left;
+        }
+
+    .machine-eff-table tbody td {
+        padding: 5px 8px;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        vertical-align: middle;
+    }
+
+        .machine-eff-table tbody td:first-child {
+            text-align: left;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+    .machine-eff-table tbody tr:hover td {
+        background-color: rgba(100, 181, 246, 0.1);
+        transition: background-color 0.15s ease;
+    }
+
+    .machine-eff-table tbody tr:nth-of-type(even) td {
+        background-color: rgba(255, 255, 255, 0.03);
+    }
+
+/* BAR PROGRESS */
+.eff-bar {
+    position: relative;
+    background-color: rgba(199, 203, 255, 0.2);
+    height: 18px;
+    border-radius: 3px;
+    overflow: hidden;
+    min-width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .eff-bar .eff-fill {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 100%;
+        background-color: #4F86F3;
+        border-radius: 3px;
+        transition: width 0.4s ease;
+    }
+
+    .eff-bar .eff-text {
+        position: relative;
+        z-index: 1;
+        font-size: 10px;
+        font-weight: 700;
+        color: #ffffff;
+    }
+
+.no-data {
+    text-align: center !important;
+    color: rgba(255, 255, 255, 0.35);
+    padding: 2rem 0 !important;
+    font-size: 11px;
+}
+
+/* ========================================
+   MACHINE PAGE - LIGHT MODE OVERRIDES
+   ======================================== */
+
+/* FACTORY MAP WRAPPER */
+body.light-mode .factory-map-wrapper {
+    background-color: rgba(255, 255, 255, 0.55) !important;
+    border-color: rgba(0, 0, 0, 0.15) !important;
+    backdrop-filter: blur(8px) !important;
+}
+
+/* BALLOON */
+body.light-mode .info-balloon {
+    background-color: rgba(255, 255, 255, 0.55) !important;
+    border-color: rgba(0, 0, 0, 0.25) !important;
+    color: #1a1a2e !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
+}
+
+    body.light-mode .info-balloon::after {
+        border-top-color: rgba(255, 255, 255, 0.55) !important;
+    }
+
+    body.light-mode .info-balloon.tacked-from-top::after {
+        border-bottom-color: rgba(255, 255, 255, 0.55) !important;
+    }
+
+    body.light-mode .info-balloon.expanded {
+        background-color: rgba(255, 255, 255, 0.75) !important;
+    }
+
+body.light-mode .balloon-title {
+    color: #1a1a2e !important;
+    text-shadow: none !important;
+}
+
+body.light-mode .balloon-details {
+    color: #1a1a2e !important;
+    border-top-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+body.light-mode .alert-balloon {
+    background-color: rgba(217, 4, 41, 0.45) !important;
+    border-color: rgba(217, 4, 41, 0.8) !important;
+}
+
+    body.light-mode .alert-balloon::after {
+        border-top-color: rgba(217, 4, 41, 0.45) !important;
+    }
+
+    body.light-mode .alert-balloon.tacked-from-top::after {
+        border-bottom-color: rgba(217, 4, 41, 0.45) !important;
+    }
+
+/* CONNECTOR LINE */
+body.light-mode .connector-line {
+    stroke: rgba(0, 0, 0, 0.35) !important;
+}
+
+body.light-mode #line-overlay #arrowhead polygon {
+    fill: rgba(0, 0, 0, 0.35) !important;
+}
+
+/* MACHINE TABLE BOX */
+body.light-mode .machine-table-box {
+    background: rgba(255, 255, 255, 0.55) !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(8px) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+}
+
+body.light-mode .machine-table-header {
+    border-bottom-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+body.light-mode .machine-table-title {
+    color: #1a1a2e !important;
+}
+
+body.light-mode .machine-table-scroll {
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent !important;
+}
+
+/* MACHINE EFF TABLE - HEADER */
+body.light-mode .machine-eff-table thead th {
+    background-color: rgba(25, 35, 58, 0.92) !important;
+    color: #ffffff !important;
+    border-bottom-color: rgba(100, 181, 246, 0.5) !important;
+}
+
+/* MACHINE EFF TABLE - BODY */
+body.light-mode .machine-eff-table tbody td {
+    color: #1a1a2e !important;
+    background-color: rgba(255, 255, 255, 0.45) !important;
+    border-bottom-color: rgba(0, 0, 0, 0.07) !important;
+}
+
+body.light-mode .machine-eff-table tbody tr:nth-of-type(even) td {
+    background-color: rgba(255, 255, 255, 0.30) !important;
+}
+
+body.light-mode .machine-eff-table tbody tr:hover td {
+    background-color: rgba(100, 181, 246, 0.15) !important;
+}
+
+/* EFF BAR */
+body.light-mode .eff-bar {
+    background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+    body.light-mode .eff-bar .eff-fill {
+        background-color: rgba(61, 121, 176, 0.85) !important;
+    }
+
+    body.light-mode .eff-bar .eff-text {
+        color: #1a1a2e !important;
+    }
+
+/* NO DATA */
+body.light-mode .no-data {
+    color: rgba(26, 26, 46, 0.4) !important;
+}
+
+/* DATEPICKER LIGHT MODE */
+body.light-mode .filter-content .datepicker {
+    background-color: rgba(255, 255, 255, 0.65) !important;
+    border-color: rgba(0, 0, 0, 0.25) !important;
+    color: #1a1a2e !important;
+    colorscheme: light !important;
+}
+
+    body.light-mode .filter-content .datepicker:focus {
+        background-color: rgba(255, 255, 255, 0.88) !important;
+        border-color: rgba(61, 121, 176, 0.5) !important;
+    }
+
+    body.light-mode .filter-content .datepicker::placeholder {
+        color: rgba(26, 26, 46, 0.4) !important;
+    }
+
+body.light-mode .date-icon {
+    color: rgba(26, 26, 46, 0.5) !important;
+}
+
+    body.light-mode .date-icon:hover {
+        color: #1a1a2e !important;
+    }

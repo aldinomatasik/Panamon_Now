@@ -863,4 +863,4 @@ namespace MonitoringSystem.Pages.LossTime
         public string Category { get; set; }    
         public string DetailedReason { get; set; }
     }
-}
+} 

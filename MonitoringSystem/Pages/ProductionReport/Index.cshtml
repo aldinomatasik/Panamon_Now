@@ -1036,40 +1036,76 @@ input[type="checkbox"]:checked + .shift-button {
                         ratioPlanData.push((totalPlanAtAnchor > 0) ? (runningPlanTotal / totalPlanAtAnchor) * 100 : 0);
                     }
                 }
+    // ===== DETEKSI LIGHT MODE =====
+    const isLightMode = document.body.classList.contains('light-mode');
+    const chartTextColor = isLightMode ? '#1a1a2e' : '#ffffff';
+    const tooltipBgColor = isLightMode ? 'rgba(232, 240, 247, 0.95)' : 'rgba(0, 0, 0, 0.8)';
+    const tooltipTitleColor = isLightMode ? '#1a1a2e' : '#ffffff';
+    const tooltipBodyColor = isLightMode ? '#1a1a2e' : '#ffffff';
+    const gridColor = isLightMode ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)';
 
-                // ===== CHART =====
-                new Chart(document.getElementById('dayChart'), {
-                    type: 'bar',
-                    data: {
-                        labels: chartLabels,
-                        datasets: [
-                            { type: 'line', label: 'Rasio Actual (%)', data: ratioActualData, borderColor: '#FACC15', backgroundColor: 'rgba(255, 215, 0, 0.2)', tension: 0.1, yAxisID: 'y1' },
-                            { type: 'line', label: 'Rasio Plan (%)', data: ratioPlanData, borderColor: '#FFFFFF', backgroundColor: 'rgba(255, 255, 255, 0.2)', tension: 0.1, yAxisID: 'y1' },
-                            { label: 'SAP Plan', data: originalPlanData, backgroundColor: '#3cb9fc', borderColor: '#3cb9fc', barThickness: 15, stack: 'OriginalPlan', yAxisID: 'y' },
-                            { label: 'Change Plan', data: planData, backgroundColor: '#a32ca3', borderColor: '#a32ca3', barThickness: 15, stack: 'Plan', yAxisID: 'y' },
-                            { label: 'Overtime Plan', data: planOvertimeData, backgroundColor: '#6a1b9a', borderColor: '#6a1b9a', barThickness: 15, stack: 'Plan', yAxisID: 'y' },
-                            { label: 'Act Normal', data: normalData, backgroundColor: '#35FF00', borderColor: '#35FF00', barThickness: 15, stack: 'Actual', yAxisID: 'y' },
-                            { label: 'Act Overtime', data: overtimeData, backgroundColor: '#006330', borderColor: '#006330', barThickness: 15, stack: 'Actual', yAxisID: 'y' }
-                            
-                        ]
-                    },
-                    options: {
-                        devicePixelRatio: 3,
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        animation: { duration: 500 },
-                        interaction: { mode: 'index', intersect: false },
-                        scales: {
-                            x: { stacked: true, ticks: { color: '#ffffff' } },
-                            y: { type: 'linear', position: 'left', title: { display: true, text: 'Production Qty (unit)', color: '#ffffff' }, ticks: { color: '#ffffff' } },
-                            y1: { type: 'linear', position: 'right', max: 120, title: { display: true, text: 'Ratio (%)', color: '#ffffff' }, ticks: { color: '#ffffff', callback: v => v + '%' }, grid: { drawOnChartArea: false } }
-                        },
-                        plugins: {
-                            legend: { labels: { color: '#ffffff' } },
-                            tooltip: { titleColor: '#ffffff', bodyColor: '#ffffff' }
-                        }
-                    }
-                });
+    // ===== CHART =====
+    new Chart(document.getElementById('dayChart'), {
+        type: 'bar',
+        data: {
+            labels: chartLabels,
+            datasets: [
+                { type: 'line', label: 'Rasio Actual (%)', data: ratioActualData, borderColor: '#FACC15', backgroundColor: 'rgba(255, 215, 0, 0.2)', tension: 0.1, yAxisID: 'y1' },
+                { type: 'line', label: 'Rasio Plan (%)', data: ratioPlanData, borderColor: isLightMode ? '#666666' : '#FFFFFF', backgroundColor: isLightMode ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.2)', tension: 0.1, yAxisID: 'y1' },
+                { label: 'SAP Plan', data: originalPlanData, backgroundColor: '#3cb9fc', borderColor: '#3cb9fc', barThickness: 15, stack: 'OriginalPlan', yAxisID: 'y' },
+                { label: 'Change Plan', data: planData, backgroundColor: '#a32ca3', borderColor: '#a32ca3', barThickness: 15, stack: 'Plan', yAxisID: 'y' },
+                { label: 'Overtime Plan', data: planOvertimeData, backgroundColor: '#6a1b9a', borderColor: '#6a1b9a', barThickness: 15, stack: 'Plan', yAxisID: 'y' },
+                { label: 'Act Normal', data: normalData, backgroundColor: '#35FF00', borderColor: '#35FF00', barThickness: 15, stack: 'Actual', yAxisID: 'y' },
+                { label: 'Act Overtime', data: overtimeData, backgroundColor: '#006330', borderColor: '#006330', barThickness: 15, stack: 'Actual', yAxisID: 'y' }
+            ]
+        },
+        options: {
+            devicePixelRatio: 3,
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: { duration: 500 },
+            interaction: { mode: 'index', intersect: false },
+            scales: {
+                x: { 
+                    stacked: true, 
+                    ticks: { color: chartTextColor },
+                    grid: { color: gridColor }
+                },
+                y: { 
+                    type: 'linear', 
+                    position: 'left', 
+                    title: { display: true, text: 'Production Qty (unit)', color: chartTextColor }, 
+                    ticks: { color: chartTextColor },
+                    grid: { color: gridColor }
+                },
+                y1: { 
+                    type: 'linear', 
+                    position: 'right', 
+                    max: 120, 
+                    title: { display: true, text: 'Ratio (%)', color: chartTextColor }, 
+                    ticks: { color: chartTextColor, callback: v => v + '%' }, 
+                    grid: { drawOnChartArea: false } 
+                }
+            },
+            plugins: {
+                legend: { 
+                    labels: { 
+                        color: chartTextColor,
+                        font: { weight: '600' }
+                    } 
+                },
+                tooltip: { 
+                    titleColor: tooltipTitleColor, 
+                    bodyColor: tooltipBodyColor,
+                    backgroundColor: tooltipBgColor,
+                    borderColor: isLightMode ? 'rgba(0, 0, 0, 0.2)' : 'rgba(255, 255, 255, 0.2)',
+                    borderWidth: 1,
+                    padding: 10,
+                    titleFont: { weight: 'bold' }
+                }
+            }
+        }
+    });
 
                 // ===== DOWNLOAD PDF =====
                 document.getElementById('downloadPdfButton')?.addEventListener('click', function () {

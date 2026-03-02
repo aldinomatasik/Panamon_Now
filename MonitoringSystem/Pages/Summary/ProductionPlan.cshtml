@@ -648,7 +648,7 @@ td .dropdown.custom-dropdown {
             <div class="card-header">
                 <div class="row"> 
                     <div class="col-6">
-                        <div class="card text-center" style="background-color:#87bbfa">
+                      <div class="card text-center">
                             <p class="pt-2 fs-7">Date :</p>
                             <p class="fs-4 fw-bold">
                                 @Model.CurrentDate.ToString("dd MMM yyyy", new System.Globalization.CultureInfo("en-US"))
@@ -656,7 +656,7 @@ td .dropdown.custom-dropdown {
                         </div>
                     </div>
                     <div class="col-6">
-                        <div class="card text-center" style="background-color:#87bbfa">
+                        <div class="card text-center">
                             <p class="pt-2 fs-7">Total Quantity :</p>
                             <p class="fs-4 fw-bold">@(Model.GrandTotal != null ? Model.GrandTotal : "0")</p>
                         </div>
