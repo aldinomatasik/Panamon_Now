@@ -1,10 +1,9 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MonitoringSystem.Hubs;
 using MonitoringSystem.Data;
 using MonitoringSystem.Filters;
 using static NuGet.Packaging.PackagingConstants;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +16,9 @@ builder.Services.AddDefaultIdentity<ApplicationUser>(
     )
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
+// ✅ TAMBAH AddControllers() agar MachineController terbaca
+builder.Services.AddControllers();
+
 // Tambahkan RazorPages dan SignalR
 builder.Services.AddRazorPages()
     .AddMvcOptions(options =>
@@ -27,14 +29,10 @@ builder.Services.AddRazorPages()
 builder.Services.AddHostedService<PlanUpdaterService>()
     .Configure<HostOptions>(options =>
     {
-        // Jangan menghentikan aplikasi ketika ada unhandled exception
         options.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.Ignore;
     });
 
 builder.Services.AddSignalR();
-
-//builder.Services.AddHostedService<PlanUpdaterService>();
-
 
 builder.Services.Configure<CookiePolicyOptions>(options =>
 {
@@ -48,7 +46,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LogoutPath = "/Identity/Account/Logout";
     options.AccessDeniedPath = "/Identity/Account/AccessDenied";
     options.SlidingExpiration = true;
-    options.ExpireTimeSpan = TimeSpan.FromHours(12); // Set session timeout
+    options.ExpireTimeSpan = TimeSpan.FromHours(12);
 });
 
 var app = builder.Build();
@@ -64,11 +62,14 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-// Tambahkan authentication & authorization
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapHub<LossTimeHub>("/dataHub");
+
+// ✅ TAMBAH MapControllers() agar endpoint /api/machine/efficiency bisa diakses
+app.MapControllers();
+
 app.MapRazorPages();
 
 app.Run();
