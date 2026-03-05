@@ -3,23 +3,18 @@ using Microsoft.EntityFrameworkCore;
 using MonitoringSystem.Hubs;
 using MonitoringSystem.Data;
 using MonitoringSystem.Filters;
-using static NuGet.Packaging.PackagingConstants;
+// HAPUS: using static NuGet.Packaging.PackagingConstants; // tidak dipakai
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Tambahkan konfigurasi koneksi database
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(
-    options => options.SignIn.RequireConfirmedAccount = true
-    )
+    options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-// ✅ TAMBAH AddControllers() agar MachineController terbaca
 builder.Services.AddControllers();
-
-// Tambahkan RazorPages dan SignalR
 builder.Services.AddRazorPages()
     .AddMvcOptions(options =>
     {
@@ -49,27 +44,49 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromHours(12);
 });
 
+// ✅ FIX 1: Compression HANYA di Production (dev konflik dengan BrowserLink → penyebab loading lama!)
+if (!builder.Environment.IsDevelopment())
+{
+    builder.Services.AddResponseCompression(options =>
+    {
+        options.EnableForHttps = true;
+    });
+}
+
 var app = builder.Build();
 
-// Middleware
+// ✅ FIX 2: Warm up database (tetap dipertahankan, bagus)
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await db.Database.ExecuteSqlRawAsync("SELECT 1");
+}
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
     app.UseHsts();
+    app.UseResponseCompression(); // ✅ FIX 3: Pindah ke sini, hanya aktif di Production
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseRouting();
 
+// ✅ FIX 4: Cache static files tetap dipertahankan
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers["Cache-Control"] = "public,max-age=604800";
+    }
+});
+
+app.UseRouting();
+app.UseCookiePolicy(); // ✅ FIX 5: TAMBAH INI — CookiePolicy harus di-use, bukan hanya di-configure!
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapHub<LossTimeHub>("/dataHub");
-
-// ✅ TAMBAH MapControllers() agar endpoint /api/machine/efficiency bisa diakses
 app.MapControllers();
-
 app.MapRazorPages();
 
 app.Run();

@@ -1,0 +1,676 @@
+﻿@page
+@model MonitoringSystem.Pages.Summary.MachineEfficiencyModel
+@{
+    ViewData["Title"] = "Machine Efficiency";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="~/css/Sidebar.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/sweetalert2.css" />
+
+    <style>
+        /* ===================================================
+           FILTER AREA
+        =================================================== */
+        .filter-area-with-lines {
+            position: relative;
+            padding: 1px 0;
+            margin-bottom: 50px !important;
+            margin-top: -10px;
+            min-height: 10px;
+            width: calc(100% - 14px);
+            margin-left: 7px;
+            margin-right: 7px;
+        }
+
+        .panamon-bottom-line,
+        .panamon-bottomm-line {
+            position: absolute !important;
+            left: -13px !important;
+            right: -13px !important;
+            height: 2px !important;
+            background: rgba(255,255,255,0.04) !important;
+            z-index: 999 !important;
+            pointer-events: none !important;
+            display: block !important;
+        }
+        .panamon-bottom-line  { top: 0    !important; border-top:    2px solid rgba(255,255,255,0.08) !important; }
+        .panamon-bottomm-line { bottom: 0 !important; border-bottom: 2px solid rgba(255,255,255,0.08) !important; }
+
+        html.light-mode .panamon-bottom-line,
+        html.light-mode .panamon-bottomm-line { background: rgba(0,0,0,0.04) !important; }
+        html.light-mode .panamon-bottom-line  { border-top:    2px solid rgba(0,0,0,0.10) !important; }
+        html.light-mode .panamon-bottomm-line { border-bottom: 2px solid rgba(0,0,0,0.10) !important; }
+
+        /* ===================================================
+           FILTER CONTENT
+        =================================================== */
+        .filter-content {
+            position: relative;
+            z-index: 2;
+            padding: 6px 0;
+            border-radius: 15px;
+            margin-left: -8px;
+            margin-right: 7px;
+        }
+
+        .filter-content label { color: rgba(255,255,255,0.85); font-size: 12px; line-height: 20px; }
+
+        .filter-content .form-control {
+            height: 28px;
+            font-size: 12px;
+            line-height: 20px;
+            border-radius: 999px;
+            background-color: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.5);
+            color: #ffffff;
+            text-align: center;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            padding: 0 22px 0 8px;
+        }
+
+        .filter-content .form-select {
+            height: 28px;
+            padding: 0 28px 0 12px !important;
+            font-size: 12px;
+            border-radius: 999px;
+            background-color: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.5);
+            color: #ffffff;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 10px;
+        }
+
+        .filter-content .form-select-sm {
+            height: 28px;
+            padding: 0 28px 0 12px !important;
+            font-size: 12px;
+            border-radius: 999px;
+            background-color: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.5);
+            color: #ffffff;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 10px;
+        }
+
+        .filter-content .form-select option,
+        .filter-content .form-select-sm option { background-color: rgba(50,60,80,0.95); color: #ffffff; }
+
+        .filter-content .form-select.selected,
+        .filter-content .form-select-sm.selected { font-weight: 700 !important; }
+
+        .filter-content .form-select:focus,
+        .filter-content .form-select-sm:focus,
+        .filter-content .form-control:focus {
+            background-color: rgba(255,255,255,0.20);
+            border-color: rgba(255,255,255,0.3);
+            color: #ffffff;
+            box-shadow: 0 0 0 0.2rem rgba(255,255,255,0.1);
+        }
+
+        .filter-content .btn { height: 28px; padding: 0 12px; font-size: 12px; border-radius: 999px !important; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+        .filter-content .btn-primary { background-color: rgba(8,65,150,0.95); border: 2px solid rgba(100,181,246,1); color: rgba(100,181,246,1); }
+        .filter-content .btn-primary:hover { background-color: rgba(5,45,110,1); border-color: rgba(144,202,249,1); color: rgba(144,202,249,1); }
+        .filter-content .btn-danger { background-color: rgba(140,30,40,0.95); border: 2px solid rgba(239,154,154,1); color: rgba(239,154,154,1); }
+        .filter-content .btn-danger:hover { background-color: rgba(110,20,30,1); border-color: rgba(244,143,177,1); color: rgba(244,143,177,1); }
+
+        /* LIGHT MODE — Filter */
+        html.light-mode .filter-content label { color: #1a1a2e !important; }
+        html.light-mode .filter-content .form-control { background-color: rgba(255,255,255,0.65) !important; border-color: rgba(0,0,0,0.25) !important; color: #1a1a2e !important; }
+        html.light-mode .filter-content .form-select,
+        html.light-mode .filter-content .form-select-sm {
+            background-color: rgba(255,255,255,0.5) !important;
+            border-color: rgba(0,0,0,0.2) !important;
+            color: #1a1a2e !important;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%231a1a2e' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+        }
+        html.light-mode .filter-content .form-select option,
+        html.light-mode .filter-content .form-select-sm option { background-color: #ffffff !important; color: #1a1a2e !important; }
+        html.light-mode .filter-content .form-select:focus,
+        html.light-mode .filter-content .form-select-sm:focus,
+        html.light-mode .filter-content .form-control:focus { background-color: rgba(255,255,255,0.9) !important; border-color: rgba(61,121,176,0.5) !important; color: #1a1a2e !important; box-shadow: 0 0 0 0.2rem rgba(61,121,176,0.15) !important; }
+        html.light-mode .filter-content .btn-primary { background-color: rgba(61,121,176,0.85) !important; border-color: rgba(61,121,176,0.9) !important; color: #ffffff !important; }
+        html.light-mode .filter-content .btn-primary:hover { background-color: rgba(35,90,150,0.95) !important; color: #ffffff !important; }
+        html.light-mode .filter-content .btn-danger { background-color: rgba(180,40,50,0.85) !important; border-color: rgba(200,60,70,0.9) !important; color: #ffffff !important; }
+        html.light-mode .filter-content .btn-danger:hover { background-color: rgba(150,25,35,0.95) !important; color: #ffffff !important; }
+
+        /* ===================================================
+           CARD
+        =================================================== */
+        .card {
+            margin: 5px 12px 8px;
+            background: rgba(255,255,255,0.20) !important;
+            border-radius: 12px;
+            border: 2px solid rgba(255,255,255,0.3) !important;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            color: #ffffff !important;
+        }
+        .card * { color: #ffffff !important; }
+        .card .btn-warning, .card .btn-warning * { color: #000000 !important; }
+
+        .card-header { background: transparent !important; border-bottom: 1px solid rgba(255,255,255,0.2) !important; padding: 16px 12px; }
+        .card-header .row { width: 100%; display: flex; align-items: stretch; }
+        .card-header .col-6,
+        .card-header .col-md-2 { display: flex; align-items: stretch; }
+        .card-header .kpi-input-box { flex: 1; }
+
+        /* LIGHT MODE — Card */
+        html.light-mode .card { background: rgba(255,255,255,0.55) !important; border: 2px solid rgba(200,215,235,0.80) !important; box-shadow: 0 4px 20px rgba(0,0,0,0.10) !important; color: #1a1a2e !important; }
+        html.light-mode .card * { color: #1a1a2e !important; }
+        html.light-mode .card .btn-warning, html.light-mode .card .btn-warning * { color: #1a1a2e !important; }
+        html.light-mode .card .btn-success, html.light-mode .card .btn-success * { color: #ffffff !important; }
+        html.light-mode .card .btn-danger,  html.light-mode .card .btn-danger  * { color: #ffffff !important; }
+        html.light-mode .card .btn-primary, html.light-mode .card .btn-primary * { color: #ffffff !important; }
+        html.light-mode .card-header { background-color: rgba(255,255,255,0.35) !important; border-bottom: 1px solid rgba(0,0,0,0.1) !important; }
+
+        /* ===================================================
+           KPI INPUT BOX
+        =================================================== */
+        .kpi-input-box {
+            background: linear-gradient(135deg, rgba(20,30,45,0.95) 0%, rgba(15,25,40,0.95) 100%);
+            border: 2px solid rgba(100,181,246,0.35);
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 85px;
+        }
+        .kpi-input-box label { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.65); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .kpi-input-box input {
+            background: rgba(255,255,255,0.08) !important;
+            border: 1px solid rgba(100,181,246,0.35) !important;
+            color: #64b5f6 !important;
+            font-size: 16px !important;
+            font-weight: 700 !important;
+            text-align: center !important;
+            border-radius: 8px !important;
+            padding: 8px 6px !important;
+            height: 36px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            transition: all 0.2s ease !important;
+        }
+        .kpi-input-box input:focus { background: rgba(255,255,255,0.12) !important; border-color: rgba(100,181,246,0.6) !important; box-shadow: 0 0 0 3px rgba(100,181,246,0.1) !important; outline: none !important; }
+        .kpi-input-box input::placeholder { color: rgba(100,181,246,0.4) !important; }
+
+        /* Machine select — lebih spesifik dari .card * */
+        .kpi-input-box > select,
+        .card-header .kpi-input-box select {
+            background-color: rgba(255,255,255,0.08) !important;
+            border: 1px solid rgba(100,181,246,0.35) !important;
+            color: #64b5f6 !important;
+            font-size: 16px !important;
+            font-weight: 700 !important;
+            text-align: center !important;
+            border-radius: 8px !important;
+            height: 36px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            -moz-appearance: none !important;
+            padding: 0 28px 0 10px !important;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%2364b5f6' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+            background-repeat: no-repeat !important;
+            background-position: right 10px center !important;
+            background-size: 11px !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+        }
+        .kpi-input-box > select:focus,
+        .card-header .kpi-input-box select:focus { background-color: rgba(255,255,255,0.12) !important; border-color: rgba(100,181,246,0.6) !important; box-shadow: 0 0 0 3px rgba(100,181,246,0.1) !important; outline: none !important; }
+        .kpi-input-box > select option,
+        .card-header .kpi-input-box select option { background: #1e2d40 !important; color: #ffffff !important; }
+
+        .kpi-input-box.ng-box input     { color: #ef9a9a !important; border-color: rgba(239,154,154,0.35) !important; }
+        .kpi-input-box.ng-box input:focus { border-color: rgba(239,154,154,0.6) !important; box-shadow: 0 0 0 3px rgba(239,154,154,0.1) !important; }
+        .kpi-input-box.actual-box input  { color: #81c784 !important; border-color: rgba(129,199,132,0.35) !important; }
+        .kpi-input-box.actual-box input:focus { border-color: rgba(129,199,132,0.6) !important; box-shadow: 0 0 0 3px rgba(129,199,132,0.1) !important; }
+
+        /* LIGHT MODE — KPI Box */
+        html.light-mode .kpi-input-box { background: linear-gradient(135deg, rgba(230,242,255,0.85) 0%, rgba(220,235,255,0.85) 100%); border: 2px solid rgba(61,121,176,0.3); }
+        html.light-mode .kpi-input-box label { color: rgba(26,26,46,0.72); }
+        html.light-mode .kpi-input-box input { background: rgba(255,255,255,0.88) !important; border: 1px solid rgba(61,121,176,0.28) !important; color: rgba(8,65,150,0.95) !important; }
+        html.light-mode .kpi-input-box input:focus { background: rgba(255,255,255,0.98) !important; border-color: rgba(61,121,176,0.5) !important; box-shadow: 0 0 0 3px rgba(61,121,176,0.08) !important; }
+        html.light-mode .kpi-input-box input::placeholder { color: rgba(8,65,150,0.3) !important; }
+        html.light-mode .kpi-input-box > select,
+        html.light-mode .card-header .kpi-input-box select { background-color: rgba(255,255,255,0.88) !important; border: 1px solid rgba(61,121,176,0.28) !important; color: rgba(8,65,150,0.95) !important; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23084182' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important; }
+        html.light-mode .kpi-input-box > select:focus,
+        html.light-mode .card-header .kpi-input-box select:focus { background: rgba(255,255,255,0.98) !important; border-color: rgba(61,121,176,0.5) !important; box-shadow: 0 0 0 3px rgba(61,121,176,0.08) !important; }
+        html.light-mode .kpi-input-box > select option,
+        html.light-mode .card-header .kpi-input-box select option { background: #ffffff !important; color: #1a1a2e !important; }
+        html.light-mode .kpi-input-box.ng-box input     { color: rgba(180,40,50,0.9) !important; border-color: rgba(180,40,50,0.28) !important; }
+        html.light-mode .kpi-input-box.ng-box input:focus { border-color: rgba(180,40,50,0.5) !important; box-shadow: 0 0 0 3px rgba(180,40,50,0.08) !important; }
+        html.light-mode .kpi-input-box.actual-box input  { color: rgba(25,135,84,0.9) !important; border-color: rgba(25,135,84,0.28) !important; }
+        html.light-mode .kpi-input-box.actual-box input:focus { border-color: rgba(25,135,84,0.5) !important; box-shadow: 0 0 0 3px rgba(25,135,84,0.08) !important; }
+
+        /* ===================================================
+           SECTION DIVIDER
+        =================================================== */
+        .section-divider { background: rgba(100,181,246,0.12); border-top: 1px solid rgba(100,181,246,0.3); border-bottom: 1px solid rgba(100,181,246,0.3); padding: 6px 16px; font-size: 12px; font-weight: 700; color: #64b5f6; letter-spacing: 1px; text-transform: uppercase; }
+        html.light-mode .section-divider { background: rgba(61,121,176,0.08); border-top: 1px solid rgba(61,121,176,0.2); border-bottom: 1px solid rgba(61,121,176,0.2); color: rgba(61,121,176,0.85); }
+
+        /* ===================================================
+           TABLE
+        =================================================== */
+        .table { background-color: rgba(255,255,255,0.08) !important; color: #ffffff !important; margin: 0 !important; border-collapse: collapse; }
+        .table thead th,
+        .table > thead > tr > th { background-color: rgba(30,40,60,1) !important; color: #ffffff !important; border-color: rgba(255,255,255,0.3) !important; text-align: center !important; vertical-align: middle !important; padding: 8px !important; font-size: 12px !important; }
+        .table tbody td { background-color: rgba(255,255,255,0.05) !important; color: #ffffff !important; border-color: rgba(255,255,255,0.15) !important; padding: 5px 6px !important; font-size: 12px !important; vertical-align: middle !important; }
+
+        html.light-mode .table { background-color: transparent !important; color: #1a1a2e !important; }
+        html.light-mode .table thead th,
+        html.light-mode .table > thead > tr > th { background-color: rgba(25,35,58,0.92) !important; color: #ffffff !important; border-color: rgba(255,255,255,0.25) !important; }
+        html.light-mode .table tbody td { background-color: rgba(255,255,255,0.50) !important; color: #1a1a2e !important; border-color: rgba(0,0,0,0.07) !important; }
+
+        /* ===================================================
+           SHIFT GROUP
+        =================================================== */
+        .shift-group { display: flex; flex-direction: row; align-items: center; gap: 10px; flex-wrap: nowrap; }
+        .shift-item  { display: flex; flex-direction: row; align-items: center; gap: 3px; white-space: nowrap; }
+        .shift-item input[type="checkbox"] { width: 13px; height: 13px; margin: 0; cursor: pointer; accent-color: #64b5f6; flex-shrink: 0; }
+        .shift-item label { font-size: 11px; color: rgba(255,255,255,0.85) !important; cursor: pointer; margin: 0; padding: 0; font-weight: 500; line-height: 1; }
+        html.light-mode .shift-item label { color: #1a1a2e !important; }
+        html.light-mode .shift-item input[type="checkbox"] { accent-color: rgba(61,121,176,0.9); }
+
+        /* ===================================================
+           SUMMARY BOXES
+        =================================================== */
+        .summary-box { background: linear-gradient(135deg, rgba(33,47,61,0.95) 0%, rgba(25,35,50,0.95) 100%); border: 2px solid rgba(100,181,246,0.4); border-radius: 12px; padding: 12px 16px; text-align: center; min-width: 120px; box-shadow: 0 2px 8px rgba(0,0,0,0.25); transition: all 0.2s ease; }
+        .summary-box:hover { border-color: rgba(100,181,246,0.6); box-shadow: 0 4px 12px rgba(100,181,246,0.15); }
+        .summary-box-label { font-size: 10px; color: rgba(255,255,255,0.6); margin-bottom: 6px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+        .summary-box-value { font-size: 22px; font-weight: 700; color: #64b5f6; letter-spacing: -0.5px; }
+        .summary-loss-value { color: #81c784 !important; }
+        .summary-ng-value   { color: #ef9a9a !important; }
+
+        html.light-mode .summary-box { background: linear-gradient(135deg, rgba(230,242,255,0.9) 0%, rgba(220,235,255,0.9) 100%); border: 2px solid rgba(61,121,176,0.35); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        html.light-mode .summary-box:hover { border-color: rgba(61,121,176,0.5); box-shadow: 0 4px 12px rgba(61,121,176,0.1); }
+        html.light-mode .summary-box-label { color: rgba(26,26,46,0.7); }
+        html.light-mode .summary-box-value { color: rgba(8,65,150,0.95); }
+        html.light-mode .summary-loss-value { color: rgba(25,135,84,0.9) !important; }
+        html.light-mode .summary-ng-value   { color: rgba(180,40,50,0.9) !important; }
+
+        /* ===================================================
+           SUBMIT / RESET BUTTONS
+        =================================================== */
+        .btn-submit-main {
+            background: rgba(8,65,150,0.95);
+            border: 2px solid rgba(100,181,246,1);
+            color: rgba(100,181,246,1) !important;
+            font-size: 13px; padding: 6px 28px; border-radius: 999px; cursor: pointer; font-weight: 700; transition: all 0.15s; display: flex; align-items: center; height: 32px;
+        }
+        .btn-submit-main:hover { background: rgba(5,45,110,1); border-color: rgba(144,202,249,1); color: rgba(144,202,249,1) !important; }
+
+        .btn-reset-main {
+            background: rgba(140,30,40,0.95);
+            border: 2px solid rgba(239,154,154,1);
+            color: rgba(239,154,154,1) !important;
+            font-size: 13px; padding: 6px 24px; border-radius: 999px; cursor: pointer; font-weight: 700; transition: all 0.15s; display: flex; align-items: center; height: 32px;
+        }
+        .btn-reset-main:hover { background: rgba(110,20,30,1); border-color: rgba(244,143,177,1); color: rgba(244,143,177,1) !important; }
+
+        html.light-mode .btn-submit-main { background: rgba(61,121,176,0.9) !important; border-color: rgba(61,121,176,1) !important; color: #ffffff !important; }
+        html.light-mode .btn-submit-main:hover { background: rgba(35,90,150,1) !important; color: #ffffff !important; }
+        html.light-mode .btn-reset-main { background: rgba(180,40,50,0.85) !important; border-color: rgba(200,60,70,0.9) !important; color: #ffffff !important; }
+        html.light-mode .btn-reset-main:hover { background: rgba(150,25,35,1) !important; color: #ffffff !important; }
+
+        /* Submitted X time(s) text */
+        .submit-count-text { font-size: 12px; color: rgba(255,255,255,0.6); margin-left: 10px; }
+        html.light-mode .submit-count-text { color: rgba(26,26,46,0.55) !important; }
+
+        /* ===================================================
+           ADD ROW BUTTON
+        =================================================== */
+        .btn-add-row {
+            background: rgba(25,100,60,0.9);
+            border: 1.5px solid rgba(102,187,106,0.8);
+            color: rgba(102,187,106,1) !important;
+            font-size: 12px; padding: 5px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 5px; transition: all 0.15s; height: 28px;
+        }
+        .btn-add-row:hover { background: rgba(35,120,75,1); border-color: rgba(129,199,132,1); color: rgba(165,214,167,1) !important; }
+        html.light-mode .btn-add-row { background: rgba(102,187,106,0.85) !important; border-color: rgba(102,187,106,0.9) !important; color: #ffffff !important; }
+        html.light-mode .btn-add-row:hover { background: rgba(76,155,80,0.95) !important; color: #ffffff !important; }
+    </style>
+</head>
+<body>
+
+<div class="filter-area-with-lines">
+    <div class="panamon-bottom-line"></div>
+    <div class="panamon-bottomm-line"></div>
+    <div class="filter-content">
+        <div class="row g-3 align-items-center justify-content-between flex-wrap">
+            <div class="col-auto">
+                <form method="get" class="d-flex flex-wrap align-items-center gap-3">
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="mb-0">Date</label>
+                        <input type="date" class="form-control" style="width:140px;" id="filterDate" value="2026-03-04" />
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="mb-0">Machine</label>
+                        <select class="form-select-sm" style="width:70px;" id="filterMachine">
+                            <option value="MCH1-01">CU</option>
+                            <option value="MCH1-02">CS</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="doSearch()">Search</button>
+                    <button type="button" class="btn btn-danger"  onclick="doReset()">Reset</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <div class="row g-2 align-items-center">
+            <div class="col-6 col-md-2">
+                <div class="kpi-input-box">
+                    <label>Date</label>
+                    <div id="displayDate" style="font-size:16px;font-weight:700;color:#64b5f6;">04 Mar 2026</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="kpi-input-box">
+                    <label>Machine</label>
+                    <select id="inputMachine" onchange="recalc()">
+                        <option value="MCH1-01">CU</option>
+                        <option value="MCH1-02">CS</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="kpi-input-box">
+                    <label>Plan</label>
+                    <input type="number" id="inputPlan" placeholder="0" min="0" oninput="recalc()" />
+                </div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="kpi-input-box ng-box">
+                    <label>NG</label>
+                    <input type="number" id="inputNG" placeholder="0" min="0" oninput="recalc()" />
+                </div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="kpi-input-box">
+                    <label>Quantity</label>
+                    <input type="number" id="inputQty" placeholder="0" min="0" oninput="recalc()" />
+                </div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="kpi-input-box actual-box">
+                    <label>Actual</label>
+                    <input type="number" id="inputActual" placeholder="0" min="0" oninput="recalc()" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-divider">
+        <i class="bi bi-clock-history me-2"></i>Loss Time
+    </div>
+
+    <div style="padding:0;overflow-x:auto;">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th style="width:40px;">No</th>
+                    <th style="min-width:160px;">Loss Category</th>
+                    <th style="min-width:90px;">Minutes</th>
+                    <th style="min-width:180px;">Shift</th>
+                    <th style="width:60px;">Del</th>
+                </tr>
+            </thead>
+            <tbody id="loss-time-body"></tbody>
+        </table>
+    </div>
+
+    <!-- Add Row Button — di atas summary -->
+    <div style="padding:10px 16px 4px;display:flex;justify-content:flex-end;">
+        <button type="button" class="btn-add-row" onclick="addLossRow()">
+            <i class="bi bi-plus-circle" style="font-size:14px;"></i>
+            <span>Add Loss Row</span>
+        </button>
+    </div>
+
+    <!-- Summary + Submit/Reset -->
+    <div style="padding:6px 16px 16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <div class="summary-box">
+                <div class="summary-box-label">Efficiency</div>
+                <div class="summary-box-value" id="effValue">-</div>
+            </div>
+            <div class="summary-box">
+                <div class="summary-box-label">Total Loss (min)</div>
+                <div class="summary-box-value summary-loss-value" id="totalLoss">0</div>
+            </div>
+            <div class="summary-box">
+                <div class="summary-box-label">Total NG</div>
+                <div class="summary-box-value summary-ng-value" id="totalNG">0</div>
+            </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;">
+            <button type="button" class="btn-submit-main" onclick="handleSubmit()">Submit</button>
+            <button type="button" class="btn-reset-main"  onclick="doReset()">Reset</button>
+            <span class="submit-count-text">Submitted <span id="submitCount">0</span> time(s)</span>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+<script src="~/js/sweetalert2.min.js"></script>
+
+<script>
+    const lossCategories = [
+        "Planned Downtime","Unplanned Breakdown","Setup & Adjustment",
+        "Material Shortage","Quality Defect","Waiting",
+        "Minor Stoppage","Speed Loss","Other"
+    ];
+
+    let lossRowCount = 0;
+    let submitCount  = 0;
+
+    /* ---- Deteksi mode ---- */
+    function isLight() { return document.documentElement.classList.contains('light-mode'); }
+
+    /* ---- Palet warna adaptif untuk elemen yang di-inject JS ---- */
+    function palette() {
+        return isLight() ? {
+            /* Warna light mode */
+            selBg:     'rgba(255,255,255,0.85)',
+            selBorder: 'rgba(0,0,0,0.18)',
+            selColor:  '#1a1a2e',
+            selArrow:  '%231a1a2e',
+            inBg:      'rgba(255,255,255,0.85)',
+            inBorder:  'rgba(0,0,0,0.18)',
+            inColor:   '#1a1a2e',
+            delBg:     'rgba(180,40,50,0.85)',
+            delBorder: 'rgba(200,60,70,0.9)',
+            delColor:  '#ffffff',
+        } : {
+            /* Warna dark mode */
+            selBg:     'rgba(255,255,255,0.08)',
+            selBorder: 'rgba(255,255,255,0.25)',
+            selColor:  '#ffffff',
+            selArrow:  '%23ffffff',
+            inBg:      'rgba(255,255,255,0.08)',
+            inBorder:  'rgba(255,255,255,0.25)',
+            inColor:   '#ffffff',
+            delBg:     'rgba(140,30,40,0.9)',
+            delBorder: 'rgba(239,154,154,0.8)',
+            delColor:  'rgba(239,154,154,1)',
+        };
+    }
+
+    function selStyle(p) {
+        return `background-color:${p.selBg};border:1px solid ${p.selBorder};color:${p.selColor};`
+             + `font-size:12px;padding:4px 28px 4px 8px;height:30px;border-radius:6px;`
+             + `width:100%;box-sizing:border-box;`
+             + `appearance:none;-webkit-appearance:none;-moz-appearance:none;`
+             + `background-image:url('data:image/svg+xml,%3csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 16 16%27%3e%3cpath fill=%27none%27 stroke=%27${p.selArrow}%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27 stroke-width=%272%27 d=%27m2 5 6 6 6-6%27/%3e%3c/svg%3e');`
+             + `background-repeat:no-repeat;background-position:right 8px center;background-size:10px;outline:none;`;
+    }
+
+    function inStyle(p) {
+        return `background:${p.inBg};border:1px solid ${p.inBorder};color:${p.inColor};`
+             + `font-size:12px;padding:4px 8px;height:30px;border-radius:6px;width:100%;box-sizing:border-box;`;
+    }
+
+    function delStyle(p) {
+        return `background:${p.delBg};border:1.5px solid ${p.delBorder};color:${p.delColor};`
+             + `font-size:11px;padding:3px 10px;border-radius:6px;cursor:pointer;font-weight:600;transition:all 0.15s;`;
+    }
+
+    /* ---- Build row ---- */
+    function addLossRow() {
+        const tbody = document.getElementById('loss-time-body');
+        const idx   = lossRowCount;
+        const p     = palette();
+        const opts  = lossCategories.map(v => `<option value="${v}">${v}</option>`).join('');
+        const tr    = document.createElement('tr');
+        tr.dataset.rowIdx = idx;
+        tr.innerHTML = `
+            <td class="row-num" style="text-align:center;">${tbody.children.length + 1}</td>
+            <td>
+                <select class="loss-cat" name="LossCat[${idx}]" style="${selStyle(p)}">${opts}</select>
+            </td>
+            <td>
+                <input type="number" class="loss-min" name="LossMin[${idx}]" placeholder="Minutes" min="0" oninput="recalc()" style="${inStyle(p)}" />
+            </td>
+            <td style="padding:6px 10px!important;">
+                <div class="shift-group">
+                    <div class="shift-item"><input type="checkbox" name="LossShift[${idx}]" value="1"  id="ls1_${idx}"><label for="ls1_${idx}">S1</label></div>
+                    <div class="shift-item"><input type="checkbox" name="LossShift[${idx}]" value="2"  id="ls2_${idx}"><label for="ls2_${idx}">S2</label></div>
+                    <div class="shift-item"><input type="checkbox" name="LossShift[${idx}]" value="3"  id="ls3_${idx}"><label for="ls3_${idx}">S3</label></div>
+                    <div class="shift-item"><input type="checkbox" name="LossShift[${idx}]" value="NS" id="lsNS_${idx}"><label for="lsNS_${idx}">NS</label></div>
+                </div>
+            </td>
+            <td style="text-align:center;">
+                <button type="button" class="del-btn" onclick="removeLossRow(this)" style="${delStyle(p)}">Del</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+        lossRowCount++;
+        recalc();
+    }
+
+    function removeLossRow(btn) {
+        btn.closest('tr').remove();
+        renumberTable();
+        recalc();
+    }
+
+    function renumberTable() {
+        document.querySelectorAll('#loss-time-body tr').forEach((row, i) => {
+            const n = row.querySelector('.row-num');
+            if (n) n.textContent = i + 1;
+        });
+    }
+
+    /* ---- Re-apply row colors saat mode berubah ---- */
+    function refreshRowColors() {
+        const p = palette();
+        document.querySelectorAll('#loss-time-body tr').forEach(tr => {
+            const sel = tr.querySelector('.loss-cat');
+            if (sel) sel.setAttribute('style', selStyle(p));
+
+            const inp = tr.querySelector('.loss-min');
+            if (inp) inp.setAttribute('style', inStyle(p));
+
+            const del = tr.querySelector('.del-btn');
+            if (del) del.setAttribute('style', delStyle(p));
+        });
+
+        /* displayDate color */
+        const dd = document.getElementById('displayDate');
+        if (dd) dd.style.color = isLight() ? 'rgba(8,65,150,0.95)' : '#64b5f6';
+    }
+
+    /* ---- Recalc ---- */
+    function recalc() {
+        let totalLoss = 0;
+        document.querySelectorAll('#loss-time-body tr').forEach(row => {
+            totalLoss += parseFloat(row.querySelector('.loss-min')?.value) || 0;
+        });
+        const plan   = parseFloat(document.getElementById('inputPlan')?.value)   || 0;
+        const actual = parseFloat(document.getElementById('inputActual')?.value) || 0;
+        const ng     = parseFloat(document.getElementById('inputNG')?.value)     || 0;
+        document.getElementById('totalLoss').textContent = totalLoss;
+        document.getElementById('totalNG').textContent   = ng;
+        document.getElementById('effValue').textContent  = plan > 0 ? ((actual / plan) * 100).toFixed(1) + '%' : '-';
+    }
+
+    function doSearch() {
+        const d = document.getElementById('filterDate').value;
+        if (d) {
+            const o = new Date(d + 'T00:00:00');
+            const m = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            document.getElementById('displayDate').textContent =
+                `${String(o.getDate()).padStart(2,'0')} ${m[o.getMonth()]} ${o.getFullYear()}`;
+        }
+    }
+
+    function doReset() {
+        document.getElementById('filterDate').value    = '2026-03-04';
+        document.getElementById('filterMachine').value = 'MCH1-01';
+        document.getElementById('inputMachine').value  = 'MCH1-01';
+        ['inputPlan','inputNG','inputQty','inputActual'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('loss-time-body').innerHTML = '';
+        lossRowCount = 0;
+        for (let i = 0; i < 5; i++) addLossRow();
+        recalc();
+        doSearch();
+    }
+
+    function handleSubmit() {
+        if (!document.getElementById('inputPlan').value) { alert('Mohon isi Plan terlebih dahulu.'); return; }
+        submitCount++;
+        document.getElementById('submitCount').textContent = submitCount;
+        alert('Data submitted successfully!');
+    }
+
+    /* ===== INIT ===== */
+    window.addEventListener('DOMContentLoaded', () => {
+        for (let i = 0; i < 5; i++) addLossRow();
+        doSearch();
+
+        /* Observe perubahan class light-mode di <html> */
+        new MutationObserver(() => refreshRowColors())
+            .observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+        /* Dropdown bold effect */
+        function updateDropdownStyle() {
+            document.querySelectorAll('.filter-content .form-select-sm').forEach(dd => {
+                if (dd.id === 'filterMachine' && dd.value) dd.classList.add('selected');
+            });
+        }
+        updateDropdownStyle();
+        document.querySelectorAll('.filter-content .form-select-sm')
+            .forEach(dd => dd.addEventListener('change', updateDropdownStyle));
+    });
+</script>
+</body>
+</html>

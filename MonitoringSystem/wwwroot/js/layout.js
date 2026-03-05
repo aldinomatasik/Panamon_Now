@@ -3,6 +3,31 @@
  * Menggabungkan semua functionality dari _Layout.cshtml
  */
 
+// ============================================================
+// 0. ANTI-FLASH THEME INIT
+// Harus jalan SECEPAT mungkin sebelum browser render apapun
+// Baca KEDUA cookie (themeMode & layoutType) untuk safety
+// ============================================================
+(function () {
+    function getCookieRaw(name) {
+        var match = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+        return match ? match[1] : null;
+    }
+
+    // Cek kedua nama cookie (themeMode = dari layout.js, layoutType = dari server/cshtml)
+    var theme = getCookieRaw('themeMode') || getCookieRaw('layoutType') || 'dark';
+
+    if (theme === 'light') {
+        document.documentElement.classList.add('light-mode');
+        // body mungkin belum ada saat script ini jalan di <head>,
+        // tapi kalau sudah ada (script di awal <body>), langsung apply juga
+        if (document.body) {
+            document.body.classList.add('light-mode');
+        }
+    }
+})();
+
+
 (function ($) {
     'use strict';
 
@@ -81,15 +106,13 @@
         const morePopup = document.getElementById('moreMenuPopup');
 
         if (moreBtn && morePopup) {
+            morePopup.style.display = 'none';
+
             moreBtn.addEventListener('click', function (e) {
                 e.preventDefault();
                 e.stopPropagation();
-
-                if (morePopup.style.display === 'none' || morePopup.style.display === '') {
-                    morePopup.style.display = 'block';
-                } else {
-                    morePopup.style.display = 'none';
-                }
+                const isVisible = morePopup.style.display === 'flex';
+                morePopup.style.display = isVisible ? 'none' : 'flex';
             });
 
             document.addEventListener('click', function (e) {
@@ -119,13 +142,11 @@
         const headerCenter = document.querySelector('.header-center');
 
         if (isLightMode) {
-            // 🌅 LIGHT MODE
             if (logoImg) logoImg.src = '/assets/PanasonicIconBlack.png';
             if (currentTime) currentTime.style.color = '#1a1a2e';
             if (currentDate) currentDate.style.color = '#1a1a2e';
             if (headerCenter) headerCenter.style.color = '#1a1a2e';
         } else {
-            // 🌙 DARK MODE
             if (logoImg) logoImg.src = '/assets/PanasonicIcon.png';
             if (currentTime) currentTime.style.color = '#ffffff';
             if (currentDate) currentDate.style.color = '#ffffff';
@@ -146,18 +167,15 @@
             if (themeIcon) themeIcon.className = 'fa-solid fa-sun';
         }
 
-        // Update logo & jam
         updateLogoAndJam();
-
-        // ✅ Update semua chart langsung saat theme di-apply
         setTimeout(updateAllChartsTheme, 80);
     }
 
     function initThemeToggle() {
         const themeToggle = document.getElementById('themeToggle');
 
-        // Load saved theme dari cookie, default dark
-        const savedTheme = getCookie('themeMode') || 'dark';
+        // ✅ Baca kedua cookie, prioritaskan themeMode
+        const savedTheme = getCookie('themeMode') || getCookie('layoutType') || 'dark';
         applyTheme(savedTheme);
 
         if (themeToggle) {
@@ -165,8 +183,11 @@
                 const isLight = document.body.classList.contains('light-mode');
                 const newTheme = isLight ? 'dark' : 'light';
 
-                // Simpan ke cookie selama 1 tahun
-                document.cookie = `themeMode=${newTheme}; path=/; max-age=31536000`;
+                // ✅ Simpan ke KEDUA cookie supaya konsisten
+                const cookieOpts = '; path=/; max-age=31536000';
+                document.cookie = 'themeMode=' + newTheme + cookieOpts;
+                document.cookie = 'layoutType=' + newTheme + cookieOpts;
+
                 applyTheme(newTheme);
             });
         }
@@ -181,11 +202,17 @@
     });
 
     document.addEventListener('DOMContentLoaded', function () {
+        // ✅ Pastikan body sudah dapat class light-mode kalau seharusnya
+        var theme = getCookie('themeMode') || getCookie('layoutType') || 'dark';
+        if (theme === 'light') {
+            document.body.classList.add('light-mode');
+            document.documentElement.classList.add('light-mode');
+        }
+
         initMoreMenu();
         initThemeToggle();
         updateLogoAndJam();
 
-        // ✅ Jalankan sekali setelah semua chart selesai dibuat
         setTimeout(updateAllChartsTheme, 300);
     });
 
@@ -194,18 +221,14 @@
 
 // ============================================================
 // 6. UNIVERSAL THEME-AWARE CHART UPDATER
-// Otomatis berlaku ke SEMUA page yang punya Chart.js
-// Tidak perlu tambah kode apapun di masing-masing page
 // ============================================================
 
 (function () {
 
-    // ---- Helper: Deteksi mode saat ini ----
     const isLightModeActive = () =>
         document.documentElement.classList.contains('light-mode') ||
         document.body.classList.contains('light-mode');
 
-    // ---- Helper: Ambil warna sesuai mode ----
     const getThemeColors = () => {
         const isLight = isLightModeActive();
         return {
@@ -216,25 +239,19 @@
         };
     };
 
-    // ---- Fungsi utama: update SEMUA chart yang ada di halaman ----
-    // Dibuat global (window) supaya bisa dipanggil dari applyTheme() di atas
     window.updateAllChartsTheme = function () {
         if (typeof Chart === 'undefined') return;
 
         const c = getThemeColors();
-
-        // Chart.js v3+ simpan semua instance di Chart.instances
         const allCharts = Object.values(Chart.instances || {});
 
         allCharts.forEach(chart => {
             if (!chart || !chart.options) return;
 
-            // ---- Legend ----
             if (chart.options.plugins?.legend?.labels) {
                 chart.options.plugins.legend.labels.color = c.textColor;
             }
 
-            // ---- Tooltip ----
             if (chart.options.plugins?.tooltip) {
                 chart.options.plugins.tooltip.titleColor = c.textColor;
                 chart.options.plugins.tooltip.bodyColor = c.textColor;
@@ -242,7 +259,6 @@
                 chart.options.plugins.tooltip.borderColor = c.tooltipBorder;
             }
 
-            // ---- Semua Scales (x, y, y1, y_ratio, dll) ----
             Object.values(chart.options.scales || {}).forEach(scale => {
                 if (!scale) return;
                 if (scale.ticks) scale.ticks.color = c.textColor;
@@ -250,13 +266,10 @@
                 if (scale.grid) scale.grid.color = c.gridColor;
             });
 
-            // Apply tanpa animasi biar instant
             chart.update('none');
         });
     };
 
-    // ---- MutationObserver: watch class change di <html> DAN <body> ----
-    // Fallback kalau theme di-toggle dari cara apapun
     const observer = new MutationObserver(function (mutations) {
         mutations.forEach(function (mutation) {
             if (mutation.attributeName === 'class') {

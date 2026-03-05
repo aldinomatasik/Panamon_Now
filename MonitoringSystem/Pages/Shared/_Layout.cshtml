@@ -13,6 +13,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - MonitoringSystem</title>
 
+    <!-- ✅ ANTI-FLASH: Harus PERTAMA, sebelum semua CSS -->
+    <!-- Baca cookie themeMode atau layoutType, langsung apply ke <html> -->
+    <!-- Tanpa ini, light mode akan flash gelap dulu setiap pindah halaman -->
+    <script>
+        (function () {
+            var m = document.cookie.match(/(?:^|; )(?:themeMode|layoutType)=([^;]*)/);
+            if (m && m[1] === 'light') {
+                document.documentElement.classList.add('light-mode');
+            }
+        })();
+    </script>
+
     <!-- CSS -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/lib/fontawesome/css/all.min.css" />
@@ -26,20 +38,24 @@
     <link rel="stylesheet" href="~/css/site-identity.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MonitoringSystem.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/background-style.css?v=1000" />
-    <link rel="stylesheet" href="~/css/background-style-light.css" asp-append-version="true" /> <!-- ← TAMBAH INI -->
+    <link rel="stylesheet" href="~/css/background-style-light.css" asp-append-version="true" />
 
     <!-- Flatpickr LOCAL -->
     <link href="~/lib/flatpickr/flatpickr.min.css" rel="stylesheet">
     <link href="~/lib/flatpickr/dark.css" rel="stylesheet">
 
-    <!-- JavaScript Libraries -->
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/chart.umd.min.js"></script>
-    <script src="~/lib/flatpickr/flatpickr.min.js"></script>  <!-- ✅ LOCAL -->
 </head>
 
+<!-- ✅ ANTI-FLASH BODY: Apply light-mode ke <body> sebelum konten dirender -->
 <body class="reusable-bg">
+    <script>
+        (function () {
+            var m = document.cookie.match(/(?:^|; )(?:themeMode|layoutType)=([^;]*)/);
+            if (m && m[1] === 'light') {
+                document.body.classList.add('light-mode');
+            }
+        })();
+    </script>
 
     <!-- Header -->
     <header class="main-header">
@@ -87,12 +103,18 @@
                         <span class="nav-label">Detail Loss<br>Time</span>
                     </a>
                 </li>
-                <li class="nav-item">
+                 <li class="nav-item">
+                    <a href="/Machine/index">
+                        <i class="fa-solid fa-gear"></i>
+                        <span class="nav-label">Machine</span>
+                    </a>
+                </li>
+                @*<li class="nav-item">
                     <a href="#" data-bs-toggle="modal" data-bs-target="#breakTimeFilterModal">
                         <i class="fa-solid fa-clock"></i>
                         <span class="nav-label">Break Time</span>
                     </a>
-                </li>
+                </li> *@
 
                 <li class="nav-item">
                     <a href="/Summary/index">
@@ -112,12 +134,6 @@
                         <span class="nav-label">Quality</span>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="/Machine/index">
-                        <i class="fa-solid fa-gear"></i>
-                        <span class="nav-label">Machine</span>
-                    </a>
-                </li>
 
                 <!-- MORE MENU -->
                 <li class="nav-item" style="position: relative;">
@@ -126,17 +142,21 @@
                         <span class="nav-label">More</span>
                     </a>
 
-                    <!-- POPUP MENU -->
-                    <div id="moreMenuPopup">
-                        <a href="/Summary/ProductionPlan">
-                            <i class="fa-solid fa-clipboard-list"></i>
-                            <span>Production<br>Plan</span>
-                        </a>
-                         <a href="/Machine/input">
-        <i class="fa-solid fa-screwdriver-wrench"></i>
-        <span>Input<br>Machine</span>
+                   <!-- POPUP MENU -->
+<div id="moreMenuPopup">
+    <a href="/Summary/ProductionPlan">
+        <i class="fa-solid fa-clipboard-list"></i>
+        <span>Production<br>Plan</span>
     </a>
-                    </div>
+    <a href="/Summary/MachineEfficiency">
+    <i class="fa-solid fa-microchip"></i>
+    <span>Machine<br>Efficiency</span>
+</a>
+    <a href="#" data-bs-toggle="modal" data-bs-target="#breakTimeFilterModal">
+        <i class="fa-solid fa-clock"></i>
+        <span>Break<br>Time</span>
+    </a>
+</div>
                 </li>
             </ul>
             <div class="align-items-center center">
@@ -206,13 +226,20 @@
         </div>
     </div>
 
-  <!-- Validation Scripts - LOCAL -->
-<script src="~/js/jquery.validate.min.js"></script>
-<script src="~/js/jquery.validate.unobtrusive.min.js"></script>
+    <!-- 1. Library utama -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/chart.umd.min.js"></script>
+    <script src="~/lib/flatpickr/flatpickr.min.js"></script>
 
-    <!-- Custom Scripts -->
+    <!-- 2. Validation -->
+    <script src="~/js/jquery.validate.min.js"></script>
+    <script src="~/js/jquery.validate.unobtrusive.min.js"></script>
+
+    <!-- 3. Layout script -->
     <script src="~/js/layout.js" asp-append-version="true"></script>
 
+    <!-- 4. Page-specific scripts (harus paling bawah, butuh jQuery & Bootstrap sudah loaded) -->
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

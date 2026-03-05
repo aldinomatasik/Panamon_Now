@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\data\NewFolder\**" />
+    <Content Remove="wwwroot\data\NewFolder\**" />
+    <EmbeddedResource Remove="wwwroot\data\NewFolder\**" />
+    <None Remove="wwwroot\data\NewFolder\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="Hubs\LossTimeHub.cs" />
   </ItemGroup>
 
@@ -31,6 +38,10 @@
     <Content Update="wwwroot\assets\BackgroundPanamon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

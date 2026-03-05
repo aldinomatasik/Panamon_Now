@@ -22,11 +22,13 @@ namespace MonitoringSystem.Data
         {
             base.OnModelCreating(modelBuilder);
 
-            // Existing configurations...
-
             modelBuilder.Entity<AdditionalBreakTime>()
                 .HasKey(b => b.Id);
+
+            // Fix: decimal 'Ratio' precision agar tidak truncated di SQL Server
+            modelBuilder.Entity<LossTimePlan>()
+                .Property(x => x.Ratio)
+                .HasPrecision(18, 4);
         }
     }
-
 }

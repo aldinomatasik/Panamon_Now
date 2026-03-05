@@ -49,7 +49,9 @@
         font-size: 12px;
     }
 
-    /* DATE INPUT */
+    /* ========================================
+   DATE INPUT - DARK MODE (default)
+   ======================================== */
     .filter-content .datepicker {
         height: 28px;
         padding: 0 30px 0 10px;
@@ -63,8 +65,8 @@
         width: 118px;
         text-align: center;
         cursor: pointer;
-        transition: border-color 0.2s ease;
-        colorscheme: dark;
+        transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+        color-scheme: dark;
     }
 
         .filter-content .datepicker:focus {
@@ -98,7 +100,9 @@
         color: #ffffff;
     }
 
-/* BUTTON */
+/* ========================================
+   BUTTONS - DARK MODE (default)
+   ======================================== */
 .filter-content .btn {
     border-radius: 999px !important;
     height: 28px;
@@ -108,8 +112,10 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.2s ease;
 }
 
+/* Search button - dark */
 .filter-content .btn-primary {
     background-color: rgba(8, 65, 150, 0.95);
     border: 2px solid rgba(100, 181, 246, 1);
@@ -121,6 +127,91 @@
         border-color: rgba(144, 202, 249, 1);
         color: rgba(144, 202, 249, 1);
     }
+
+/* Upload Actual Loss button - dark */
+.filter-content .btn-success {
+    background-color: rgba(18, 90, 48, 0.92);
+    border: 2px solid rgba(129, 199, 132, 0.85);
+    color: rgba(129, 199, 132, 1);
+}
+
+    .filter-content .btn-success:hover {
+        background-color: rgba(12, 70, 35, 1);
+        border-color: rgba(165, 214, 167, 1);
+        color: rgba(165, 214, 167, 1);
+    }
+
+/* ========================================
+   LIGHT MODE OVERRIDES - FILTER AREA
+   ======================================== */
+
+/* Label */
+body.light-mode .filter-content label {
+    color: #1a1a2e !important;
+}
+
+/* Datepicker input */
+body.light-mode .filter-content .datepicker {
+    background-color: rgba(255, 255, 255, 0.75) !important;
+    border: 2px solid rgba(0, 0, 0, 0.25) !important;
+    color: #1a1a2e !important;
+    color-scheme: light !important;
+}
+
+    body.light-mode .filter-content .datepicker:focus {
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        border-color: rgba(61, 121, 176, 0.6) !important;
+    }
+
+    body.light-mode .filter-content .datepicker::placeholder {
+        color: rgba(26, 26, 46, 0.4) !important;
+    }
+
+/* Calendar icon */
+body.light-mode .date-icon {
+    color: rgba(26, 26, 46, 0.5) !important;
+}
+
+    body.light-mode .date-icon:hover {
+        color: #1a1a2e !important;
+    }
+
+/* Search button - light */
+body.light-mode .filter-content .btn-primary {
+    background-color: rgba(61, 121, 176, 0.88) !important;
+    border: 2px solid rgba(61, 121, 176, 0.9) !important;
+    color: #ffffff !important;
+}
+
+    body.light-mode .filter-content .btn-primary:hover {
+        background-color: rgba(35, 90, 150, 0.95) !important;
+        border-color: rgba(35, 90, 150, 1) !important;
+        color: #ffffff !important;
+    }
+
+/* Upload Actual Loss button - light */
+body.light-mode .filter-content .btn-success {
+    background-color: rgba(25, 135, 84, 0.88) !important;
+    border: 2px solid rgba(25, 135, 84, 0.9) !important;
+    color: #ffffff !important;
+}
+
+    body.light-mode .filter-content .btn-success:hover {
+        background-color: rgba(18, 108, 66, 0.95) !important;
+        border-color: rgba(18, 108, 66, 1) !important;
+        color: #ffffff !important;
+    }
+
+/* Separator lines - light */
+body.light-mode .panamon-bottom-line {
+    border-top-color: rgba(0, 0, 0, 0.12) !important;
+    background: rgba(0, 0, 0, 0.03) !important;
+}
+
+body.light-mode .panamon-bottomm-line {
+    border-bottom-color: rgba(0, 0, 0, 0.12) !important;
+    background: rgba(0, 0, 0, 0.03) !important;
+}
 
 /* ========================================
    FACTORY MAP
@@ -252,7 +343,7 @@
         border-top: 2px solid rgba(255, 255, 255, 0.3);
     }
 
-/* POSISI BALLOON - SAMA PERSIS KAYAK DASHBOARD */
+/* POSISI BALLOON */
 #machine-300t-new {
     top: 75%;
     left: 88%;
@@ -393,7 +484,6 @@
     margin: 0 7px 8px 7px;
 }
 
-    /* override factory-map-wrapper biar ga ada margin sendiri */
     .machine-layout-row .factory-map-wrapper {
         width: 55%;
         flex-shrink: 0;
@@ -442,6 +532,7 @@
     color: #eaeaea;
 }
 
+    /* ✅ SEMUA HEADER CENTER + garis vertikal antar kolom */
     .machine-eff-table thead th {
         position: sticky;
         top: 0;
@@ -452,22 +543,30 @@
         padding: 7px 8px;
         text-align: center;
         border-bottom: 2px solid rgba(100, 181, 246, 0.4);
+        border-right: 1px solid rgba(255, 255, 255, 0.1);
         white-space: nowrap;
     }
 
-        .machine-eff-table thead th:first-child {
-            text-align: left;
+        .machine-eff-table thead th:last-child {
+            border-right: none;
         }
 
+    /* ✅ SEMUA TD CENTER + garis vertikal antar kolom */
     .machine-eff-table tbody td {
         padding: 5px 8px;
         text-align: center;
         border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        border-right: 1px solid rgba(255, 255, 255, 0.06);
         vertical-align: middle;
     }
 
-        .machine-eff-table tbody td:first-child {
-            text-align: left;
+        .machine-eff-table tbody td:last-child {
+            border-right: none;
+        }
+
+        /* ✅ Machine Name CENTER + bold */
+        .machine-eff-table tbody td.td-machine-name {
+            text-align: center;
             font-weight: 600;
             white-space: nowrap;
         }
@@ -480,6 +579,49 @@
     .machine-eff-table tbody tr:nth-of-type(even) td {
         background-color: rgba(255, 255, 255, 0.03);
     }
+
+/* ========================================
+   ACHIEVEMENT BADGE
+   ======================================== */
+.achievement-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+.badge-excellent {
+    background-color: rgba(46, 160, 67, 0.25);
+    border: 1px solid rgba(46, 160, 67, 0.7);
+    color: #4cde6e;
+}
+
+.badge-good {
+    background-color: rgba(100, 181, 246, 0.2);
+    border: 1px solid rgba(100, 181, 246, 0.6);
+    color: #90caf9;
+}
+
+.badge-average {
+    background-color: rgba(255, 193, 7, 0.2);
+    border: 1px solid rgba(255, 193, 7, 0.6);
+    color: #ffd54f;
+}
+
+.badge-poor {
+    background-color: rgba(217, 4, 41, 0.2);
+    border: 1px solid rgba(217, 4, 41, 0.6);
+    color: #ff6b6b;
+}
+
+.badge-na {
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.4);
+}
 
 /* BAR PROGRESS */
 .eff-bar {
@@ -520,17 +662,15 @@
 }
 
 /* ========================================
-   MACHINE PAGE - LIGHT MODE OVERRIDES
+   LIGHT MODE - FACTORY MAP & TABLE
    ======================================== */
 
-/* FACTORY MAP WRAPPER */
 body.light-mode .factory-map-wrapper {
     background-color: rgba(255, 255, 255, 0.55) !important;
     border-color: rgba(0, 0, 0, 0.15) !important;
     backdrop-filter: blur(8px) !important;
 }
 
-/* BALLOON */
 body.light-mode .info-balloon {
     background-color: rgba(255, 255, 255, 0.55) !important;
     border-color: rgba(0, 0, 0, 0.25) !important;
@@ -573,7 +713,6 @@ body.light-mode .alert-balloon {
         border-bottom-color: rgba(217, 4, 41, 0.45) !important;
     }
 
-/* CONNECTOR LINE */
 body.light-mode .connector-line {
     stroke: rgba(0, 0, 0, 0.35) !important;
 }
@@ -582,7 +721,6 @@ body.light-mode #line-overlay #arrowhead polygon {
     fill: rgba(0, 0, 0, 0.35) !important;
 }
 
-/* MACHINE TABLE BOX */
 body.light-mode .machine-table-box {
     background: rgba(255, 255, 255, 0.55) !important;
     border-color: rgba(255, 255, 255, 0.6) !important;
@@ -602,18 +740,18 @@ body.light-mode .machine-table-scroll {
     scrollbar-color: rgba(0, 0, 0, 0.2) transparent !important;
 }
 
-/* MACHINE EFF TABLE - HEADER */
 body.light-mode .machine-eff-table thead th {
     background-color: rgba(25, 35, 58, 0.92) !important;
     color: #ffffff !important;
     border-bottom-color: rgba(100, 181, 246, 0.5) !important;
+    border-right-color: rgba(255, 255, 255, 0.15) !important;
 }
 
-/* MACHINE EFF TABLE - BODY */
 body.light-mode .machine-eff-table tbody td {
     color: #1a1a2e !important;
     background-color: rgba(255, 255, 255, 0.45) !important;
     border-bottom-color: rgba(0, 0, 0, 0.07) !important;
+    border-right-color: rgba(0, 0, 0, 0.07) !important;
 }
 
 body.light-mode .machine-eff-table tbody tr:nth-of-type(even) td {
@@ -624,7 +762,6 @@ body.light-mode .machine-eff-table tbody tr:hover td {
     background-color: rgba(100, 181, 246, 0.15) !important;
 }
 
-/* EFF BAR */
 body.light-mode .eff-bar {
     background-color: rgba(0, 0, 0, 0.08) !important;
 }
@@ -637,32 +774,212 @@ body.light-mode .eff-bar {
         color: #1a1a2e !important;
     }
 
-/* NO DATA */
 body.light-mode .no-data {
     color: rgba(26, 26, 46, 0.4) !important;
 }
 
-/* DATEPICKER LIGHT MODE */
-body.light-mode .filter-content .datepicker {
-    background-color: rgba(255, 255, 255, 0.65) !important;
-    border-color: rgba(0, 0, 0, 0.25) !important;
-    color: #1a1a2e !important;
-    colorscheme: light !important;
+/* ✅ LIGHT MODE - Achievement Badge */
+body.light-mode .badge-excellent {
+    background-color: rgba(46, 160, 67, 0.15) !important;
+    border-color: rgba(46, 160, 67, 0.6) !important;
+    color: #1a7a35 !important;
 }
 
-    body.light-mode .filter-content .datepicker:focus {
-        background-color: rgba(255, 255, 255, 0.88) !important;
-        border-color: rgba(61, 121, 176, 0.5) !important;
-    }
-
-    body.light-mode .filter-content .datepicker::placeholder {
-        color: rgba(26, 26, 46, 0.4) !important;
-    }
-
-body.light-mode .date-icon {
-    color: rgba(26, 26, 46, 0.5) !important;
+body.light-mode .badge-good {
+    background-color: rgba(61, 121, 176, 0.15) !important;
+    border-color: rgba(61, 121, 176, 0.6) !important;
+    color: #235a9b !important;
 }
 
-    body.light-mode .date-icon:hover {
+body.light-mode .badge-average {
+    background-color: rgba(230, 160, 0, 0.15) !important;
+    border-color: rgba(230, 160, 0, 0.6) !important;
+    color: #a07000 !important;
+}
+
+body.light-mode .badge-poor {
+    background-color: rgba(217, 4, 41, 0.12) !important;
+    border-color: rgba(217, 4, 41, 0.5) !important;
+    color: #b0001e !important;
+}
+
+body.light-mode .badge-na {
+    background-color: rgba(0, 0, 0, 0.05) !important;
+    border-color: rgba(0, 0, 0, 0.2) !important;
+    color: rgba(26, 26, 46, 0.4) !important;
+}
+
+/* DARK MODE - default */
+.flatpickr-calendar {
+    background: rgba(25, 35, 58, 0.97) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.55) !important;
+    color: #e8eaf0 !important;
+}
+
+    /* LIGHT MODE - pakai class .theme-light */
+    .flatpickr-calendar.theme-light {
+        background: rgba(245, 250, 255, 0.98) !important;
+        border: 1px solid rgba(200, 215, 235, 0.80) !important;
+        border-radius: 12px !important;
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.14) !important;
         color: #1a1a2e !important;
     }
+
+        .flatpickr-calendar.theme-light .flatpickr-months {
+            background: rgba(230, 240, 255, 0.92) !important;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.09) !important;
+        }
+
+        .flatpickr-calendar.theme-light .flatpickr-month,
+        .flatpickr-calendar.theme-light .flatpickr-current-month {
+            color: #1a1a2e !important;
+        }
+
+        .flatpickr-calendar.theme-light .flatpickr-next-month,
+        .flatpickr-calendar.theme-light .flatpickr-prev-month {
+            color: rgba(61, 121, 176, 0.85) !important;
+            fill: rgba(61, 121, 176, 0.85) !important;
+        }
+
+        .flatpickr-calendar.theme-light .flatpickr-weekdaycontainer {
+            background: rgba(25, 35, 58, 0.92) !important;
+        }
+
+        .flatpickr-calendar.theme-light .flatpickr-weekday {
+            color: #ffffff !important;
+        }
+
+        .flatpickr-calendar.theme-light .flatpickr-day {
+            color: #1a1a2e !important;
+        }
+
+            .flatpickr-calendar.theme-light .flatpickr-day:hover {
+                background: rgba(61, 121, 176, 0.15) !important;
+                color: rgba(35, 90, 155, 1) !important;
+            }
+
+            .flatpickr-calendar.theme-light .flatpickr-day.selected {
+                background: rgba(61, 121, 176, 0.85) !important;
+                border-color: rgba(61, 121, 176, 0.85) !important;
+                color: #ffffff !important;
+            }
+
+            .flatpickr-calendar.theme-light .flatpickr-day.today {
+                border-color: rgba(61, 121, 176, 0.60) !important;
+                color: rgba(35, 90, 155, 1) !important;
+            }
+
+            .flatpickr-calendar.theme-light .flatpickr-day.disabled,
+            .flatpickr-calendar.theme-light .flatpickr-day.prevMonthDay,
+            .flatpickr-calendar.theme-light .flatpickr-day.nextMonthDay {
+                color: rgba(26, 26, 46, 0.25) !important;
+            }
+        /* ✅ FIX: Month & Year dropdown di flatpickr light mode */
+        .flatpickr-calendar.theme-light select.flatpickr-monthDropdown-months {
+            background-color: rgba(230, 240, 255, 0.95) !important;
+            color: #1a1a2e !important;
+            border: 1px solid rgba(61, 121, 176, 0.3) !important;
+            border-radius: 4px !important;
+        }
+
+            .flatpickr-calendar.theme-light select.flatpickr-monthDropdown-months option {
+                background-color: #ffffff !important;
+                color: #1a1a2e !important;
+            }
+
+        /* Year input number */
+        .flatpickr-calendar.theme-light .numInputWrapper input.numInput {
+            background-color: rgba(230, 240, 255, 0.95) !important;
+            color: #1a1a2e !important;
+            border: none !important;
+        }
+
+        /* Arrow naik/turun tahun */
+        .flatpickr-calendar.theme-light .numInputWrapper span.arrowUp::after {
+            border-bottom-color: #1a1a2e !important;
+        }
+
+        .flatpickr-calendar.theme-light .numInputWrapper span.arrowDown::after {
+            border-top-color: #1a1a2e !important;
+        }
+
+        /* Tombol prev/next bulan */
+        .flatpickr-calendar.theme-light .flatpickr-prev-month svg,
+        .flatpickr-calendar.theme-light .flatpickr-next-month svg {
+            fill: rgba(61, 121, 176, 0.85) !important;
+        }
+
+        /* Header months wrapper background */
+        .flatpickr-calendar.theme-light .flatpickr-months {
+            background: rgba(230, 240, 255, 0.95) !important;
+            border-radius: 12px 12px 0 0 !important;
+        }
+
+/* ✅ NUCLEAR FIX - paksa override dark.css untuk flatpickr light mode */
+body.light-mode .flatpickr-calendar.theme-light div.flatpickr-months {
+    background: #ddeeff !important;
+    color: #1a1a2e !important;
+}
+
+body.light-mode .flatpickr-calendar.theme-light div.flatpickr-month {
+    background: transparent !important;
+    color: #1a1a2e !important;
+    fill: #1a1a2e !important;
+}
+
+body.light-mode .flatpickr-calendar.theme-light div.flatpickr-current-month {
+    background: transparent !important;
+    color: #1a1a2e !important;
+}
+
+body.light-mode .flatpickr-calendar.theme-light span.flatpickr-prev-month,
+body.light-mode .flatpickr-calendar.theme-light span.flatpickr-next-month {
+    background: transparent !important;
+    color: #1a1a2e !important;
+    fill: #1a1a2e !important;
+}
+
+    body.light-mode .flatpickr-calendar.theme-light span.flatpickr-prev-month svg,
+    body.light-mode .flatpickr-calendar.theme-light span.flatpickr-next-month svg {
+        fill: #1a1a2e !important;
+    }
+
+
+/* ✅ FIX: Weekday header (Sun Mon Tue...) di light mode */
+body.light-mode .flatpickr-calendar.theme-light .flatpickr-weekdays,
+body.light-mode .flatpickr-calendar.theme-light .flatpickr-weekdaycontainer {
+    background: rgba(61, 121, 176, 0.85) !important;
+}
+
+body.light-mode .flatpickr-calendar.theme-light .flatpickr-weekday {
+    color: #ffffff !important;
+    background: transparent !important;
+}
+/* ✅ FIX: Hilangkan sisa background gelap di belakang weekday header */
+body.light-mode .flatpickr-calendar.theme-light .flatpickr-months {
+    background: rgba(210, 228, 248, 0.98) !important;
+    border-radius: 12px 12px 0 0 !important;
+}
+
+body.light-mode .flatpickr-calendar.theme-light .flatpickr-innerContainer {
+    background: transparent !important;
+}
+
+body.light-mode .flatpickr-calendar.theme-light .flatpickr-rContainer {
+    background: transparent !important;
+}
+
+body.light-mode .flatpickr-calendar.theme-light .flatpickr-weekdays {
+    background: rgba(61, 121, 176, 0.85) !important;
+}
+
+body.light-mode .flatpickr-calendar.theme-light .flatpickr-weekdaycontainer {
+    background: transparent !important;
+}
+
+body.light-mode .flatpickr-calendar.theme-light span.flatpickr-weekday {
+    background: transparent !important;
+    color: #ffffff !important;
+}

@@ -155,7 +155,7 @@ body.light-mode {
             color: #1a1a2e !important;
         }
 
-    /* Filter buttons - warna proper sesuai fungsi */
+    /* Filter buttons */
     body.light-mode .filter-content .btn-primary {
         background-color: rgba(61, 121, 176, 0.85) !important;
         border-color: rgba(61, 121, 176, 0.9) !important;
@@ -175,6 +175,17 @@ body.light-mode {
 
         body.light-mode .filter-content .btn-danger:hover {
             background-color: rgba(160, 30, 40, 0.95) !important;
+            color: #ffffff !important;
+        }
+
+    body.light-mode .filter-content .btn-success {
+        background-color: rgba(25, 135, 84, 0.85) !important;
+        border-color: rgba(25, 135, 84, 0.9) !important;
+        color: #ffffff !important;
+    }
+
+        body.light-mode .filter-content .btn-success:hover {
+            background-color: rgba(18, 108, 66, 0.95) !important;
             color: #ffffff !important;
         }
 
@@ -208,38 +219,8 @@ body.light-mode {
             font-weight: 700;
         }
 
-    /* ========== BUTTONS (global fallback) ========== */
-    body.light-mode .btn-primary,
-    body.light-mode .btn-danger,
-    body.light-mode .btn-success,
-    body.light-mode .btn-info,
-    body.light-mode .btn {
-        background-color: rgba(255, 255, 255, 0.5) !important;
-        border-color: rgba(0, 0, 0, 0.2) !important;
-        color: #1a1a2e !important;
-    }
-
-        body.light-mode .btn-primary:hover,
-        body.light-mode .btn-danger:hover,
-        body.light-mode .btn-success:hover,
-        body.light-mode .btn-info:hover,
-        body.light-mode .btn:hover {
-            background-color: rgba(255, 255, 255, 0.65) !important;
-        }
-
-    body.light-mode .ms-auto .btn-primary,
-    body.light-mode .ms-auto .btn-danger {
-        background-color: rgba(255, 255, 255, 0.5) !important;
-        border-color: rgba(0, 0, 0, 0.2) !important;
-        color: #1a1a2e !important;
-    }
-
-        body.light-mode .ms-auto .btn-primary:hover,
-        body.light-mode .ms-auto .btn-danger:hover {
-            background-color: rgba(255, 255, 255, 0.65) !important;
-        }
-
-    /* Warning button (Edit) */
+    /* ========== BUTTONS (global fallback, NON-modal) ========== */
+    /* CATATAN: Tombol di dalam .modal di-handle oleh site.css Section 18b */
     body.light-mode .btn-warning {
         background-color: rgba(255, 193, 7, 0.90) !important;
         border-color: rgba(200, 150, 0, 0.7) !important;
@@ -269,8 +250,7 @@ body.light-mode {
         border-radius: 8px;
     }
 
-    /* ========== TABLE HEADER (semua page) ========== */
-    body.light-mode #lossTimeTable table.table thead th,
+    /* ========== TABLE HEADER ========== */
     body.light-mode table.table thead th,
     body.light-mode .table thead th,
     body.light-mode .table > thead > tr > th {
@@ -280,12 +260,6 @@ body.light-mode {
         border-bottom-color: rgba(100, 181, 246, 0.5) !important;
     }
 
-        body.light-mode table.table thead th:first-child,
-        body.light-mode .table thead th:first-child {
-            background-color: rgba(20, 30, 50, 0.95) !important;
-            color: #ffffff !important;
-        }
-
     body.light-mode table.table thead tr:nth-child(2) th,
     body.light-mode .table thead tr:nth-child(2) th {
         background-color: rgba(30, 40, 60, 0.90) !important;
@@ -294,30 +268,17 @@ body.light-mode {
 
     /* ========== TABLE BODY ========== */
     body.light-mode table.table tbody td,
-    body.light-mode .table tbody td {
-        color: #1a1a2e !important;
-        background-color: rgba(255, 255, 255, 0.45) !important;
-        border-color: rgba(0, 0, 0, 0.07) !important;
-    }
-
+    body.light-mode .table tbody td,
     body.light-mode .table tbody th {
         color: #1a1a2e !important;
         background-color: rgba(255, 255, 255, 0.50) !important;
         border-color: rgba(0, 0, 0, 0.07) !important;
     }
 
-    body.light-mode table.table tbody td:first-child,
-    body.light-mode .table tbody td:first-child {
-        background-color: rgba(255, 255, 255, 0.50) !important;
-        color: #1a1a2e !important;
-    }
-
     body.light-mode table.table-bordered > :not(caption) > * {
         border-color: rgba(0, 0, 0, 0.08) !important;
     }
 
-    /* Zebra stripe */
-    /* Zebra stripe - disamakan */
     body.light-mode .table tbody tr:nth-of-type(odd) td,
     body.light-mode .table tbody tr:nth-of-type(odd) th,
     body.light-mode .table tbody tr:nth-of-type(even) td,
@@ -325,7 +286,6 @@ body.light-mode {
         background-color: rgba(255, 255, 255, 0.50) !important;
         color: #1a1a2e !important;
     }
-   
 
     body.light-mode .table-secondary td {
         background-color: rgba(200, 210, 230, 0.5) !important;
@@ -345,17 +305,12 @@ body.light-mode {
         transition: background-color 0.2s ease;
     }
 
-   
-
-    body.light-mode .table th {
-        color: #1a1a2e !important;
-    }
-
+    body.light-mode .table th,
     body.light-mode .table td {
         color: #1a1a2e !important;
     }
 
-        /* ========== INPUT DI DALAM TABEL (Production Plan) ========== */
+        /* Input di dalam tabel */
         body.light-mode .table td input.form-control,
         body.light-mode .table td textarea.form-control {
             background-color: rgba(255, 255, 255, 0.80) !important;
@@ -372,42 +327,10 @@ body.light-mode {
                 color: #1a1a2e !important;
             }
 
-            body.light-mode .table td input.form-control::placeholder,
-            body.light-mode .table td textarea.form-control::placeholder {
-                color: rgba(26, 26, 46, 0.40) !important;
-            }
-
         body.light-mode .table td input:disabled {
             background-color: rgba(220, 228, 240, 0.60) !important;
             color: rgba(26, 26, 46, 0.55) !important;
             border-color: rgba(0, 0, 0, 0.10) !important;
-        }
-
-    /* ========== CHECKBOX DI TABEL ========== */
-    body.light-mode .table .form-check-label {
-        color: #1a1a2e !important;
-    }
-
-    body.light-mode .table .form-check-input {
-        border-color: rgba(0, 0, 0, 0.3) !important;
-        background-color: rgba(255, 255, 255, 0.8) !important;
-    }
-
-        body.light-mode .table .form-check-input:checked {
-            background-color: rgba(61, 121, 176, 0.85) !important;
-            border-color: rgba(61, 121, 176, 0.9) !important;
-        }
-
-    /* ========== BUTTON OPSI DI TABEL ========== */
-    body.light-mode .table .input-group .btn-primary {
-        background-color: rgba(61, 121, 176, 0.88) !important;
-        border: 2px solid rgba(61, 121, 176, 0.9) !important;
-        color: #ffffff !important;
-    }
-
-        body.light-mode .table .input-group .btn-primary:hover {
-            background-color: rgba(35, 90, 150, 0.95) !important;
-            color: #ffffff !important;
         }
 
     /* ========== DETAIL LOSS TIME TABLE ========== */
@@ -420,27 +343,11 @@ body.light-mode {
     body.light-mode #lossTimeTable tbody td {
         color: #1a1a2e !important;
         border-color: rgba(0, 0, 0, 0.07) !important;
-    }
-
-    body.light-mode #lossTimeTable tbody tr:nth-of-type(odd) td {
-        background-color: rgba(255, 255, 255, 0.45) !important;
-    }
-
-    body.light-mode #lossTimeTable tbody tr:nth-of-type(even) td {
-        background-color: rgba(255, 255, 255, 0.25) !important;
+        background-color: rgba(255, 255, 255, 0.50) !important;
     }
 
     body.light-mode #lossTimeTable tbody tr:hover td {
         background-color: rgba(100, 181, 246, 0.20) !important;
-    }
-
-    body.light-mode #lossTimeTable .btn-sm {
-        color: #1a1a2e !important;
-    }
-
-    body.light-mode .total-info-text span,
-    body.light-mode .total-info-text strong {
-        color: #1a1a2e !important;
     }
 
     /* ========== CARD ========== */
@@ -457,17 +364,6 @@ body.light-mode {
         border-bottom-color: rgba(0, 0, 0, 0.1) !important;
     }
 
-        /* Card nested (Date & Total Qty di Production Plan) */
-        body.light-mode .card-header .card {
-            background: rgba(220, 235, 255, 0.80) !important;
-            border: 2px solid rgba(61, 121, 176, 0.35) !important;
-            color: #1a1a2e !important;
-        }
-
-            body.light-mode .card-header .card p {
-                color: #1a1a2e !important;
-            }
-
         body.light-mode .card-title,
         body.light-mode .card-header h5,
         body.light-mode .card-header .card-title,
@@ -475,7 +371,6 @@ body.light-mode {
             color: #1a1a2e !important;
         }
 
-    /* Semua teks di card */
     body.light-mode .card label,
     body.light-mode .card p,
     body.light-mode .card span,
@@ -495,48 +390,6 @@ body.light-mode {
         body.light-mode .card-footer span {
             color: #1a1a2e !important;
         }
-
-    /* ========== COMMENT TEXTAREA (Production Plan) ========== */
-    body.light-mode textarea#comment {
-        background-color: rgba(255, 255, 255, 0.78) !important;
-        border: 1px solid rgba(0, 0, 0, 0.18) !important;
-        color: #1a1a2e !important;
-    }
-
-        body.light-mode textarea#comment:focus {
-            background-color: rgba(255, 255, 255, 0.95) !important;
-            border-color: rgba(61, 121, 176, 0.55) !important;
-            box-shadow: 0 0 0 0.15rem rgba(61, 121, 176, 0.15) !important;
-            color: #1a1a2e !important;
-        }
-
-        body.light-mode textarea#comment::placeholder {
-            color: rgba(26, 26, 46, 0.4) !important;
-        }
-
-    /* ========== SUBMIT COUNTER ========== */
-    body.light-mode #submitCounter,
-    body.light-mode #submitCounter span {
-        color: #1a1a2e !important;
-    }
-
-    /* ========== DROPDOWN AUTOCOMPLETE (Production Plan) ========== */
-    body.light-mode .dropdown.custom-dropdown {
-        background-color: rgba(255, 255, 255, 0.97) !important;
-        border: 2px solid rgba(61, 121, 176, 0.45) !important;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
-    }
-
-        body.light-mode .dropdown.custom-dropdown div {
-            color: #1a1a2e !important;
-            background-color: transparent !important;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.07) !important;
-        }
-
-            body.light-mode .dropdown.custom-dropdown div:hover {
-                background-color: rgba(61, 121, 176, 0.12) !important;
-                color: #1a1a2e !important;
-            }
 
     /* ========== PAGINATION ========== */
     body.light-mode .pagination .page-link {
@@ -564,10 +417,6 @@ body.light-mode {
     }
 
     /* ========== ALERT ========== */
-    body.light-mode .alert {
-        color: #1a1a2e !important;
-    }
-
     body.light-mode .alert-warning {
         background-color: rgba(255, 193, 7, 0.15) !important;
         border-color: rgba(255, 193, 7, 0.3) !important;
@@ -577,6 +426,7 @@ body.light-mode {
     /* ========== FOOTER ========== */
     body.light-mode .footer-copyright p {
         color: #1a1a2e !important;
+        font-size: 11px !important;
     }
 
     /* ========== SCROLLBAR ========== */
@@ -592,7 +442,6 @@ body.light-mode {
             background: rgba(0, 0, 0, 0.35);
         }
 
-
 /* Fix sticky column header */
 .table thead tr:first-child th:nth-child(2) {
     position: static !important;
@@ -601,291 +450,8 @@ body.light-mode {
     border-right: none !important;
 }
 
-
-
-
-/* ============================================================
-   ========== MODAL - LIGHT MODE ==============================
-   ============================================================ */
-
-body.light-mode .modal-content {
-    background: rgba(255, 255, 255, 0.82) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.6) !important;
-    color: #1a1a2e !important;
-    border-radius: 12px !important;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
-}
-
-body.light-mode .modal-header {
-    background-color: rgba(240, 247, 255, 0.85) !important;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
-    border-radius: 12px 12px 0 0 !important;
-}
-
-    body.light-mode .modal-title,
-    body.light-mode .modal-header .modal-title {
-        color: #1a1a2e !important;
-    }
-
-    body.light-mode .modal-header i {
-        color: #3d79b0 !important;
-    }
-
-    body.light-mode .modal-header .btn-close {
-        filter: none !important;
-        opacity: 0.6;
-    }
-
-        body.light-mode .modal-header .btn-close:hover {
-            opacity: 1;
-        }
-
-    body.light-mode .modal-header.bg-success {
-        background-color: rgba(25, 135, 84, 0.85) !important;
-        color: #ffffff !important;
-    }
-
-        body.light-mode .modal-header.bg-success .modal-title,
-        body.light-mode .modal-header.bg-success h5 {
-            color: #ffffff !important;
-        }
-
-body.light-mode .modal-body {
-    background-color: transparent !important;
-    color: #1a1a2e !important;
-}
-
-body.light-mode .modal-footer {
-    background-color: rgba(240, 247, 255, 0.5) !important;
-    border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
-    border-radius: 0 0 12px 12px !important;
-}
-
-body.light-mode .modal .form-label,
-body.light-mode .modal .col-form-label,
-body.light-mode .modal label,
-body.light-mode .modal h6 {
-    color: #1a1a2e !important;
-    font-weight: 500;
-}
-
-body.light-mode .modal .section-label,
-body.light-mode .modal .fw-semibold,
-body.light-mode .modal strong {
-    color: #1a1a2e !important;
-}
-
-body.light-mode .modal .form-control,
-body.light-mode .modal .form-select {
-    background-color: rgba(255, 255, 255, 0.75) !important;
-    border-color: rgba(0, 0, 0, 0.18) !important;
-    color: #1a1a2e !important;
-    border-radius: 6px !important;
-}
-
-    body.light-mode .modal .form-control:focus,
-    body.light-mode .modal .form-select:focus {
-        background-color: rgba(255, 255, 255, 0.92) !important;
-        border-color: rgba(61, 121, 176, 0.6) !important;
-        box-shadow: 0 0 0 0.2rem rgba(61, 121, 176, 0.15) !important;
-    }
-
-body.light-mode .modal .form-select {
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%231a1a2e' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
-}
-
-body.light-mode .modal input[type="time"] {
-    background-color: rgba(255, 255, 255, 0.75) !important;
-    border: 1px solid rgba(0, 0, 0, 0.18) !important;
-    color: #1a1a2e !important;
-    border-radius: 6px !important;
-    padding: 6px 10px !important;
-}
-
-    body.light-mode .modal input[type="time"]::-webkit-calendar-picker-indicator {
-        filter: none !important;
-        opacity: 0.6;
-    }
-
-body.light-mode .modal .flatpickr-input {
-    background-color: rgba(255, 255, 255, 0.75) !important;
-    border: 1px solid rgba(0, 0, 0, 0.18) !important;
-    color: #1a1a2e !important;
-    border-radius: 6px !important;
-}
-
-body.light-mode .modal .form-text,
-body.light-mode .modal .text-muted {
-    color: rgba(26, 26, 46, 0.6) !important;
-}
-
-body.light-mode .modal hr {
-    border-color: rgba(0, 0, 0, 0.1) !important;
-}
-
-body.light-mode .modal .input-group-text {
-    background-color: rgba(255, 255, 255, 0.6) !important;
-    border-color: rgba(0, 0, 0, 0.18) !important;
-    color: #1a1a2e !important;
-}
-
-body.light-mode .modal .btn-save-break,
-body.light-mode .modal button[type="submit"] {
-    background: linear-gradient(135deg, rgba(61, 121, 176, 0.9), rgba(35, 66, 164, 0.9)) !important;
-    border: 1px solid rgba(61, 121, 176, 0.4) !important;
-    color: #ffffff !important;
-    border-radius: 8px !important;
-    padding: 8px 24px !important;
-    font-weight: 600;
-    transition: all 0.2s ease !important;
-}
-
-    body.light-mode .modal .btn-save-break:hover,
-    body.light-mode .modal button[type="submit"]:hover {
-        background: linear-gradient(135deg, rgba(71, 131, 196, 1), rgba(45, 76, 174, 1)) !important;
-        transform: translateY(-1px);
-        box-shadow: 0 4px 12px rgba(61, 121, 176, 0.35) !important;
-    }
-
-body.light-mode .modal .btn-secondary {
-    background-color: rgba(255, 255, 255, 0.65) !important;
-    border-color: rgba(0, 0, 0, 0.2) !important;
-    color: #1a1a2e !important;
-}
-
-    body.light-mode .modal .btn-secondary:hover {
-        background-color: rgba(255, 255, 255, 0.85) !important;
-    }
-
-body.light-mode .modal .btn-outline-primary {
-    border-color: rgba(26, 26, 46, 0.4) !important;
-    color: #1a1a2e !important;
-    background-color: transparent !important;
-}
-
-    body.light-mode .modal .btn-outline-primary:hover {
-        background-color: rgba(61, 121, 176, 0.1) !important;
-        border-color: rgba(61, 121, 176, 0.6) !important;
-    }
-
-/* Outline success (tombol Template) */
-body.light-mode .modal .btn-outline-success {
-    border-color: rgba(25, 135, 84, 0.75) !important;
-    color: rgba(18, 110, 70, 1) !important;
-    background-color: transparent !important;
-}
-
-    body.light-mode .modal .btn-outline-success:hover {
-        background-color: rgba(25, 135, 84, 0.12) !important;
-        color: rgba(15, 90, 58, 1) !important;
-    }
-
-/* Success button */
-body.light-mode .modal .btn-success {
-    background-color: rgba(25, 135, 84, 0.90) !important;
-    border-color: rgba(18, 110, 70, 0.9) !important;
-    color: #ffffff !important;
-}
-
-    body.light-mode .modal .btn-success:hover {
-        background-color: rgba(18, 110, 70, 1) !important;
-        color: #ffffff !important;
-    }
-
-/* Danger button */
-body.light-mode .modal .btn-danger {
-    background-color: rgba(180, 40, 50, 0.85) !important;
-    border-color: rgba(200, 60, 70, 0.8) !important;
-    color: #ffffff !important;
-}
-
-    body.light-mode .modal .btn-danger:hover {
-        background-color: rgba(160, 30, 40, 0.95) !important;
-        color: #ffffff !important;
-    }
-
-body.light-mode .modal-backdrop {
-    background-color: rgba(0, 0, 0, 0.25) !important;
-}
-
-/* ========== BREAK TIME MODAL SPECIFIC ========== */
-.modal-body .text-center.fw-bold,
-.modal-body .fw-semibold.text-center,
-#breakTimeFilterModal .fw-bold {
-    color: inherit !important;
-}
-
 /* ====================================================
-   QUALITY PAGE THEME FIX - DARK & LIGHT MODE
-   Tambahkan ini di bagian PALING BAWAH site.css
-   ==================================================== */
-
-/* ====================================================
-   DARK MODE (DEFAULT / reusable-bg)
-   ==================================================== */
-
-body.reusable-bg .grid-border {
-    background: rgba(255, 255, 255, 0.10) !important;
-    border: 2px solid rgba(255, 255, 255, 0.25) !important;
-    border-radius: 12px !important;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
-}
-
-body.reusable-bg .section-title {
-    color: rgba(255, 255, 255, 0.9) !important;
-    border-bottom: 2px solid rgba(255, 255, 255, 0.25) !important;
-}
-
-body.reusable-bg .btn-outline-inactive {
-    background-color: rgba(255, 255, 255, 0.08) !important;
-    color: rgba(255, 255, 255, 0.6) !important;
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;
-}
-
-    body.reusable-bg .btn-outline-inactive:hover {
-        background-color: rgba(255, 255, 255, 0.15) !important;
-        color: rgba(255, 255, 255, 0.9) !important;
-    }
-
-body.reusable-bg .kpi-box {
-    background: rgba(255, 255, 255, 0.10) !important;
-    border: 2px solid rgba(255, 255, 255, 0.25) !important;
-    border-radius: 12px !important;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
-    overflow: hidden !important;
-}
-
-body.reusable-bg .kpi-header {
-    background-color: rgba(61, 121, 176, 0.75) !important;
-    color: #ffffff !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
-}
-
-body.reusable-bg .kpi-value {
-    background-color: transparent !important;
-    color: #ffffff !important;
-}
-
-/* Date inputs */
-body.reusable-bg .dashboard-container .form-control[type="date"] {
-    background-color: rgba(255, 255, 255, 0.08) !important;
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;
-    color: #ffffff !important;
-    border-radius: 8px !important;
-}
-
-    body.reusable-bg .dashboard-container .form-control[type="date"]::-webkit-calendar-picker-indicator {
-        filter: invert(1);
-    }
-
-body.reusable-bg .dashboard-container label.fw-bold.text-muted {
-    color: rgba(255, 255, 255, 0.6) !important;
-}
-
-/* ====================================================
-   LIGHT MODE OVERRIDE
+   QUALITY PAGE THEME FIX - LIGHT MODE
    ==================================================== */
 
 body.light-mode .grid-border {
@@ -896,40 +462,10 @@ body.light-mode .grid-border {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
 }
 
-body.light-mode .section-title {
-    color: var(--panasonic-blue) !important;
-    border-bottom: 2px solid var(--panasonic-blue) !important;
-}
-
 body.light-mode .btn-blue-active {
     background-color: var(--panasonic-blue) !important;
     color: #ffffff !important;
     border: 1px solid var(--panasonic-blue) !important;
-}
-
-body.light-mode .btn-outline-inactive {
-    background-color: rgba(255, 255, 255, 0.70) !important;
-    color: #6c757d !important;
-    border: 2px solid rgba(0, 0, 0, 0.2) !important;
-}
-
-    body.light-mode .btn-outline-inactive:hover {
-        background-color: rgba(255, 255, 255, 0.88) !important;
-        color: #333 !important;
-    }
-
-body.light-mode .kpi-box {
-    background: rgba(255, 255, 255, 0.55) !important;
-    backdrop-filter: blur(8px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.6) !important;
-    border-radius: 8px !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
-    overflow: hidden !important;
-}
-
-body.light-mode .kpi-header {
-    background-color: var(--panasonic-blue) !important;
-    color: #ffffff !important;
 }
 
 body.light-mode .kpi-value {
@@ -937,26 +473,15 @@ body.light-mode .kpi-value {
     color: #1a1a2e !important;
 }
 
-/* Date inputs light mode */
-body.light-mode .dashboard-container .form-control[type="date"] {
-    background-color: rgba(255, 255, 255, 0.75) !important;
-    border: 1px solid rgba(0, 0, 0, 0.18) !important;
-    color: #1a1a2e !important;
-    border-radius: 8px !important;
-}
-
-    body.light-mode .dashboard-container .form-control[type="date"]::-webkit-calendar-picker-indicator {
-        filter: none !important;
-        opacity: 0.6;
-    }
-
-body.light-mode .dashboard-container label.fw-bold.text-muted {
-    color: rgba(26, 26, 46, 0.6) !important;
-}
-
-/* Apply Filter button light mode */
 body.light-mode .dashboard-container .btn-blue-active {
     background-color: rgba(61, 121, 176, 0.88) !important;
     border-color: rgba(61, 121, 176, 0.9) !important;
     color: #ffffff !important;
 }
+
+/* ====================================================
+   CATATAN PENTING:
+   Semua styling MODAL (dark & light mode) ada di site.css Section 18.
+   File ini TIDAK mengandung override modal sama sekali.
+   Ini mencegah konflik CSS antar file.
+   ==================================================== */

@@ -14,12 +14,12 @@
     --text-dark: #333333;
     --border-radius: 5px;
 }
+
 html {
     font-size: 14px;
     position: relative;
-    min-height: 100vh !important; /* ? UBAH INI */
+    min-height: 100vh !important;
     margin: 0;
-    /* JANGAN tambah background di sini, biar background-style.css yang handle */
 }
 
 @media (min-width: 768px) {
@@ -39,13 +39,13 @@ html, body {
     height: 100vh;
 }
 
-    /* ====================================================
+/* ====================================================
    2. BACKGROUND SETTINGS
    ==================================================== */
-    /* Background styles TIDAK ADA DI SINI */
-    /* Tetap pakai background-style.css yang original */
+/* Background styles TIDAK ADA DI SINI */
+/* Tetap pakai background-style.css yang original */
 
-    /* ====================================================
+/* ====================================================
    3. TRANSPARENT CONTAINERS
    ==================================================== */
 .bg-light,
@@ -61,38 +61,38 @@ canvas,
     background-color: transparent !important;
 }
 
-    /* ====================================================
+/* ====================================================
    4. CUSTOM SCROLLBAR
    ==================================================== */
-    body.reusable-bg ::-webkit-scrollbar {
-        width: 12px;
-        height: 12px;
+body.reusable-bg ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+body.reusable-bg ::-webkit-scrollbar-track {
+    background: rgba(26, 26, 46, 0.5);
+    border-radius: 10px;
+}
+
+body.reusable-bg ::-webkit-scrollbar-thumb {
+    background: rgba(61, 121, 176, 0.7);
+    border-radius: 10px;
+    border: 2px solid rgba(26, 26, 46, 0.5);
+}
+
+    body.reusable-bg ::-webkit-scrollbar-thumb:hover {
+        background: rgba(61, 121, 176, 0.9);
     }
 
-    body.reusable-bg ::-webkit-scrollbar-track {
-        background: rgba(26, 26, 46, 0.5);
-        border-radius: 10px;
-    }
+body.reusable-bg ::-webkit-scrollbar-corner {
+    background: rgba(26, 26, 46, 0.5);
+}
 
-    body.reusable-bg ::-webkit-scrollbar-thumb {
-        background: rgba(61, 121, 176, 0.7);
-        border-radius: 10px;
-        border: 2px solid rgba(26, 26, 46, 0.5);
-    }
-
-        body.reusable-bg ::-webkit-scrollbar-thumb:hover {
-            background: rgba(61, 121, 176, 0.9);
-        }
-
-    body.reusable-bg ::-webkit-scrollbar-corner {
-        background: rgba(26, 26, 46, 0.5);
-    }
-
-    /* Firefox scrollbar */
-    body.reusable-bg * {
-        scrollbar-width: thin;
-        scrollbar-color: rgba(61, 121, 176, 0.7) rgba(26, 26, 46, 0.5);
-    }
+/* Firefox scrollbar */
+body.reusable-bg * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(61, 121, 176, 0.7) rgba(26, 26, 46, 0.5);
+}
 
 /* Main content wrapper scrollbar */
 .main-content-wrapper::-webkit-scrollbar-track {
@@ -266,7 +266,6 @@ canvas,
                 background: rgba(255, 255, 255, 0.1) !important;
             }
 
-            /* Active/Current Page Indicator - Garis Kiri */
             #bdSidebar .nav-item a.active {
                 color: #ffffff !important;
                 position: relative;
@@ -283,7 +282,6 @@ canvas,
                     border-radius: 0 3px 3px 0;
                 }
 
-    /* Label Teks */
     #bdSidebar .nav-label {
         font-size: 8.5px !important;
         font-weight: 500;
@@ -293,7 +291,6 @@ canvas,
         letter-spacing: -0.1px;
     }
 
-    /* Logout Section - PUSH KE BOTTOM */
     #bdSidebar .align-items-center.center {
         margin-top: auto !important;
         padding: 8px 0 !important;
@@ -402,9 +399,6 @@ canvas,
     padding-top: 3px;
 }
 
-/ /* ====================================================
-   8. FOOTER STYLES
-   ==================================================== */
 /* ====================================================
    8. FOOTER STYLES
    ==================================================== */
@@ -417,17 +411,17 @@ canvas,
     padding: 5px 0 !important;
     background: transparent !important;
     z-index: 5 !important;
-    font-size: 6px !important;
-    margin-top: 3px !important;  /* ← Jarak dari box terakhir */
+    font-size: 11px !important; /* ← FIXED dari 6px */
+    margin-top: 3px !important;
 }
 
-.footer-copyright p {
-    margin: 0 !important;
-    opacity: 0.6 !important;
-    color: #ffffff !important;
-}
+    .footer-copyright p {
+        margin: 0 !important;
+        opacity: 0.6 !important;
+        color: #ffffff !important;
+        font-size: 11px !important; /* ← FIXED, dikunci eksplisit */
+    }
 
-/* Footer sticky bottom for auth pages */
 body.reusable-bg .position-sticky.sticky-bottom,
 body.reusable-bg .sticky-bottom {
     background: rgba(15, 32, 39, 0.9) !important;
@@ -450,7 +444,7 @@ body.reusable-bg .sticky-bottom {
     }
 
 /* ====================================================
-   9. MODAL STYLES
+   9. MODAL STYLES - FUNCTIONAL (pointer-events only)
    ==================================================== */
 .modal-backdrop {
     display: none !important;
@@ -488,7 +482,6 @@ body.modal-open #bdSidebar {
    11. AUTH PAGES (Login/Register) STYLES
    ==================================================== */
 
-/* Card styling untuk auth */
 .auth-body .card {
     background: linear-gradient(135deg, rgba(50, 60, 80, 0.7) 0%, rgba(30, 40, 60, 0.8) 100%) !important;
     border: 1px solid rgba(255, 255, 255, 0.35) !important;
@@ -532,7 +525,6 @@ body.modal-open #bdSidebar {
         margin: 0 auto;
     }
 
-/* Custom Input Box untuk auth */
 .auth-body .custom-input {
     width: 100%;
     background: linear-gradient(135deg, rgba(120, 130, 150, 1.0) 0%, rgba(100, 110, 130, 1.0) 100%) !important;
@@ -551,7 +543,6 @@ body.modal-open #bdSidebar {
         color: rgba(255, 255, 255, 0.5) !important;
     }
 
-/* Autofill fix */
 .auth-body input.custom-input:-webkit-autofill,
 .auth-body input.custom-input:-webkit-autofill:hover,
 .auth-body input.custom-input:-webkit-autofill:focus,
@@ -564,7 +555,6 @@ body.modal-open #bdSidebar {
     transition: background-color 9999s ease-in-out 0s !important;
 }
 
-/* Label styling untuk auth */
 .auth-body .form-label {
     display: block;
     font-size: 14px;
@@ -577,7 +567,6 @@ body.modal-open #bdSidebar {
     margin-bottom: 1rem !important;
 }
 
-/* Buttons untuk auth */
 .auth-body .btn-primary,
 .auth-body .btn-success,
 .auth-body .btn-white {
@@ -624,7 +613,6 @@ body.modal-open #bdSidebar {
     margin-bottom: 0.75rem !important;
 }
 
-/* Links untuk auth */
 .auth-body .text-decoration-none {
     color: rgb(255, 255, 255);
     transition: all 0.2s ease;
@@ -635,14 +623,12 @@ body.modal-open #bdSidebar {
         text-decoration: underline !important;
     }
 
-/* Validation errors untuk auth */
 .auth-body .text-danger {
     font-size: 0.85rem;
     margin-top: 0.25rem;
     color: #ff6b6b !important;
 }
 
-/* External login buttons untuk auth */
 .auth-body .btn-outline-secondary {
     border-radius: 5px;
     transition: all 0.3s ease;
@@ -653,7 +639,6 @@ body.modal-open #bdSidebar {
         box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
     }
 
-/* Brand logo untuk auth page */
 .brand-logo {
     display: inline-flex !important;
     align-items: center;
@@ -693,13 +678,11 @@ body.modal-open #bdSidebar {
         border-radius: 50%;
     }
 
-/* Auth footer */
 .auth-footer {
     margin-top: -2.5rem !important;
     font-size: 9px !important;
 }
 
-/* Password toggle untuk auth */
 .auth-body .password-toggle {
     color: #ffffff;
 }
@@ -708,7 +691,6 @@ body.modal-open #bdSidebar {
         color: rgb(200, 220, 255);
     }
 
-/* Fix double password eye */
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
     display: none;
@@ -720,7 +702,6 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
     pointer-events: none;
 }
 
-/* Wrapper khusus halaman auth */
 .panamon-bg {
     flex: 1;
     display: flex;
@@ -906,16 +887,9 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
 }
 
 /* ====================================================
-   QUALITY PAGE THEME FIX
-   Tambahkan ini di bagian BAWAH site.css
-   (setelah section 16. RESPONSIVE ADJUSTMENTS)
-   ==================================================== */
-
-/* ====================================================
    17. QUALITY PAGE - DARK MODE (DEFAULT)
    ==================================================== */
 
-/* Grid Border Boxes */
 body.reusable-bg .grid-border {
     background: rgba(255, 255, 255, 0.10) !important;
     border: 2px solid rgba(255, 255, 255, 0.25) !important;
@@ -923,13 +897,11 @@ body.reusable-bg .grid-border {
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
 }
 
-/* Section Title */
 body.reusable-bg .section-title {
     color: rgba(255, 255, 255, 0.9) !important;
     border-bottom: 2px solid rgba(255, 255, 255, 0.25) !important;
 }
 
-/* Button Inactive */
 body.reusable-bg .btn-outline-inactive {
     background-color: rgba(255, 255, 255, 0.08) !important;
     color: rgba(255, 255, 255, 0.6) !important;
@@ -941,7 +913,6 @@ body.reusable-bg .btn-outline-inactive {
         color: rgba(255, 255, 255, 0.9) !important;
     }
 
-/* KPI Box */
 body.reusable-bg .kpi-box {
     background: rgba(255, 255, 255, 0.10) !important;
     border: 2px solid rgba(255, 255, 255, 0.25) !important;
@@ -950,20 +921,17 @@ body.reusable-bg .kpi-box {
     overflow: hidden !important;
 }
 
-/* KPI Header */
 body.reusable-bg .kpi-header {
     background-color: rgba(61, 121, 176, 0.75) !important;
     color: #ffffff !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
 
-/* KPI Value */
 body.reusable-bg .kpi-value {
     background-color: transparent !important;
     color: #ffffff !important;
 }
 
-/* Date inputs inside filter */
 body.reusable-bg .dashboard-container .form-control[type="date"] {
     background-color: rgba(255, 255, 255, 0.08) !important;
     border: 2px solid rgba(255, 255, 255, 0.3) !important;
@@ -1029,49 +997,746 @@ body.light-mode .dashboard-container label.fw-bold.text-muted {
 }
 
 /* ====================================================
-   QUALITY PAGE - TARGET MODAL THEMING
+   18. MODAL - SINGLE SOURCE OF TRUTH
+   Berlaku untuk SEMUA modal di seluruh halaman.
+   Dark mode = default, light mode = override di bawah.
    ==================================================== */
 
-/* Dark mode modal */
-body.reusable-bg .modal-content {
-    background: linear-gradient(180deg, #2d3548 0%, #1f2533 100%) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
-    color: #ffffff !important;
+/* ============================================================
+   18a. DARK MODE (default) — struktur & ukuran
+   ============================================================ */
+
+/* --- Container --- */
+.modal-content {
+    background-color: rgba(25, 35, 58, 0.97) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 14px !important;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.55) !important;
+    color: #e8eaf0 !important;
 }
 
-    body.reusable-bg .modal-content label,
-    body.reusable-bg .modal-content h4 {
+/* --- Header --- */
+.modal-header {
+    background-color: rgba(30, 42, 68, 0.98) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10) !important;
+    border-radius: 14px 14px 0 0 !important;
+    padding: 14px 20px !important;
+}
+
+    .modal-title,
+    .modal-header h5,
+    .modal-header .modal-title {
         color: #ffffff !important;
+        font-weight: 700 !important;
+        font-size: 14px !important;
     }
 
-    body.reusable-bg .modal-content input.form-control {
-        background-color: rgba(255, 255, 255, 0.1) !important;
-        border: 1px solid rgba(255, 255, 255, 0.3) !important;
-        color: #ffffff !important;
+    .modal-header i {
+        color: rgba(100, 181, 246, 0.9) !important;
     }
 
-        body.reusable-bg .modal-content input.form-control::placeholder {
-            color: rgba(255, 255, 255, 0.4) !important;
+    /* Header hijau (Upload) */
+    .modal-header.bg-success {
+        background-color: rgba(20, 100, 55, 0.95) !important;
+        border-bottom: 1px solid rgba(129, 199, 132, 0.25) !important;
+    }
+
+        .modal-header.bg-success .modal-title,
+        .modal-header.bg-success h5,
+        .modal-header.bg-success i {
+            color: #ffffff !important;
         }
 
-    body.reusable-bg .modal-content hr {
-        border-color: rgba(255, 255, 255, 0.2) !important;
+    /* Close button */
+    .modal-header .btn-close {
+        filter: invert(1) grayscale(100%) brightness(200%) !important;
+        opacity: 0.6 !important;
+        transition: opacity 0.2s !important;
     }
 
-/* Light mode modal */
-body.light-mode .modal-content {
-    background: #ffffff !important;
-    border: 1px solid rgba(0,0,0,0.2) !important;
-    color: #333 !important;
+        .modal-header .btn-close:hover {
+            opacity: 1 !important;
+        }
+
+/* --- Body --- */
+.modal-body {
+    background-color: transparent !important;
+    color: #e0e2ea !important;
+    padding: 20px !important;
 }
 
-    body.light-mode .modal-content label,
-    body.light-mode .modal-content h4 {
-        color: #333 !important;
+    .modal-body label,
+    .modal-body .form-label,
+    .modal-body .col-form-label,
+    .modal-body p,
+    .modal-body span,
+    .modal-body h6,
+    .modal-body strong,
+    .modal-body .fw-bold,
+    .modal-body .fw-semibold {
+        color: #e0e2ea !important;
     }
 
-    body.light-mode .modal-content input.form-control {
-        background-color: #ffffff !important;
-        border: 1px solid #ced4da !important;
-        color: #333 !important;
+    .modal-body .text-muted,
+    .modal-body .form-text {
+        color: rgba(200, 205, 220, 0.65) !important;
     }
+
+    .modal-body hr {
+        border-color: rgba(255, 255, 255, 0.12) !important;
+        margin: 14px 0 !important;
+    }
+
+    /* Input / Select / Textarea */
+    .modal-body .form-control,
+    .modal-body .form-select,
+    .modal-body input[type="text"],
+    .modal-body input[type="number"],
+    .modal-body input[type="date"],
+    .modal-body input[type="time"],
+    .modal-body input[type="file"],
+    .modal-body textarea {
+        background-color: rgba(255, 255, 255, 0.07) !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
+        color: #ffffff !important;
+        border-radius: 8px !important;
+        transition: border-color 0.2s, background-color 0.2s !important;
+    }
+
+        .modal-body .form-control:focus,
+        .modal-body .form-select:focus,
+        .modal-body input[type="text"]:focus,
+        .modal-body input[type="number"]:focus,
+        .modal-body input[type="date"]:focus,
+        .modal-body input[type="time"]:focus,
+        .modal-body textarea:focus {
+            background-color: rgba(255, 255, 255, 0.13) !important;
+            border-color: rgba(100, 181, 246, 0.60) !important;
+            box-shadow: 0 0 0 0.18rem rgba(100, 181, 246, 0.15) !important;
+            color: #ffffff !important;
+        }
+
+        .modal-body .form-control::placeholder,
+        .modal-body input::placeholder,
+        .modal-body textarea::placeholder {
+            color: rgba(200, 205, 220, 0.42) !important;
+        }
+
+    /* Select arrow putih */
+    .modal-body .form-select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+        background-repeat: no-repeat !important;
+        background-position: right 10px center !important;
+        background-size: 12px 12px !important;
+    }
+
+        .modal-body .form-select option {
+            background-color: rgba(30, 42, 68, 0.98) !important;
+            color: #e0e2ea !important;
+        }
+
+    /* Input file */
+    .modal-body input[type="file"] {
+        padding: 6px 10px !important;
+        cursor: pointer !important;
+    }
+
+        .modal-body input[type="file"]::-webkit-file-upload-button {
+            background-color: rgba(100, 181, 246, 0.15) !important;
+            border: 1px solid rgba(100, 181, 246, 0.35) !important;
+            color: rgba(100, 181, 246, 1) !important;
+            border-radius: 6px !important;
+            padding: 4px 10px !important;
+            margin-right: 8px !important;
+            cursor: pointer !important;
+            transition: all 0.2s !important;
+        }
+
+            .modal-body input[type="file"]::-webkit-file-upload-button:hover {
+                background-color: rgba(100, 181, 246, 0.25) !important;
+            }
+
+    /* Calendar picker indicator */
+    .modal-body input[type="date"]::-webkit-calendar-picker-indicator,
+    .modal-body input[type="time"]::-webkit-calendar-picker-indicator {
+        filter: invert(1) !important;
+        opacity: 0.6 !important;
+        cursor: pointer !important;
+    }
+
+/* --- Footer --- */
+.modal-footer {
+    background-color: rgba(22, 30, 50, 0.90) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.10) !important;
+    border-radius: 0 0 14px 14px !important;
+    padding: 12px 20px !important;
+    gap: 8px !important;
+}
+
+    /* --- Tombol di Modal (Dark) --- */
+
+    .modal .btn-secondary,
+    .modal-footer .btn-secondary {
+        background-color: rgba(255, 255, 255, 0.08) !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.22) !important;
+        color: rgba(200, 210, 230, 0.9) !important;
+        border-radius: 999px !important;
+        font-size: 12px !important;
+        padding: 6px 16px !important;
+        transition: all 0.2s !important;
+    }
+
+        .modal .btn-secondary:hover,
+        .modal-footer .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.16) !important;
+            border-color: rgba(255, 255, 255, 0.38) !important;
+            color: #ffffff !important;
+        }
+
+    .modal .btn-primary,
+    .modal-footer .btn-primary {
+        background-color: rgba(8, 65, 150, 0.92) !important;
+        border: 1.5px solid rgba(100, 181, 246, 0.85) !important;
+        color: rgba(100, 181, 246, 1) !important;
+        border-radius: 999px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        padding: 6px 16px !important;
+        transition: all 0.2s !important;
+    }
+
+        .modal .btn-primary:hover,
+        .modal-footer .btn-primary:hover {
+            background-color: rgba(5, 48, 120, 1) !important;
+            border-color: rgba(144, 202, 249, 1) !important;
+            color: rgba(144, 202, 249, 1) !important;
+        }
+
+    .modal .btn-success,
+    .modal-footer .btn-success {
+        background-color: rgba(18, 90, 48, 0.92) !important;
+        border: 1.5px solid rgba(129, 199, 132, 0.85) !important;
+        color: rgba(129, 199, 132, 1) !important;
+        border-radius: 999px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        padding: 6px 16px !important;
+        transition: all 0.2s !important;
+    }
+
+        .modal .btn-success:hover,
+        .modal-footer .btn-success:hover {
+            background-color: rgba(12, 70, 35, 1) !important;
+            border-color: rgba(165, 214, 167, 1) !important;
+            color: rgba(165, 214, 167, 1) !important;
+        }
+
+    .modal .btn-danger,
+    .modal-footer .btn-danger {
+        background-color: rgba(130, 25, 35, 0.90) !important;
+        border: 1.5px solid rgba(239, 154, 154, 0.80) !important;
+        color: rgba(239, 154, 154, 1) !important;
+        border-radius: 999px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        padding: 6px 16px !important;
+        transition: all 0.2s !important;
+    }
+
+        .modal .btn-danger:hover,
+        .modal-footer .btn-danger:hover {
+            background-color: rgba(100, 18, 26, 1) !important;
+            border-color: rgba(244, 143, 177, 1) !important;
+            color: rgba(244, 143, 177, 1) !important;
+        }
+
+    .modal .btn-warning,
+    .modal-footer .btn-warning {
+        background-color: rgba(160, 120, 0, 0.88) !important;
+        border: 1.5px solid rgba(255, 213, 79, 0.80) !important;
+        color: rgba(255, 213, 79, 1) !important;
+        border-radius: 999px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        padding: 6px 16px !important;
+        transition: all 0.2s !important;
+    }
+
+        .modal .btn-warning:hover,
+        .modal-footer .btn-warning:hover {
+            background-color: rgba(130, 95, 0, 1) !important;
+            border-color: rgba(255, 224, 130, 1) !important;
+            color: rgba(255, 224, 130, 1) !important;
+        }
+
+.modal .btn-outline-primary {
+    background-color: transparent !important;
+    border: 1.5px solid rgba(100, 181, 246, 0.60) !important;
+    color: rgba(100, 181, 246, 1) !important;
+    border-radius: 999px !important;
+    font-size: 12px !important;
+    padding: 4px 14px !important;
+    transition: all 0.2s !important;
+}
+
+    .modal .btn-outline-primary:hover {
+        background-color: rgba(100, 181, 246, 0.12) !important;
+        border-color: rgba(144, 202, 249, 0.85) !important;
+        color: rgba(144, 202, 249, 1) !important;
+    }
+
+.modal .btn-outline-success {
+    background-color: transparent !important;
+    border: 1.5px solid rgba(129, 199, 132, 0.60) !important;
+    color: rgba(129, 199, 132, 1) !important;
+    border-radius: 999px !important;
+    font-size: 12px !important;
+    padding: 4px 14px !important;
+    transition: all 0.2s !important;
+}
+
+    .modal .btn-outline-success:hover {
+        background-color: rgba(129, 199, 132, 0.12) !important;
+        border-color: rgba(165, 214, 167, 0.85) !important;
+        color: rgba(165, 214, 167, 1) !important;
+    }
+
+/* Submit button dengan inline style hijau */
+.modal-footer button[style*="background-color: rgb(25, 135, 84)"],
+.modal-footer .btn-small.text-white {
+    background-color: rgba(18, 100, 52, 0.95) !important;
+    border: 1.5px solid rgba(129, 199, 132, 0.85) !important;
+    color: #ffffff !important;
+    border-radius: 999px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    padding: 6px 18px !important;
+}
+
+    .modal-footer button[style*="background-color: rgb(25, 135, 84)"]:hover,
+    .modal-footer .btn-small.text-white:hover {
+        background-color: rgba(12, 75, 38, 1) !important;
+        border-color: rgba(165, 214, 167, 1) !important;
+    }
+
+/* Info button */
+.modal .btn-info,
+.modal-body .btn-info {
+    background-color: rgba(2, 100, 130, 0.88) !important;
+    border: 1.5px solid rgba(79, 195, 247, 0.80) !important;
+    color: rgba(79, 195, 247, 1) !important;
+    border-radius: 8px !important;
+    font-size: 11px !important;
+    padding: 4px 10px !important;
+    transition: all 0.2s !important;
+}
+
+    .modal .btn-info:hover {
+        background-color: rgba(1, 75, 100, 1) !important;
+        border-color: rgba(129, 212, 250, 1) !important;
+        color: rgba(129, 212, 250, 1) !important;
+    }
+
+/* Backdrop */
+.modal-backdrop.show {
+    background-color: rgba(0, 0, 0, 0.65) !important;
+}
+
+/* Detail Reason Modal (bg-dark) */
+.modal-content.bg-dark {
+    background-color: rgba(20, 28, 48, 0.98) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+/* ============================================================
+   TOAST NOTIFICATION - DARK MODE
+   ============================================================ */
+
+.toast.text-bg-danger {
+    background-color: rgba(180, 40, 50, 0.95) !important;
+    border: 1px solid rgba(239, 154, 154, 0.3) !important;
+    border-radius: 10px !important;
+}
+
+.toast.text-bg-success {
+    background-color: rgba(18, 100, 52, 0.95) !important;
+    border: 1px solid rgba(129, 199, 132, 0.3) !important;
+    border-radius: 10px !important;
+}
+
+.toast .toast-body {
+    color: #ffffff !important;
+    font-size: 13px !important;
+}
+
+/* ============================================================
+   18b. LIGHT MODE OVERRIDE - SEMUA MODAL
+   ============================================================ */
+
+/* --- Container --- */
+body.light-mode .modal-content {
+    background: rgba(245, 250, 255, 0.96) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(200, 215, 235, 0.80) !important;
+    border-radius: 14px !important; /* sama dengan dark */
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.14) !important;
+    color: #1a1a2e !important;
+}
+
+/* --- Header --- */
+body.light-mode .modal-header {
+    background-color: rgba(230, 240, 255, 0.92) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.09) !important;
+    border-radius: 14px 14px 0 0 !important; /* sama dengan dark */
+    padding: 14px 20px !important; /* sama dengan dark */
+}
+
+    body.light-mode .modal-title,
+    body.light-mode .modal-header h5,
+    body.light-mode .modal-header .modal-title {
+        color: #1a1a2e !important;
+        font-weight: 700 !important;
+        font-size: 14px !important; /* sama dengan dark */
+    }
+
+    body.light-mode .modal-header i {
+        color: #3d79b0 !important;
+    }
+
+    /* Header hijau tetap hijau di light mode */
+    body.light-mode .modal-header.bg-success {
+        background-color: rgba(25, 135, 84, 0.90) !important;
+        border-bottom: 1px solid rgba(25, 135, 84, 0.25) !important;
+    }
+
+        body.light-mode .modal-header.bg-success .modal-title,
+        body.light-mode .modal-header.bg-success h5,
+        body.light-mode .modal-header.bg-success i {
+            color: #ffffff !important;
+        }
+
+        /* Close button hijau (putih) */
+        body.light-mode .modal-header.bg-success .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%) !important;
+            opacity: 0.75 !important;
+        }
+
+    /* Close button normal */
+    body.light-mode .modal-header .btn-close {
+        filter: none !important;
+        opacity: 0.55 !important;
+    }
+
+        body.light-mode .modal-header .btn-close:hover {
+            opacity: 1 !important;
+        }
+
+/* --- Body --- */
+body.light-mode .modal-body {
+    background-color: transparent !important;
+    color: #1a1a2e !important;
+    padding: 20px !important; /* sama dengan dark */
+}
+
+    body.light-mode .modal-body label,
+    body.light-mode .modal-body .form-label,
+    body.light-mode .modal-body .col-form-label,
+    body.light-mode .modal-body p,
+    body.light-mode .modal-body span,
+    body.light-mode .modal-body h6,
+    body.light-mode .modal-body strong,
+    body.light-mode .modal-body .fw-bold,
+    body.light-mode .modal-body .fw-semibold {
+        color: #1a1a2e !important;
+    }
+
+    body.light-mode .modal-body .text-muted,
+    body.light-mode .modal-body .form-text {
+        color: rgba(26, 26, 46, 0.55) !important;
+    }
+
+    body.light-mode .modal-body hr {
+        border-color: rgba(0, 0, 0, 0.10) !important;
+        margin: 14px 0 !important; /* sama dengan dark */
+    }
+
+    /* Input / Select / Textarea */
+    body.light-mode .modal-body .form-control,
+    body.light-mode .modal-body .form-select,
+    body.light-mode .modal-body input[type="text"],
+    body.light-mode .modal-body input[type="number"],
+    body.light-mode .modal-body input[type="date"],
+    body.light-mode .modal-body input[type="time"],
+    body.light-mode .modal-body input[type="file"],
+    body.light-mode .modal-body textarea {
+        background-color: rgba(255, 255, 255, 0.85) !important;
+        border: 1.5px solid rgba(0, 0, 0, 0.16) !important;
+        color: #1a1a2e !important;
+        border-radius: 8px !important; /* sama dengan dark */
+        transition: border-color 0.2s, background-color 0.2s !important;
+    }
+
+        body.light-mode .modal-body .form-control:focus,
+        body.light-mode .modal-body .form-select:focus,
+        body.light-mode .modal-body input[type="text"]:focus,
+        body.light-mode .modal-body input[type="number"]:focus,
+        body.light-mode .modal-body input[type="date"]:focus,
+        body.light-mode .modal-body input[type="time"]:focus,
+        body.light-mode .modal-body textarea:focus {
+            background-color: rgba(255, 255, 255, 0.98) !important;
+            border-color: rgba(61, 121, 176, 0.55) !important;
+            box-shadow: 0 0 0 0.18rem rgba(61, 121, 176, 0.14) !important;
+            color: #1a1a2e !important;
+        }
+
+        body.light-mode .modal-body .form-control::placeholder,
+        body.light-mode .modal-body input::placeholder,
+        body.light-mode .modal-body textarea::placeholder {
+            color: rgba(26, 26, 46, 0.38) !important;
+        }
+
+    /* Select arrow gelap */
+    body.light-mode .modal-body .form-select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%231a1a2e' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
+        background-repeat: no-repeat !important;
+        background-position: right 10px center !important;
+        background-size: 12px 12px !important;
+    }
+
+        body.light-mode .modal-body .form-select option {
+            background-color: #ffffff !important;
+            color: #1a1a2e !important;
+        }
+
+    /* Input file */
+    body.light-mode .modal-body input[type="file"] {
+        padding: 6px 10px !important;
+        cursor: pointer !important;
+    }
+
+        body.light-mode .modal-body input[type="file"]::-webkit-file-upload-button {
+            background-color: rgba(61, 121, 176, 0.10) !important;
+            border: 1px solid rgba(61, 121, 176, 0.35) !important;
+            color: rgba(35, 90, 155, 1) !important;
+            border-radius: 6px !important;
+            padding: 4px 10px !important;
+            margin-right: 8px !important;
+            cursor: pointer !important;
+            transition: all 0.2s !important;
+        }
+
+            body.light-mode .modal-body input[type="file"]::-webkit-file-upload-button:hover {
+                background-color: rgba(61, 121, 176, 0.18) !important;
+            }
+
+    /* Calendar picker */
+    body.light-mode .modal-body input[type="date"]::-webkit-calendar-picker-indicator,
+    body.light-mode .modal-body input[type="time"]::-webkit-calendar-picker-indicator {
+        filter: none !important;
+        opacity: 0.55 !important;
+        cursor: pointer !important;
+    }
+
+/* --- Footer --- */
+body.light-mode .modal-footer {
+    background-color: rgba(225, 235, 250, 0.70) !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+    border-radius: 0 0 14px 14px !important; /* sama dengan dark */
+    padding: 12px 20px !important; /* sama dengan dark */
+    gap: 8px !important;
+}
+
+    /* --- Tombol di Modal (Light) --- */
+
+    body.light-mode .modal .btn-secondary,
+    body.light-mode .modal-footer .btn-secondary {
+        background-color: rgba(255, 255, 255, 0.75) !important;
+        border: 1.5px solid rgba(0, 0, 0, 0.20) !important;
+        color: #1a1a2e !important;
+        border-radius: 999px !important;
+        font-size: 12px !important;
+        padding: 6px 16px !important;
+        transition: all 0.2s !important;
+    }
+
+        body.light-mode .modal .btn-secondary:hover,
+        body.light-mode .modal-footer .btn-secondary:hover {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            border-color: rgba(0, 0, 0, 0.32) !important;
+            color: #1a1a2e !important;
+        }
+
+    body.light-mode .modal .btn-primary,
+    body.light-mode .modal-footer .btn-primary {
+        background-color: rgba(61, 121, 176, 0.90) !important;
+        border: 1.5px solid rgba(61, 121, 176, 0.75) !important;
+        color: #ffffff !important;
+        border-radius: 999px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        padding: 6px 16px !important;
+        transition: all 0.2s !important;
+    }
+
+        body.light-mode .modal .btn-primary:hover,
+        body.light-mode .modal-footer .btn-primary:hover {
+            background-color: rgba(35, 90, 150, 1) !important;
+            border-color: rgba(35, 90, 150, 1) !important;
+            color: #ffffff !important;
+        }
+
+    body.light-mode .modal .btn-success,
+    body.light-mode .modal-footer .btn-success {
+        background-color: rgba(25, 135, 84, 0.90) !important;
+        border: 1.5px solid rgba(25, 135, 84, 0.75) !important;
+        color: #ffffff !important;
+        border-radius: 999px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        padding: 6px 16px !important;
+        transition: all 0.2s !important;
+    }
+
+        body.light-mode .modal .btn-success:hover,
+        body.light-mode .modal-footer .btn-success:hover {
+            background-color: rgba(18, 108, 66, 1) !important;
+            border-color: rgba(18, 108, 66, 1) !important;
+            color: #ffffff !important;
+        }
+
+    body.light-mode .modal .btn-danger,
+    body.light-mode .modal-footer .btn-danger {
+        background-color: rgba(180, 40, 50, 0.88) !important;
+        border: 1.5px solid rgba(180, 40, 50, 0.75) !important;
+        color: #ffffff !important;
+        border-radius: 999px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        padding: 6px 16px !important;
+        transition: all 0.2s !important;
+    }
+
+        body.light-mode .modal .btn-danger:hover,
+        body.light-mode .modal-footer .btn-danger:hover {
+            background-color: rgba(155, 28, 38, 1) !important;
+            border-color: rgba(155, 28, 38, 1) !important;
+            color: #ffffff !important;
+        }
+
+    body.light-mode .modal .btn-warning,
+    body.light-mode .modal-footer .btn-warning {
+        background-color: rgba(255, 193, 7, 0.90) !important;
+        border: 1.5px solid rgba(200, 150, 0, 0.70) !important;
+        color: #1a1a2e !important;
+        border-radius: 999px !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        padding: 6px 16px !important;
+        transition: all 0.2s !important;
+    }
+
+        body.light-mode .modal .btn-warning:hover,
+        body.light-mode .modal-footer .btn-warning:hover {
+            background-color: rgba(230, 170, 0, 1) !important;
+            color: #1a1a2e !important;
+        }
+
+body.light-mode .modal .btn-outline-primary {
+    background-color: transparent !important;
+    border: 1.5px solid rgba(61, 121, 176, 0.60) !important;
+    color: rgba(35, 90, 155, 1) !important;
+    border-radius: 999px !important;
+    font-size: 12px !important;
+    padding: 4px 14px !important;
+    transition: all 0.2s !important;
+}
+
+    body.light-mode .modal .btn-outline-primary:hover {
+        background-color: rgba(61, 121, 176, 0.10) !important;
+        border-color: rgba(35, 90, 155, 0.85) !important;
+        color: rgba(35, 90, 155, 1) !important;
+    }
+
+body.light-mode .modal .btn-outline-success {
+    background-color: transparent !important;
+    border: 1.5px solid rgba(25, 135, 84, 0.60) !important;
+    color: rgba(18, 108, 66, 1) !important;
+    border-radius: 999px !important;
+    font-size: 12px !important;
+    padding: 4px 14px !important;
+    transition: all 0.2s !important;
+}
+
+    body.light-mode .modal .btn-outline-success:hover {
+        background-color: rgba(25, 135, 84, 0.10) !important;
+        border-color: rgba(18, 108, 66, 0.85) !important;
+        color: rgba(18, 108, 66, 1) !important;
+    }
+
+/* Submit button inline style hijau (light) */
+body.light-mode .modal-footer button[style*="background-color: rgb(25, 135, 84)"],
+body.light-mode .modal-footer .btn-small.text-white {
+    background-color: rgba(25, 135, 84, 0.92) !important;
+    border: 1.5px solid rgba(25, 135, 84, 0.75) !important;
+    color: #ffffff !important;
+    border-radius: 999px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    padding: 6px 18px !important;
+}
+
+    body.light-mode .modal-footer button[style*="background-color: rgb(25, 135, 84)"]:hover,
+    body.light-mode .modal-footer .btn-small.text-white:hover {
+        background-color: rgba(18, 108, 66, 1) !important;
+        border-color: rgba(18, 108, 66, 1) !important;
+        color: #ffffff !important;
+    }
+
+/* Info button (light) */
+body.light-mode .modal .btn-info,
+body.light-mode .modal-body .btn-info {
+    background-color: rgba(13, 110, 155, 0.85) !important;
+    border: 1.5px solid rgba(13, 202, 240, 0.60) !important;
+    color: rgba(13, 202, 240, 1) !important;
+    border-radius: 8px !important;
+    font-size: 11px !important;
+    padding: 4px 10px !important;
+    transition: all 0.2s !important;
+}
+
+    body.light-mode .modal .btn-info:hover {
+        background-color: rgba(9, 88, 128, 1) !important;
+        color: rgba(100, 220, 255, 1) !important;
+    }
+
+/* Backdrop (light) */
+body.light-mode .modal-backdrop.show {
+    background-color: rgba(0, 0, 0, 0.30) !important;
+}
+
+/* Detail Reason Modal bg-dark di light mode */
+body.light-mode .modal-content.bg-dark {
+    background-color: rgba(30, 40, 65, 0.97) !important;
+    border: 1px solid rgba(100, 130, 180, 0.35) !important;
+}
+
+    body.light-mode .modal-content.bg-dark .modal-title,
+    body.light-mode .modal-content.bg-dark h5,
+    body.light-mode .modal-content.bg-dark p,
+    body.light-mode .modal-content.bg-dark .modal-body {
+        color: #e8eaf0 !important;
+    }
+
+/* Toast (light) */
+body.light-mode .toast.text-bg-danger {
+    background-color: rgba(220, 53, 69, 0.93) !important;
+    border: 1px solid rgba(220, 53, 69, 0.4) !important;
+}
+
+body.light-mode .toast.text-bg-success {
+    background-color: rgba(25, 135, 84, 0.93) !important;
+    border: 1px solid rgba(25, 135, 84, 0.4) !important;
+}
