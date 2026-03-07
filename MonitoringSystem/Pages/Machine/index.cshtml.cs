@@ -41,16 +41,16 @@ namespace MonitoringSystem.Controllers
                 var query = @"
                     SELECT 
                         [MachineName],
-                        ISNULL(CAST([OEE] AS VARCHAR), '-') AS [OEE],
-                        ISNULL(CAST([OperatingRatio] AS VARCHAR), '-') AS [OperatingRatio],
-                        ISNULL(CAST([Ability] AS VARCHAR), '-') AS [Ability],
-                        ISNULL(CAST([Quality] AS VARCHAR), '-') AS [Quality],
-                        ISNULL(CAST([Achievement] AS VARCHAR), '-') AS [Achievement],
-                        CONVERT(VARCHAR, [Date], 23) AS [Date]
+                        ISNULL(CAST(ROUND(AVG(CAST([OEE]            AS FLOAT)), 2) AS VARCHAR), '-') AS [OEE],
+                        ISNULL(CAST(ROUND(AVG(CAST([OperatingRatio] AS FLOAT)), 2) AS VARCHAR), '-') AS [OperatingRatio],
+                        ISNULL(CAST(ROUND(AVG(CAST([Ability]        AS FLOAT)), 2) AS VARCHAR), '-') AS [Ability],
+                        ISNULL(CAST(ROUND(AVG(CAST([Quality]        AS FLOAT)), 2) AS VARCHAR), '-') AS [Quality],
+                        ISNULL(CAST(ROUND(AVG(CAST([Achievement]    AS FLOAT)), 2) AS VARCHAR), '-') AS [Achievement]
                     FROM [dbo].[MachineEfficiency]
                     WHERE MONTH([Date]) = @Month
                       AND YEAR([Date])  = @Year
-                    ORDER BY [MachineName], [Date]";
+                    GROUP BY [MachineName]
+                    ORDER BY [MachineName]";
 
                 using var cmd = new SqlCommand(query, conn);
                 cmd.Parameters.AddWithValue("@Month", month);
@@ -66,8 +66,7 @@ namespace MonitoringSystem.Controllers
                         operatingRatio = reader["OperatingRatio"]?.ToString() ?? "-",
                         ability = reader["Ability"]?.ToString() ?? "-",
                         quality = reader["Quality"]?.ToString() ?? "-",
-                        achievement = reader["Achievement"]?.ToString() ?? "-",
-                        date = reader["Date"]?.ToString() ?? "-"
+                        achievement = reader["Achievement"]?.ToString() ?? "-"
                     });
                 }
 
@@ -83,7 +82,6 @@ namespace MonitoringSystem.Controllers
             }
         }
 
-        // ✅ FIX: Ambil dari MachineEfficiency supaya nama match dengan tabel
         [HttpGet("list")]
         public IActionResult GetMachineList()
         {
@@ -183,7 +181,6 @@ namespace MonitoringSystem.Controllers
                         double? quality = TryParseDouble(sheet.Cells[row, baseCol + 2].Value);
                         double? ability = TryParseDouble(sheet.Cells[row, baseCol + 3].Value);
 
-                        // ✅ Skip kalau semua nilai null atau 0
                         if ((achievement == null || achievement == 0) &&
                             (operatingRatio == null || operatingRatio == 0) &&
                             (quality == null || quality == 0) &&

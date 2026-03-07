@@ -334,18 +334,18 @@ body.light-mode .filter-content .btn-success {
 
 /* POSISI BALLOON */
 #machine-300t-new {
-    top: 75%;
-    left: 88%;
+    top: 73%;
+    left: 87%;
 }
 
 #machine-300t {
     top: 47%;
-    left: 90%;
+    left: 86%;
 }
 
 #machine-200t {
     top: 37%;
-    left: 88%;
+    left: 84%;
 }
 
 #machine-400t {
@@ -365,7 +365,7 @@ body.light-mode .filter-content .btn-success {
 
 #machine-sf-250 {
     top: 4%;
-    left: 68%;
+    left: 65%;
 }
 
 #machine-fix-80 {
@@ -373,24 +373,24 @@ body.light-mode .filter-content .btn-success {
     left: 58%;
 }
 
-#machine-fix-36 {
-    top: 4%;
-    left: 39%;
-}
-
 #machine-fix-12 {
     top: 4%;
     left: 50%;
 }
 
-#machine-kyoshin {
-    top: 29%;
-    left: 63%;
+#machine-fix-36 {
+    top: 4%;
+    left: 39%;
 }
 
 #machine-kyoshin-ori {
     top: 29%;
     left: 38%;
+}
+
+#machine-kyoshin {
+    top: 29%;
+    left: 63%;
 }
 
 #machine-li-chin {
@@ -405,12 +405,12 @@ body.light-mode .filter-content .btn-success {
 
 #machine-7-row {
     top: 4%;
-    left: 88%;
+    left: 86%;
 }
 
 #outdoor-unit-marker {
     top: 17%;
-    left: 20%;
+    left: 18%;
     max-width: 175px;
 }
 
@@ -427,12 +427,12 @@ body.light-mode .filter-content .btn-success {
 
 #evap {
     top: 53%;
-    left: 56%;
+    left: 53%;
 }
 
 #cond {
     top: 54%;
-    left: 70%;
+    left: 67%;
 }
 
 /* LAYOUT */
