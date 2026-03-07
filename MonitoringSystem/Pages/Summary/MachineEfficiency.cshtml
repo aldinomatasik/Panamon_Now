@@ -153,7 +153,7 @@
                 <form method="get" class="d-flex flex-wrap align-items-center gap-3">
                     <div class="d-flex align-items-center gap-2">
                         <label class="mb-0">Date</label>
-                        <input type="date" class="form-control" style="width:140px;" id="filterDate" value="2026-03-04" />
+                        <input type="date" class="form-control" style="width:140px;" id="filterDate" />
                     </div>
                     <button type="button" class="btn btn-primary" onclick="doSearch()">Search</button>
                     <button type="button" class="btn btn-danger"  onclick="doReset()">Reset</button>
@@ -172,7 +172,7 @@
             <div class="col-6 col-md-2">
                 <div class="kpi-input-box">
                     <label>Date</label>
-                    <div id="displayDate" style="font-size:16px;font-weight:700;">04 Mar 2026</div>
+                    <div id="displayDate" style="font-size:16px;font-weight:700;"></div>
                 </div>
             </div>
             <div class="col-6 col-md-2">
@@ -310,6 +310,15 @@
         freeTalkingQC:            'FreeTalkingQC',
         noProductionDay:          'NoProductionDay',
     };
+
+    // ─── Helper: tanggal hari ini dalam format YYYY-MM-DD ─────────
+    function todayISO() {
+        const now = new Date();
+        const y = now.getFullYear();
+        const m = String(now.getMonth() + 1).padStart(2, '0');
+        const d = String(now.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
 
     // ─── Badge helpers ────────────────────────────────────────────
     function showBadge(isExisting) {
@@ -681,7 +690,7 @@
     }
 
     function doReset() {
-        document.getElementById('filterDate').value = '2026-03-04';
+        document.getElementById('filterDate').value = todayISO();
         const machSel = document.getElementById('inputMachine');
         if (machSel.options.length > 0) machSel.selectedIndex = 0;
         document.getElementById('inputShift').value = '1';
@@ -756,6 +765,7 @@
     }
 
     window.addEventListener('DOMContentLoaded', async () => {
+        document.getElementById('filterDate').value = todayISO();
         await loadMachines();
         await loadLossCategories();
         doSearch();   // doSearch() memanggil loadExistingData() — jadi tidak perlu addLossRow manual di sini
