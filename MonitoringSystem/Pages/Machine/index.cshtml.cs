@@ -19,9 +19,15 @@ namespace MonitoringSystem.Controllers
 
         [HttpGet("efficiency")]
         public IActionResult GetMachineEfficiency(
-            [FromQuery] string? startDate,
-            [FromQuery] string? endDate)
+            [FromQuery] int month,
+            [FromQuery] int year)
         {
+            if (month < 1 || month > 12)
+                return BadRequest(new { error = "Bulan tidak valid (1–12)." });
+
+            if (year < 2000 || year > 2100)
+                return BadRequest(new { error = "Tahun tidak valid." });
+
             var result = new List<object>();
             try
             {
@@ -42,22 +48,13 @@ namespace MonitoringSystem.Controllers
                         ISNULL(CAST([Achievement] AS VARCHAR), '-') AS [Achievement],
                         CONVERT(VARCHAR, [Date], 23) AS [Date]
                     FROM [dbo].[MachineEfficiency]
-                    WHERE 1=1
-                        AND (@startDate IS NULL OR [Date] >= @startDate)
-                        AND (@endDate IS NULL OR [Date] <= @endDate)
+                    WHERE MONTH([Date]) = @Month
+                      AND YEAR([Date])  = @Year
                     ORDER BY [MachineName], [Date]";
 
                 using var cmd = new SqlCommand(query, conn);
-
-                if (DateTime.TryParse(startDate, out var parsedStart))
-                    cmd.Parameters.AddWithValue("@startDate", parsedStart.Date);
-                else
-                    cmd.Parameters.AddWithValue("@startDate", DBNull.Value);
-
-                if (DateTime.TryParse(endDate, out var parsedEnd))
-                    cmd.Parameters.AddWithValue("@endDate", parsedEnd.Date);
-                else
-                    cmd.Parameters.AddWithValue("@endDate", DBNull.Value);
+                cmd.Parameters.AddWithValue("@Month", month);
+                cmd.Parameters.AddWithValue("@Year", year);
 
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
