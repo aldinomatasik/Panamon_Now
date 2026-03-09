@@ -73,20 +73,32 @@
         }
 
         /* ===== LIGHT MODE - DROPDOWN ===== */
-        html.light-mode .dropdown.custom-dropdown {
+        body.light-mode .dropdown.custom-dropdown {
             background-color: rgba(245, 250, 255, 0.98) !important;
             border: 2px solid rgba(61, 121, 176, 0.4) !important;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
         }
 
-        html.light-mode .dropdown.custom-dropdown div {
+        body.light-mode .dropdown.custom-dropdown div {
             color: #1a1a2e !important;
             border-bottom: 1px solid rgba(0, 0, 0, 0.07) !important;
         }
 
-        html.light-mode .dropdown.custom-dropdown div:hover {
+        body.light-mode .dropdown.custom-dropdown div:hover {
             background-color: rgba(61, 121, 176, 0.12) !important;
             color: #1a1a2e !important;
+        }
+
+        body.light-mode .dropdown.custom-dropdown::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.04);
+        }
+
+        body.light-mode .dropdown.custom-dropdown::-webkit-scrollbar-thumb {
+            background: rgba(61, 121, 176, 0.25);
+        }
+
+        body.light-mode .dropdown.custom-dropdown::-webkit-scrollbar-thumb:hover {
+            background: rgba(61, 121, 176, 0.45);
         }
 
         /* ===== FILTER AREA ===== */
@@ -115,6 +127,17 @@
 
         .panamon-bottom-line { top: 0 !important; border-top: 2px solid rgba(255, 255, 255, 0.08) !important; }
         .panamon-bottomm-line { bottom: 0 !important; border-bottom: 2px solid rgba(255, 255, 255, 0.08) !important; }
+
+        /* ===== LIGHT MODE - PANAMON LINES ===== */
+        body.light-mode .panamon-bottom-line {
+            border-top-color: rgba(0, 0, 0, 0.10) !important;
+            background: rgba(0, 0, 0, 0.03) !important;
+        }
+
+        body.light-mode .panamon-bottomm-line {
+            border-bottom-color: rgba(0, 0, 0, 0.10) !important;
+            background: rgba(0, 0, 0, 0.03) !important;
+        }
 
         .filter-content {
             position: relative;
@@ -164,7 +187,7 @@
         }
 
         .filter-content .form-select option {
-            background-color: rgba(50, 60, 80, 0.95);
+            background-color: rgb(30, 40, 60);
             color: #ffffff;
             font-size: 12px;
             padding: 8px;
@@ -189,6 +212,13 @@
             background-repeat: no-repeat;
             background-position: right 8px center;
             background-size: 10px 10px;
+        }
+
+        .filter-content .form-select-sm option {
+            background-color: rgb(30, 40, 60);
+            color: #ffffff;
+            font-size: 12px;
+            padding: 8px;
         }
 
         .filter-content .form-select-sm.selected { font-weight: 700 !important; }
@@ -245,40 +275,40 @@
         }
 
         /* ===== LIGHT MODE - FILTER ===== */
-        html.light-mode .filter-content label { color: #1a1a2e !important; }
+        body.light-mode .filter-content label { color: #1a1a2e !important; }
 
-        html.light-mode .filter-content .form-control {
+        body.light-mode .filter-content .form-control {
             background-color: rgba(255, 255, 255, 0.65) !important;
             border-color: rgba(0, 0, 0, 0.25) !important;
             color: #1a1a2e !important;
         }
 
-        html.light-mode .filter-content .form-select,
-        html.light-mode .filter-content .form-select-sm {
+        body.light-mode .filter-content .form-select,
+        body.light-mode .filter-content .form-select-sm {
             background-color: rgba(255, 255, 255, 0.5) !important;
             border-color: rgba(0, 0, 0, 0.2) !important;
             color: #1a1a2e !important;
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%231a1a2e' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e") !important;
         }
 
-        html.light-mode .filter-content .form-select option,
-        html.light-mode .filter-content .form-select-sm option {
+        body.light-mode .filter-content .form-select option,
+        body.light-mode .filter-content .form-select-sm option {
             background-color: #ffffff !important;
             color: #1a1a2e !important;
         }
 
-        html.light-mode .filter-content .btn-primary {
+        body.light-mode .filter-content .btn-primary {
             background-color: rgba(61, 121, 176, 0.85) !important;
             border-color: rgba(61, 121, 176, 0.9) !important;
             color: #ffffff !important;
         }
 
-        html.light-mode .filter-content .btn-primary:hover {
+        body.light-mode .filter-content .btn-primary:hover {
             background-color: rgba(35, 90, 150, 0.95) !important;
             color: #ffffff !important;
         }
 
-        html.light-mode .filter-content .btn-danger {
+        body.light-mode .filter-content .btn-danger {
             background-color: rgba(180, 40, 50, 0.85) !important;
             border-color: rgba(200, 60, 70, 0.9) !important;
             color: #ffffff !important;
@@ -328,31 +358,31 @@
         .card-header .card p { color: #ffffff !important; margin-bottom: 4px; }
 
         /* ===== LIGHT MODE - CARD ===== */
-        html.light-mode .card {
+        body.light-mode .card {
             background: rgba(255, 255, 255, 0.55) !important;
             border: 2px solid rgba(200, 215, 235, 0.80) !important;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.10) !important;
             color: #1a1a2e !important;
         }
 
-        html.light-mode .card * { color: #1a1a2e !important; }
-        html.light-mode .card .btn-warning, html.light-mode .card .btn-warning * { color: #1a1a2e !important; }
-        html.light-mode .card .btn-success, html.light-mode .card .btn-success * { color: #ffffff !important; }
-        html.light-mode .card .btn-danger, html.light-mode .card .btn-danger * { color: #ffffff !important; }
-        html.light-mode .card .btn-primary, html.light-mode .card .btn-primary * { color: #ffffff !important; }
+        body.light-mode .card * { color: #1a1a2e !important; }
+        body.light-mode .card .btn-warning, body.light-mode .card .btn-warning * { color: #1a1a2e !important; }
+        body.light-mode .card .btn-success, body.light-mode .card .btn-success * { color: #ffffff !important; }
+        body.light-mode .card .btn-danger, body.light-mode .card .btn-danger * { color: #ffffff !important; }
+        body.light-mode .card .btn-primary, body.light-mode .card .btn-primary * { color: #ffffff !important; }
 
-        html.light-mode .card-header {
+        body.light-mode .card-header {
             background-color: rgba(255, 255, 255, 0.35) !important;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
         }
 
-        html.light-mode .card-header .card {
+        body.light-mode .card-header .card {
             background: rgba(230, 240, 255, 0.85) !important;
             border: 2px solid rgba(61, 121, 176, 0.4) !important;
             color: #1a1a2e !important;
         }
 
-        html.light-mode .card-header .card p { color: #1a1a2e !important; }
+        body.light-mode .card-header .card p { color: #1a1a2e !important; }
 
         /* ===== TABLE - DARK MODE DEFAULT ===== */
         .table {
@@ -404,48 +434,48 @@
         }
 
         /* ===== LIGHT MODE - TABLE ===== */
-        html.light-mode .table {
+        body.light-mode .table {
             background-color: transparent !important;
             color: #1a1a2e !important;
         }
 
-        html.light-mode .table thead th,
-        html.light-mode .table > thead > tr > th {
+        body.light-mode .table thead th,
+        body.light-mode .table > thead > tr > th {
             background-color: rgba(25, 35, 58, 0.92) !important;
             color: #ffffff !important;
             border-color: rgba(255, 255, 255, 0.25) !important;
         }
 
-        html.light-mode .table tbody td,
-        html.light-mode .table tbody th {
+        body.light-mode .table tbody td,
+        body.light-mode .table tbody th {
             background-color: rgba(255, 255, 255, 0.50) !important;
             color: #1a1a2e !important;
             border-color: rgba(0, 0, 0, 0.07) !important;
         }
 
-        html.light-mode .table tbody input[type="text"],
-        html.light-mode .table tbody input[type="number"] { color: #1a1a2e !important; }
+        body.light-mode .table tbody input[type="text"],
+        body.light-mode .table tbody input[type="number"] { color: #1a1a2e !important; }
 
-        html.light-mode .table .form-check-label { color: #1a1a2e !important; }
+        body.light-mode .table .form-check-label { color: #1a1a2e !important; }
 
-        html.light-mode .table td input.form-control,
-        html.light-mode .table td textarea.form-control {
+        body.light-mode .table td input.form-control,
+        body.light-mode .table td textarea.form-control {
             background-color: rgba(255, 255, 255, 0.85) !important;
             border: 1px solid rgba(0, 0, 0, 0.18) !important;
             color: #1a1a2e !important;
         }
 
-        html.light-mode .table td input.form-control:focus,
-        html.light-mode .table td textarea.form-control:focus {
+        body.light-mode .table td input.form-control:focus,
+        body.light-mode .table td textarea.form-control:focus {
             background-color: rgba(255, 255, 255, 0.98) !important;
             border-color: rgba(61, 121, 176, 0.55) !important;
             color: #1a1a2e !important;
         }
 
-        html.light-mode .table td input.form-control::placeholder,
-        html.light-mode .table td textarea.form-control::placeholder { color: rgba(26, 26, 46, 0.38) !important; }
+        body.light-mode .table td input.form-control::placeholder,
+        body.light-mode .table td textarea.form-control::placeholder { color: rgba(26, 26, 46, 0.38) !important; }
 
-        html.light-mode .table td input:disabled {
+        body.light-mode .table td input:disabled {
             background-color: rgba(220, 228, 240, 0.60) !important;
             color: rgba(26, 26, 46, 0.55) !important;
         }
@@ -466,17 +496,17 @@
         textarea#comment::placeholder { color: rgba(255, 255, 255, 0.5) !important; }
 
         /* ===== LIGHT MODE - TEXTAREA COMMENT ===== */
-        html.light-mode textarea#comment {
+        body.light-mode textarea#comment {
             background-color: rgba(255, 255, 255, 0.85) !important;
             border: 1px solid rgba(0, 0, 0, 0.18) !important;
             color: #1a1a2e !important;
         }
 
-        html.light-mode textarea#comment::placeholder { color: rgba(26, 26, 46, 0.38) !important; }
+        body.light-mode textarea#comment::placeholder { color: rgba(26, 26, 46, 0.38) !important; }
 
         /* ===== SUBMIT COUNTER ===== */
         #submitCounter, #submitCounter span { color: #ffffff !important; }
-        html.light-mode #submitCounter, html.light-mode #submitCounter span { color: #1a1a2e !important; }
+        body.light-mode #submitCounter, body.light-mode #submitCounter span { color: #1a1a2e !important; }
 
         /* ===== BUTTON OPSI DI TABEL - DARK ===== */
         .table .input-group .btn-primary {
@@ -492,33 +522,33 @@
         }
 
         /* ===== LIGHT MODE - BUTTON OPSI ===== */
-        html.light-mode .table .input-group .btn-primary {
+        body.light-mode .table .input-group .btn-primary {
             background-color: rgba(61, 121, 176, 0.90) !important;
             border: 2px solid rgba(61, 121, 176, 0.75) !important;
             color: #ffffff !important;
         }
 
-        html.light-mode .table .input-group .btn-primary:hover {
+        body.light-mode .table .input-group .btn-primary:hover {
             background-color: rgba(35, 90, 150, 1) !important;
             color: #ffffff !important;
         }
 
         /* ===== ADD ROW BUTTON ===== */
-        html.light-mode .btn-success.btn-sm {
+        body.light-mode .btn-success.btn-sm {
             background-color: rgba(25, 135, 84, 0.90) !important;
             border: 1.5px solid rgba(25, 135, 84, 0.75) !important;
             color: #ffffff !important;
         }
 
         /* ===== SUBMIT & RESET BAWAH FORM - LIGHT ===== */
-        html.light-mode #btn-validate-submit {
+        body.light-mode #btn-validate-submit {
             background-color: rgba(61, 121, 176, 0.90) !important;
             border: 1.5px solid rgba(61, 121, 176, 0.75) !important;
             color: #ffffff !important;
             border-radius: 999px !important;
         }
 
-        html.light-mode .d-flex.align-middle.justify-content-center .btn-danger {
+        body.light-mode .d-flex.align-middle.justify-content-center .btn-danger {
             background-color: rgba(180, 40, 50, 0.88) !important;
             border-color: rgba(180, 40, 50, 0.75) !important;
             color: #ffffff !important;
@@ -526,20 +556,20 @@
         }
 
         /* ===== EDIT & DEL BUTTONS DI TABEL - LIGHT ===== */
-        html.light-mode .table .btn-warning {
+        body.light-mode .table .btn-warning {
             background-color: rgba(255, 193, 7, 0.90) !important;
             border-color: rgba(200, 150, 0, 0.7) !important;
             color: #1a1a2e !important;
         }
 
-        html.light-mode .table .btn-danger {
+        body.light-mode .table .btn-danger {
             background-color: rgba(180, 40, 50, 0.88) !important;
             border-color: rgba(180, 40, 50, 0.75) !important;
             color: #ffffff !important;
         }
 
         /* ===== UPLOAD MONTHLY PLAN BUTTON - LIGHT ===== */
-        html.light-mode .col-auto.ms-auto .btn-primary {
+        body.light-mode .col-auto.ms-auto .btn-primary {
             background-color: rgba(61, 121, 176, 0.85) !important;
             border-color: rgba(61, 121, 176, 0.9) !important;
             color: #ffffff !important;
@@ -620,9 +650,9 @@
                                     <select id="TargetMonth" name="TargetMonth" class="form-select" required>
                                     @for (int i = 1; i <= 12; i++)
                                     {
-                                                    <option value="@i" selected="@(i == DateTime.Now.Month ? "selected" : null)">
+                                                        <option value="@i" selected="@(i == DateTime.Now.Month ? "selected" : null)">
                                             @System.Globalization.CultureInfo.GetCultureInfo("en-US").DateTimeFormat.GetMonthName(i)
-                                                    </option>
+                                                        </option>
                                     }
                                     </select>
                                 </div>
@@ -631,7 +661,7 @@
                                     <select id="TargetYear" name="TargetYear" class="form-select" required>
                                     @for (int i = DateTime.Now.Year - 3; i <= DateTime.Now.Year + 1; i++)
                                     {
-                                                    <option value="@i" selected="@(i == DateTime.Now.Year ? "selected" : null)">@i</option>
+                                                        <option value="@i" selected="@(i == DateTime.Now.Year ? "selected" : null)">@i</option>
                                     }
                                     </select>
                                 </div>
@@ -712,94 +742,94 @@
                     @for (int i = 0; i < totalRows; i++)
                     {
                         var record = dataCount > i ? Model.listRecords[i] : null;
-                                <tr>
-                                    <th scope="row" class="text-center align-middle row-number">@(i + 1)</th>
-                                    <td>
-                                        <input disabled type="hidden" name="IdModel[@i]" value="@(record?.Id)" />
-                                        <input disabled type="text" class="form-control" name="OriginalModelName[@i]" value="@(record?.ModelName)" placeholder="-" />
-                                    </td>
-                                    <td>
-                                        <input disabled type="text" class="form-control" name="OriginalQuantity[@i]" value="@(record?.Quantity.ToString())" placeholder="-" />
-                                    </td>
-                                    <td>
-                                        <div class="input-group position-relative">
-                                            <input type="hidden" name="IdModel[@i]" value="@(record?.Id)" />
-                                            <input type="text" class="form-control productInput" name="ModelName[@i]" value="@(record?.ModelName)" placeholder="Pilih Model" autocomplete="off" />
-                                            <a class="btn btn-primary input-group-text" data-bs-toggle="modal" data-bs-target="#new-model-modal">Opsi</a>
-                                            <div class="dropdown custom-dropdown" style="top: 100%; left: 0; width: 100%;"></div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" name="Quantity[@i]" value="@(record?.Quantity.ToString())" placeholder="Qty" autocomplete="off" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" name="Overtime[@i]" value="@(record?.Overtime.ToString())" placeholder="Ovt" autocomplete="off" />
-                                    </td>
-                                    <td>
-                                        <input type="number" class="form-control" name="NoOfDirectWorker[@i]" value="@(record?.NoDirectOfWorker.ToString())" placeholder="Worker" autocomplete="off" />
-                                    </td>
-                                    <td>
-                                        <input type="number" class="form-control" name="NoOfDirectWorkerOvertime[@i]" value="@(record?.NoDirectOfWorkerOvertime.ToString())" placeholder="Ovt" autocomplete="off" />
-                                    </td>
-                                    <td class="align-middle">
-                                        <div class="d-flex flex-wrap gap-2">
-                                            <div class="form-check">
-                                                <input class="form-check-input"
-                                                       type="checkbox"
-                                                       name="Shift[@i]"
-                                                       value="1"
+                                    <tr>
+                                        <th scope="row" class="text-center align-middle row-number">@(i + 1)</th>
+                                        <td>
+                                            <input disabled type="hidden" name="IdModel[@i]" value="@(record?.Id)" />
+                                            <input disabled type="text" class="form-control" name="OriginalModelName[@i]" value="@(record?.ModelName)" placeholder="-" />
+                                        </td>
+                                        <td>
+                                            <input disabled type="text" class="form-control" name="OriginalQuantity[@i]" value="@(record?.Quantity.ToString())" placeholder="-" />
+                                        </td>
+                                        <td>
+                                            <div class="input-group position-relative">
+                                                <input type="hidden" name="IdModel[@i]" value="@(record?.Id)" />
+                                                <input type="text" class="form-control productInput" name="ModelName[@i]" value="@(record?.ModelName)" placeholder="Pilih Model" autocomplete="off" />
+                                                <a class="btn btn-primary input-group-text" data-bs-toggle="modal" data-bs-target="#new-model-modal">Opsi</a>
+                                                <div class="dropdown custom-dropdown" style="top: 100%; left: 0; width: 100%;"></div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" name="Quantity[@i]" value="@(record?.Quantity.ToString())" placeholder="Qty" autocomplete="off" />
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" name="Overtime[@i]" value="@(record?.Overtime.ToString())" placeholder="Ovt" autocomplete="off" />
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control" name="NoOfDirectWorker[@i]" value="@(record?.NoDirectOfWorker.ToString())" placeholder="Worker" autocomplete="off" />
+                                        </td>
+                                        <td>
+                                            <input type="number" class="form-control" name="NoOfDirectWorkerOvertime[@i]" value="@(record?.NoDirectOfWorkerOvertime.ToString())" placeholder="Ovt" autocomplete="off" />
+                                        </td>
+                                        <td class="align-middle">
+                                            <div class="d-flex flex-wrap gap-2">
+                                                <div class="form-check">
+                                                    <input class="form-check-input"
+                                                           type="checkbox"
+                                                           name="Shift[@i]"
+                                                           value="1"
                                         @(record?.Shift?.Contains("1") == true ? "checked" : "")>
-                                                <label class="form-check-label">S1</label>
-                                            </div>
+                                                    <label class="form-check-label">S1</label>
+                                                </div>
 
-                                            <div class="form-check">
-                                                <input class="form-check-input"
-                                                       type="checkbox"
-                                                       name="Shift[@i]"
-                                                       value="2"
+                                                <div class="form-check">
+                                                    <input class="form-check-input"
+                                                           type="checkbox"
+                                                           name="Shift[@i]"
+                                                           value="2"
                                         @(record?.Shift?.Contains("2") == true ? "checked" : "")>
-                                                <label class="form-check-label">S2</label>
-                                            </div>
+                                                    <label class="form-check-label">S2</label>
+                                                </div>
 
-                                            <div class="form-check">
-                                                <input class="form-check-input"
-                                                       type="checkbox"
-                                                       name="Shift[@i]"
-                                                       value="3"
+                                                <div class="form-check">
+                                                    <input class="form-check-input"
+                                                           type="checkbox"
+                                                           name="Shift[@i]"
+                                                           value="3"
                                         @(record?.Shift?.Contains("3") == true ? "checked" : "")>
-                                                <label class="form-check-label">S3</label>
-                                            </div>
+                                                    <label class="form-check-label">S3</label>
+                                                </div>
 
-                                            <div class="form-check">
-                                                <input class="form-check-input"
-                                                       type="checkbox"
-                                                       name="Shift[@i]"
-                                                       value="NS"
+                                                <div class="form-check">
+                                                    <input class="form-check-input"
+                                                           type="checkbox"
+                                                           name="Shift[@i]"
+                                                           value="NS"
                                         @(record?.Shift?.Contains("NS") == true ? "checked" : "")>
-                                                <label class="form-check-label">NS</label>
+                                                    <label class="form-check-label">NS</label>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" name="QtyHour[@i]" value="@(record?.QtyHour.ToString())" placeholder="Qty/Hr" autocomplete="off" />
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control" name="Hour[@i]" value="@(record?.Hour ?? 0)" readonly />
-                                    </td>
-                                    <td>
-                                        <div class="d-flex justify-content-center">
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" name="QtyHour[@i]" value="@(record?.QtyHour.ToString())" placeholder="Qty/Hr" autocomplete="off" />
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control" name="Hour[@i]" value="@(record?.Hour ?? 0)" readonly />
+                                        </td>
+                                        <td>
+                                            <div class="d-flex justify-content-center">
                                     @if (record != null)
                                     {
-                                                        <a class="btn btn-warning btn-sm mt-1 me-1" data-bs-toggle="modal" data-bs-target="#edit-model" onclick="setModalData(this)">Edit</a>
-                                                        <a class="btn btn-danger btn-sm mt-1" data-bs-toggle="modal" data-bs-target="#delete-model" onclick="setDeleteRecordId(@(record?.Id))">Del</a>
+                                                                <a class="btn btn-warning btn-sm mt-1 me-1" data-bs-toggle="modal" data-bs-target="#edit-model" onclick="setModalData(this)">Edit</a>
+                                                                <a class="btn btn-danger btn-sm mt-1" data-bs-toggle="modal" data-bs-target="#delete-model" onclick="setDeleteRecordId(@(record?.Id))">Del</a>
                                     }
                                     else
                                     {
-                                                        <button type="button" class="btn btn-danger btn-sm mt-1" onclick="removeRow(this)">Del</button>
+                                                                <button type="button" class="btn btn-danger btn-sm mt-1" onclick="removeRow(this)">Del</button>
                                     }
-                                        </div>
-                                    </td>
-                                </tr>
+                                            </div>
+                                        </td>
+                                    </tr>
                     }
                 </tbody>
             </table>
