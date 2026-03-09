@@ -135,9 +135,9 @@
                     <tr>
                         <td class="td-machine-name">${m.machineName}</td>
                         <td>${m.oEE !== '-' ? m.oEE + '%' : '-'}</td>
-                        <td>${m.operatingRatio !== '-' ? m.operatingRatio : '-'}</td>
-                        <td>${m.ability !== '-' ? m.ability : '-'}</td>
-                        <td>${m.quality !== '-' ? m.quality : '-'}</td>
+                            <td>${m.operatingRatio !== '-' ? m.operatingRatio + '%' : '-'}</td>
+                            <td>${m.ability !== '-' ? m.ability + '%' : '-'}</td>
+                            <td>${m.quality !== '-' ? m.quality + '%' : '-'}</td>
                     </tr>
                 `).join('');
             } catch (err) {
