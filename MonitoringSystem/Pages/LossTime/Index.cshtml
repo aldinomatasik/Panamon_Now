@@ -3,29 +3,18 @@
 @model MonitoringSystem.Pages.LossTime.IndexModel
 @{
     ViewData["Title"] = "Loss Time";
-    /* Pa Adan Disini */
 }
 
 <style>
-    /*Kita dikejar pa Daniel Februari minggu pertama*/
-
-
-/* CONTAINER FLUID PADDING - SAMA DENGAN PRODUCTION REPORT */
+/* CONTAINER FLUID PADDING */
 .container-fluid {
     padding-left: 0px !important;
     padding-right: 0px !important;
 }
 
-/* REMOVE EXTRA MARGIN FROM ROWS */
-.row.d-flex.justify-content-between.mx-3 {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-}
-
-/* CARD SPACING - SAMA DENGAN PRODUCTION REPORT */
 .row.mt-2 {
-    margin-left: -21px !important;   /* ← UBAH dari -18px jadi -7px */
-    margin-right: -21px !important;  /* ← UBAH dari -18px jadi -7px */
+    margin-left: -21px !important;
+    margin-right: -21px !important;
 }
 
 .row.mt-2:first-of-type {
@@ -37,13 +26,11 @@
     padding-right: 5px !important;
 }
 
-/* ← GANTI YANG INI - LEBIH KUAT */
 .row.mt-2 > .col-12 {
     padding-left: 5px !important;
     padding-right: 5px !important;
 }
 
-/* ← TAMBAHIN INI JUGA - DOUBLE FORCE */
 .row.mt-2:last-of-type > div {
     padding-left: 5px !important;
     padding-right: 5px !important;
@@ -55,14 +42,14 @@
     width: 100% !important;
 }
 
-/* FILTER AREA WITH LINES - SUPER COMPACT */
+/* FILTER AREA */
 .filter-area-with-lines {
     position: relative;
     padding: 1px 0;
     margin-bottom: 8px;
     margin-top: -20px;
     min-height: 10px;
-    width: calc(100% - 14px);  /* ← UBAH dari 18px jadi 14px */
+    width: calc(100% - 14px);
     margin-left: 7px;
     margin-right: 7px;
 }
@@ -70,16 +57,14 @@
 .panamon-bottom-line,
 .panamon-bottomm-line {
     position: absolute !important;
-    left: -13px !important;  /* ← UBAH dari 0px jadi 7px */
-    right: -13px !important;  /* ← UBAH dari 0px jadi 7px */
-    /* HAPUS baris width! */
+    left: -13px !important;
+    right: -13px !important;
     height: 2px !important;
     background: rgba(255, 255, 255, 0.04) !important;
     z-index: 999 !important;
     pointer-events: none !important;
     display: block !important;
 }
-
 
 .panamon-bottom-line {
     top: 0 !important;
@@ -91,7 +76,7 @@
     border-bottom: 2px solid rgba(255, 255, 255, 0.08) !important;
 }
 
-/* FILTER CONTENT - SUPER COMPACT */
+/* FILTER CONTENT */
 .filter-content {
     position: relative;
     z-index: 2;
@@ -100,16 +85,13 @@
     margin-left: -8px;
     margin-right: 7px;
 }
-/* Tambahkan di bagian style */
-.filter-content .form-select.selected {
-    font-weight: 700 !important; /* Bold saat dipilih */
-}
+
 .filter-content .form-select,
 .filter-content .form-control {
     height: 28px;
     padding: 0 22px 0 8px;
     font-size: 12px;
-    line-height: 20px;  /* ← Pastikan ini sama dengan height */
+    line-height: 20px;
     border-radius: 999px;
     background-color: rgba(255, 255, 255, 0.05);
     border: 2px solid rgba(255, 255, 255, 0.5);
@@ -118,19 +100,15 @@
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    padding-top: 0;     /* ← TAMBAH */
-    padding-bottom: 0;  /* ← TAMBAH */
-    vertical-align: middle; /* ← TAMBAH */
 }
 
 .filter-content .form-select {
     height: 28px;
-    padding: 0 !important;  /* ← RESET semua padding */
+    padding: 0 !important;
     padding-left: 12px !important;
     padding-right: 28px !important;
-    padding-top: -2px !important;  /* ← NEGATIVE padding, ini trik nya! */
     font-size: 12px;
-    line-height: 16px;  /* ← UBAH dari 20px jadi 16px */
+    line-height: 16px;
     border-radius: 999px;
     background-color: rgba(255, 255, 255, 0.05);
     border: 2px solid rgba(255, 255, 255, 0.5);
@@ -139,23 +117,17 @@
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
     background-position: right 8px center;
     background-size: 10px 10px;
 }
+
 .filter-content .form-select option {
     background-color: rgba(50, 60, 80, 0.95);
     color: #ffffff;
     font-size: 12px;
     padding: 8px;
-}
-
-.filter-content .form-select option:hover {
-    background-color: rgba(70, 85, 110, 0.95);
 }
 
 .filter-content .form-select:focus,
@@ -171,6 +143,10 @@
     font-size: 14px;
     line-height: 20px;
     font-weight: 600;
+}
+
+.filter-content .form-select.selected {
+    font-weight: 700 !important;
 }
 
 .filter-content .form-check-input {
@@ -241,7 +217,7 @@
     color: rgba(244, 143, 177, 1);
 }
 
-/* CUSTOM SHIFT BUTTONS - KOTAK KAYAK PRODUCTION REPORT */
+/* SHIFT BUTTONS */
 .shift-button {
     width: 28px;
     height: 28px;
@@ -270,33 +246,27 @@
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4);
 }
 
-input[type="checkbox"]:checked + .shift-button {
-    background-color: rgba(50, 60, 80, 0.9);
-    border: 3px solid #ffffff;
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.4);
-}
-
-/* CUSTOM CARD STYLE TO MATCH DARK THEME */
-/* CUSTOM CARD STYLE TO MATCH PRODUCTION REPORT */
+/* CARD */
 .card {
-    background-color: rgba(255, 255, 255, 0.20) !important;  /* ← UBAH dari 0.05 jadi 0.20 */
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;   /* ← UBAH dari 1px 0.1 jadi 2px 0.3 */
-    border-radius: 12px;                                      /* ← TAMBAH ini */
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);               /* ← TAMBAH ini */
+    background-color: rgba(255, 255, 255, 0.20) !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .card-title {
     color: #ffffff;
 }
-/* TABEL LOSS TIME DATA - SAMAIN WARNA DENGAN CARD */
+
+/* TABLE */
 #lossTimeTable {
     font-size: 12px;
-    background-color: transparent !important;  /* ← TAMBAH ini */
+    background-color: transparent !important;
 }
 
 #lossTimeTable thead th {
     font-size: 12px;
-    background-color: rgba(0, 0, 0, 0.5) !important;  /* ← UBAH background header */
+    background-color: rgba(0, 0, 0, 0.5) !important;
     color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.2) !important;
 }
@@ -304,17 +274,17 @@ input[type="checkbox"]:checked + .shift-button {
 #lossTimeTable tbody td {
     font-size: 12px;
     padding: 4px 6px;
-    background-color: transparent !important;  /* ← TAMBAH ini */
-    color: #ffffff !important;  /* ← UBAH dari default jadi putih */
-    border-color: rgba(255, 255, 255, 0.2) !important;  /* ← TAMBAH border */
+    background-color: transparent !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 #lossTimeTable tbody tr {
-    background-color: transparent !important;  /* ← TAMBAH ini */
+    background-color: transparent !important;
 }
 
 #lossTimeTable tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.1) !important;  /* ← Hover effect */
+    background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 #lossTimeTable .btn-sm {
@@ -324,45 +294,30 @@ input[type="checkbox"]:checked + .shift-button {
     line-height: 1.2;
 }
 
-/* TABEL STRIPED - HAPUS ATAU UBAH */
 #lossTimeTable.table-striped tbody tr:nth-of-type(odd) {
-    background-color: rgba(255, 255, 255, 0.05) !important;  /* ← Stripe tipis */
+    background-color: rgba(255, 255, 255, 0.05) !important;
 }
-/* BIAR TABEL NGIKUTIN TINGGI CARD */
-/* BIAR TABEL NGIKUTIN TINGGI CARD DAN ADA SCROLL VERTIKAL */
+
 .col-md-4 .card-body {
     height: 100%;
     display: flex;
     flex-direction: column;
-    padding: 0 !important; /* Hilangkan padding biar table full */
+    padding: 0 !important;
 }
 
 .col-md-4 .table-responsive {
     flex: 1;
-    overflow-y: auto !important;  /* ← INI YANG PENTING, SCROLL VERTIKAL */
-    overflow-x: hidden !important; /* Gak ada scroll horizontal */
-    max-height: 350px !important; /* Batasi tinggi biar gak numbuh */
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    max-height: 350px !important;
 }
 
-/* Biar scrollbar keliatan */
-.col-md-4 .table-responsive::-webkit-scrollbar {
-    width: 8px;
-}
+.col-md-4 .table-responsive::-webkit-scrollbar { width: 8px; }
+.col-md-4 .table-responsive::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); border-radius: 4px; }
+.col-md-4 .table-responsive::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
+.col-md-4 .table-responsive::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.5); }
 
-.col-md-4 .table-responsive::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 4px;
-}
-
-.col-md-4 .table-responsive::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 4px;
-}
-
-.col-md-4 .table-responsive::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.5);
-}
-/* PAGINATION STYLING - DARK THEME */
+/* PAGINATION */
 .pagination .page-link {
     background-color: rgba(255, 255, 255, 0.1) !important;
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
@@ -391,9 +346,9 @@ input[type="checkbox"]:checked + .shift-button {
 }
 
 .form-select {
-    background-color: #1f2a44;   /* background gelap */
-    color: #e0e1dd;              /* text */
-    border: 1px solid #5c7cfa;   /* WARNA SAMA KAYAK LINE */
+    background-color: #1f2a44;
+    color: #e0e1dd;
+    border: 1px solid #5c7cfa;
 }
 
 .form-select:focus {
@@ -403,100 +358,189 @@ input[type="checkbox"]:checked + .shift-button {
     box-shadow: 0 0 0 0.15rem rgba(92,124,250,0.35);
 }
 
+#lineFilterPanel,
+#machineFilterPanel {
+    transition: opacity 0.2s ease;
+}
 
+.filter-panel-hidden {
+    display: none !important;
+}
+
+/* CUSTOM TOAST */
+.custom-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    min-width: 300px;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    animation: slideIn 0.3s ease-out;
+}
+.custom-toast.success {
+    background-color: rgba(25, 135, 84, 0.95);
+    color: #fff;
+    border-left: 4px solid #198754;
+}
+.custom-toast.error {
+    background-color: rgba(220, 53, 69, 0.95);
+    color: #fff;
+    border-left: 4px solid #dc3545;
+}
+.custom-toast i {
+    font-size: 18px;
+    flex-shrink: 0;
+}
+    @@keyframes slideIn {
+    from { transform: translateX(400px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+    @@keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(400px); opacity: 0; }
+}
+.custom-toast.hide {
+    animation: slideOut 0.3s ease-out forwards;
+}
 </style>
 
-<div class="filter-area-with-lines">    
+@if (TempData["Success"] != null)
+{
+                    <div id="toastSuccess" class="position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+                        <div class="toast show align-items-center text-white bg-success border-0 shadow-lg" role="alert">
+                            <div class="d-flex">
+                                <div class="toast-body">
+                                    <i class="fas fa-check-circle me-2"></i> @TempData["Success"]
+                                </div>
+                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                            </div>
+                        </div>
+                    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+                    <div id="toastError" class="position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+                        <div class="toast show align-items-center text-white bg-danger border-0 shadow-lg" role="alert">
+                            <div class="d-flex">
+                                <div class="toast-body">
+                                    <i class="fas fa-exclamation-circle me-2"></i> @TempData["Error"]
+                                </div>
+                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                            </div>
+                        </div>
+                    </div>
+}
+<div class="filter-area-with-lines">
     <div class="panamon-bottom-line"></div>
     <div class="panamon-bottomm-line"></div>
 
     <div class="filter-content">
-            <form method="post" asp-page-handler="Filter" class="d-flex flex-wrap align-items-center gap-3">
-                <div class="d-flex align-items-center gap-2">
-                    <label class="mb-0">Line</label>
-                    <select class="form-select" style="width: 60px;" id="MachineLine" name="MachineLine" asp-for="MachineLine">
-                        <option value="All">All</option>
-                        <option value="MCH1-01">CU</option>
-                        <option value="MCH1-02">CS</option>
-                    </select>
-                </div>
+        <form method="post" asp-page-handler="Filter" class="d-flex flex-wrap align-items-center gap-3">
 
-@*<div class="d-flex align-items-center gap-2">
-    <label class="mb-0">Start</label>
-    <div class="position-relative">
-        <input type="text"
-               class="form-control datepicker"
-               style="width: 140px; padding-right: 32px;"
-               id="StartDate"
-               name="StartDate">
-        <i class="fas fa-calendar position-absolute" 
-           style="right: 14px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.6); pointer-events: none; font-size: 12px;"></i>
-    </div>
-</div>
+            <div class="d-flex align-items-center gap-2">
+                <label class="mb-0">Source</label>
+                <select class="form-select" style="width: 110px;" id="SelectedSource"
+                        onchange="onSourceChange(this.value)">
+                    @if (Model.SelectedSource == "Assembly")
+                    {
+                                        <option value="Assembly" selected>Assembly</option>
+                                        <option value="Machine">Machine</option>
+                    }
+                    else
+                    {
+                                        <option value="Assembly">Assembly</option>
+                                        <option value="Machine" selected>Machine</option>
+                    }
+                </select>
+            </div>
 
-<div class="d-flex align-items-center gap-2">
-    <label class="mb-0">End</label>
-    <div class="position-relative">
-        <input type="text"
-               class="form-control datepicker"
-               style="width: 140px; padding-right: 32px;"
-               id="EndDate"
-               name="EndDate">
-        <i class="fas fa-calendar position-absolute" 
-           style="right: 14px; top: 50%; transform: translateY(-50%); color: rgba(255,255,255,0.6); pointer-events: none; font-size: 12px;"></i>
-    </div>
-</div> *@
-<div class="d-flex align-items-center gap-2">
-    <label class="mb-0">Month</label>
-    <select class="form-select" style="width: 110px;" 
-            id="SelectedMonth" name="SelectedMonth" asp-for="SelectedMonth">
+            <div class="d-flex align-items-center gap-2 @(Model.SelectedSource == "Machine" ? "filter-panel-hidden" : "")" id="lineFilterPanel">
+                <label class="mb-0">Line</label>
+                <select class="form-select" style="width: 60px;" id="MachineLine" name="MachineLine" asp-for="MachineLine">
+                    <option value="All">All</option>
+                    <option value="MCH1-01">CU</option>
+                    <option value="MCH1-02">CS</option>
+                </select>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 @(Model.SelectedSource == "Assembly" ? "filter-panel-hidden" : "")" id="machineFilterPanel">
+                <label class="mb-0">Machine</label>
+                <select class="form-select" style="width: 140px;" id="SelectedMachineName" name="SelectedMachineName"
+                        asp-for="SelectedMachineName">
+                    <option value="All">All</option>
+                    @foreach (var machine in Model.MachineNameList)
+                    {
+                                        <option value="@machine">@machine</option>
+                    }
+                </select>
+            </div>
+
+            <div class="d-flex align-items-center gap-2">
+                <label class="mb-0">Month</label>
+                <select class="form-select" style="width: 110px;"
+                        id="SelectedMonth" name="SelectedMonth" asp-for="SelectedMonth">
                     @for (int i = 1; i <= 12; i++)
                     {
-                <option value="@i">@CultureInfo.GetCultureInfo("en-US").DateTimeFormat.GetMonthName(i)</option>
+                                        <option value="@i">@CultureInfo.GetCultureInfo("en-US").DateTimeFormat.GetMonthName(i)</option>
                     }
-    </select>
-</div>
+                </select>
+            </div>
 
-<div class="d-flex align-items-center gap-2">
-    <label class="mb-0">Year</label>
-    <select class="form-select" style="width: 80px;" 
-            id="SelectedYear" name="SelectedYear" asp-for="SelectedYear">
+            <div class="d-flex align-items-center gap-2">
+                <label class="mb-0">Year</label>
+                <select class="form-select" style="width: 80px;"
+                        id="SelectedYear" name="SelectedYear" asp-for="SelectedYear">
                     @for (int i = DateTime.Now.Year; i >= 2020; i--)
                     {
-                <option value="@i">@i</option>
+                                        <option value="@i">@i</option>
                     }
-    </select>
-</div>
-                <div class="d-flex align-items-center gap-2">
-                    <label class="mb-0">Shift</label>
-                            <div class="d-flex gap-2 shift-buttons-container">
-                                <input type="checkbox" id="Shift1" name="SelectedShifts" value="1" 
-                                            @(Model.SelectedShifts != null && Model.SelectedShifts.Contains("1") ? "checked" : "") 
-                                       style="display: none;">
-                                <label for="Shift1" class="shift-button">1</label>
+                </select>
+            </div>
 
-                                <input type="checkbox" id="Shift2" name="SelectedShifts" value="2" 
-                                            @(Model.SelectedShifts != null && Model.SelectedShifts.Contains("2") ? "checked" : "") 
-                                       style="display: none;">
-                                <label for="Shift2" class="shift-button">2</label>
+            <div class="d-flex align-items-center gap-2">
+                <label class="mb-0">Shift</label>
+                <div class="d-flex gap-2 shift-buttons-container">
+                    <input type="checkbox" id="Shift1" name="SelectedShifts" value="1"
+                    @(Model.SelectedShifts != null && Model.SelectedShifts.Contains("1") ? "checked" : "")
+                           style="display: none;">
+                    <label for="Shift1" class="shift-button">1</label>
 
-                                <input type="checkbox" id="Shift3" name="SelectedShifts" value="3" 
-                                            @(Model.SelectedShifts != null && Model.SelectedShifts.Contains("3") ? "checked" : "") 
-                                       style="display: none;">
-                                <label for="Shift3" class="shift-button">3</label>
-                             </div>
+                    <input type="checkbox" id="Shift2" name="SelectedShifts" value="2"
+                    @(Model.SelectedShifts != null && Model.SelectedShifts.Contains("2") ? "checked" : "")
+                           style="display: none;">
+                    <label for="Shift2" class="shift-button">2</label>
+
+                    <input type="checkbox" id="Shift3" name="SelectedShifts" value="3"
+                    @(Model.SelectedShifts != null && Model.SelectedShifts.Contains("3") ? "checked" : "")
+                           style="display: none;">
+                    <label for="Shift3" class="shift-button">3</label>
                 </div>
+            </div>
 
-              <button type="submit" class="btn btn-primary">Search</button>
-               <button type="submit" asp-page-handler="ExportExcel" class="btn btn-success">
-                     <i class="fas fa-file-excel me-1"></i> Export CSV
-                </button>
-                <button type="submit" asp-page-handler="Reset" class="btn btn-danger">Reset</button>
+            <button type="submit" class="btn btn-primary">Search</button>
+            <button type="submit" asp-page-handler="ExportExcel" class="btn btn-success">
+                <i class="fas fa-file-excel me-1"></i> Export CSV
+            </button>
+            <button type="submit" asp-page-handler="Reset" class="btn btn-danger">Reset</button>
 
-                <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#uploadModal">
-                    <i class="fas fa-file-excel me-2"></i>Upload Actual Loss
-                </button>
-            </form>
+            @if (Model.SelectedSource == "Assembly")
+            {
+                                <button type="button" class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                                    <i class="fas fa-file-excel me-2"></i>Upload Actual Loss
+                                </button>
+            }
+
+            <input type="hidden" id="hiddenSelectedSource" name="SelectedSource" value="@Model.SelectedSource" />
+
+        </form>
     </div>
 </div>
 
@@ -505,7 +549,11 @@ input[type="checkbox"]:checked + .shift-button {
         <div class="card shadow-sm h-100">
             <div class="card-header bg-transparent">
                 <h5 class="card-title mb-0 fw-bold fs-8 text-white">
-                    Loss Time Categories @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(Model.SelectedMonth)</h5>
+                    Loss Time Categories — @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(Model.SelectedMonth)
+                    <small class="ms-2 opacity-75" style="font-size:11px;">
+                        [@Model.SelectedSource@(Model.SelectedSource == "Machine" && Model.SelectedMachineName != "All" ? $": {Model.SelectedMachineName}" : "")]
+                    </small>
+                </h5>
             </div>
             <div class="card-body">
                 <canvas id="lossTimeChart" style="width: 100%; height: 280px;"></canvas>
@@ -521,118 +569,130 @@ input[type="checkbox"]:checked + .shift-button {
             <div class="card-body p-0">
                 @if (Model.HasDataToDisplay)
                 {
-                            <div class="table-responsive" style="height: 100%;">
-                                <table class="table table-hover table-striped mb-0 text-white" id="lossTimeTable">
-                                    <thead class="sticky-top bg-dark text-white">
-                                        <tr>
-                                            <th>No.</th>
-                                            <th>Date</th>
-                                            <th>Category</th>
-                                            <th>Start Time</th>
-                                            <th>End Time</th>
-                                            <th>Duration</th>
-                                            <th>Location</th>
-                                            <th>Shift</th>
-                                            <th>Detailed</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="lossTimeTableBody">
+                                    <div class="table-responsive" style="height: 100%;">
+                                        <table class="table table-hover table-striped mb-0 text-white" id="lossTimeTable">
+                                            <thead class="sticky-top bg-dark text-white">
+                                                <tr>
+                                                    <th>No.</th>
+                                                    <th>Date</th>
+                                                    <th>Category</th>
+                                    @if (Model.SelectedSource == "Assembly")
+                                    {
+                                                                        <th>Start</th>
+                                                                        <th>End</th>
+                                    }
+                                                    <th>Duration</th>
+                                                    <th>Location</th>
+                                                    <th>Shift</th>
+                                                    <th>Detail</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="lossTimeTableBody">
                                 @foreach (var item in Model.LossTimeData.Select((data, index) => new { Data = data, Index = index + 1 + (Model.CurrentPage - 1) * Model.PageSize }))
                                 {
-                                                <tr>
-                                                    <td>@item.Index</td>
-                                                    <td>@item.Data.Date.ToString("dd-MM-yyyy")</td>
-                                                    <td>@item.Data.Category</td>
-                                                    <td>@item.Data.Start.ToString(@"hh\:mm\:ss")</td>
-                                                    <td>@item.Data.End.ToString(@"hh\:mm\:ss")</td>
-                                                    <td>@item.Data.Duration</td>
-                                                    <td>@item.Data.Location</td>
-                                                    <td>@item.Data.Shift</td>
-                                                    <td>
-                                                        <button type="button" class="btn btn-sm btn-info text-white"
-                                                                data-bs-toggle="modal"
-                                                                data-bs-target="#detailedReasonModal"
-                                                                data-reason="@item.Data.DetailedReason">
-                                                            View
-                                                        </button>
-                                                    </td>
-                                                </tr>
+                                                                    <tr>
+                                                                        <td>@item.Index</td>
+                                                                        <td>@item.Data.Date.ToString("dd-MM-yyyy")</td>
+                                                                        <td>@item.Data.Category</td>
+                                        @if (Model.SelectedSource == "Assembly")
+                                        {
+                                                                                            <td>@item.Data.Start.ToString(@"hh\:mm\:ss")</td>
+                                                                                            <td>@item.Data.End.ToString(@"hh\:mm\:ss")</td>
+                                        }
+                                                                        <td>@Math.Round(item.Data.Duration / 60.0, 1) min</td>
+                                                                        <td>@item.Data.Location</td>
+                                                                        <td>@item.Data.Shift</td>
+                                                                        <td>
+                                                                            <button type="button" class="btn btn-sm btn-info text-white"
+                                                                                    data-bs-toggle="modal"
+                                                                                    data-bs-target="#detailedReasonModal"
+                                                                                    data-reason="@item.Data.DetailedReason">
+                                                                                View
+                                                                            </button>
+                                                                        </td>
+                                                                    </tr>
                                 }
-                                    </tbody>
-                                </table>
-                            </div>
+                                            </tbody>
+                                        </table>
+                                    </div>
                 }
                 else
                 {
-                            <div class="d-flex align-items-center justify-content-center" style="height: 350px;">
-                                <div class="text-center text-muted">
-                                    <i class="fas fa-inbox fa-3x mb-3"></i>
-                                    <h5>No Data Available</h5>
-                                    <p>No records found for the selected criteria.</p>
-                                </div>
-                            </div>
+                                    <div class="d-flex align-items-center justify-content-center" style="height: 350px;">
+                                        <div class="text-center text-muted">
+                                            <i class="fas fa-inbox fa-3x mb-3"></i>
+                                            <h5>No Data Available</h5>
+                                            <p>No records found for the selected criteria.</p>
+                                        </div>
+                                    </div>
                 }
             </div>
             @if (Model.HasDataToDisplay)
             {
-                        <div class="card-footer bg-transparent border-top border-secondary">
-                            <div class="d-flex justify-content-between align-items-center text-white">
-                                <div>
-                                    <span class="fw-bold">Total: @Model.TotalRecords records</span>
+                                <div class="card-footer bg-transparent border-top border-secondary">
+                                    <div class="d-flex justify-content-between align-items-center text-white">
+                                        <div>
+                                            <span class="fw-bold">Total: @Model.TotalRecords records</span>
+                                        </div>
+                                        <nav aria-label="Page navigation">
+                                            <ul class="pagination mb-0">
+                                                <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
+                                                    <form method="post" asp-page-handler="ChangePage">
+                                                        <input type="hidden" name="pageNumber" value="@(Model.CurrentPage - 1)" />
+                                                        <input type="hidden" name="pageSize" value="10" />
+                                                        <input type="hidden" name="selectedMonth" value="@Model.SelectedMonth" />
+                                                        <input type="hidden" name="selectedYear" value="@Model.SelectedYear" />
+                                                        <input type="hidden" name="machineLine" value="@Model.MachineLine" />
+                                                        <input type="hidden" name="selectedSource" value="@Model.SelectedSource" />
+                                                        <input type="hidden" name="selectedMachineName" value="@Model.SelectedMachineName" />
+                                        @foreach (var shift in Model.SelectedShifts)
+                                        {
+                                                                            <input type="hidden" name="selectedShifts" value="@shift" />
+                                        }
+                                                        <input type="hidden" name="additionalBreakTime1Start" value="@Model.AdditionalBreakTime1Start" />
+                                                        <input type="hidden" name="additionalBreakTime1End" value="@Model.AdditionalBreakTime1End" />
+                                                        <input type="hidden" name="additionalBreakTime2Start" value="@Model.AdditionalBreakTime2Start" />
+                                                        <input type="hidden" name="additionalBreakTime2End" value="@Model.AdditionalBreakTime2End" />
+                                                        <button type="submit" class="page-link">&lsaquo;</button>
+                                                    </form>
+                                                </li>
+                                                <li class="page-item active"><span class="page-link">@Model.CurrentPage</span></li>
+                                                <li class="page-item @(Model.CurrentPage >= Model.TotalPages ? "disabled" : "")">
+                                                    <form method="post" asp-page-handler="ChangePage">
+                                                        <input type="hidden" name="pageNumber" value="@(Model.CurrentPage + 1)" />
+                                                        <input type="hidden" name="pageSize" value="10" />
+                                                        <input type="hidden" name="selectedMonth" value="@Model.SelectedMonth" />
+                                                        <input type="hidden" name="selectedYear" value="@Model.SelectedYear" />
+                                                        <input type="hidden" name="machineLine" value="@Model.MachineLine" />
+                                                        <input type="hidden" name="selectedSource" value="@Model.SelectedSource" />
+                                                        <input type="hidden" name="selectedMachineName" value="@Model.SelectedMachineName" />
+                                        @foreach (var shift in Model.SelectedShifts)
+                                        {
+                                                                            <input type="hidden" name="selectedShifts" value="@shift" />
+                                        }
+                                                        <input type="hidden" name="additionalBreakTime1Start" value="@Model.AdditionalBreakTime1Start" />
+                                                        <input type="hidden" name="additionalBreakTime1End" value="@Model.AdditionalBreakTime1End" />
+                                                        <input type="hidden" name="additionalBreakTime2Start" value="@Model.AdditionalBreakTime2Start" />
+                                                        <input type="hidden" name="additionalBreakTime2End" value="@Model.AdditionalBreakTime2End" />
+                                                        <button type="submit" class="page-link">&rsaquo;</button>
+                                                    </form>
+                                                </li>
+                                            </ul>
+                                        </nav>
+                                    </div>
                                 </div>
-                                <nav aria-label="Page navigation">
-                                    <ul class="pagination mb-0">
-                                        <li class="page-item @(Model.CurrentPage == 1 ? "disabled" : "")">
-                                            <form method="post" asp-page-handler="ChangePage">
-                                                <input type="hidden" name="pageNumber" value="@(Model.CurrentPage - 1)" />
-                                                <input type="hidden" name="pageSize" value="10" />
-                                                <input type="hidden" name="selectedMonth" value="@Model.SelectedMonth" />
-                                                <input type="hidden" name="selectedYear" value="@Model.SelectedYear" />
-                                                <input type="hidden" name="machineLine" value="@Model.MachineLine" />
-                                        @foreach (var shift in Model.SelectedShifts)
-                                        {
-                                                        <input type="hidden" name="selectedShifts" value="@shift" />
-                                        }
-                                                <input type="hidden" name="additionalBreakTime1Start" value="@Model.AdditionalBreakTime1Start" />
-                                                <input type="hidden" name="additionalBreakTime1End" value="@Model.AdditionalBreakTime1End" />
-                                                <input type="hidden" name="additionalBreakTime2Start" value="@Model.AdditionalBreakTime2Start" />
-                                                <input type="hidden" name="additionalBreakTime2End" value="@Model.AdditionalBreakTime2End" />
-                                                <button type="submit" class="page-link">&lsaquo;</button>
-                                            </form>
-                                        </li>
-                                        <li class="page-item active"><span class="page-link">@Model.CurrentPage</span></li>
-                                        <li class="page-item @(Model.CurrentPage >= Model.TotalPages ? "disabled" : "")">
-                                            <form method="post" asp-page-handler="ChangePage">
-                                                <input type="hidden" name="pageNumber" value="@(Model.CurrentPage + 1)" />
-                                                <input type="hidden" name="pageSize" value="10" />
-                                                <input type="hidden" name="selectedMonth" value="@Model.SelectedMonth" />
-                                                <input type="hidden" name="selectedYear" value="@Model.SelectedYear" />
-                                                <input type="hidden" name="machineLine" value="@Model.MachineLine" />
-                                        @foreach (var shift in Model.SelectedShifts)
-                                        {
-                                                        <input type="hidden" name="selectedShifts" value="@shift" />
-                                        }
-                                                <input type="hidden" name="additionalBreakTime1Start" value="@Model.AdditionalBreakTime1Start" />
-                                                <input type="hidden" name="additionalBreakTime1End" value="@Model.AdditionalBreakTime1End" />
-                                                <input type="hidden" name="additionalBreakTime2Start" value="@Model.AdditionalBreakTime2Start" />
-                                                <input type="hidden" name="additionalBreakTime2End" value="@Model.AdditionalBreakTime2End" />
-                                                <button type="submit" class="page-link">&rsaquo;</button>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </nav>
-                            </div>
-                        </div>
             }
         </div>
     </div>
 </div>
 
 <div class="row mt-2" style="margin-bottom: 2px; margin-left: -18px; margin-right: -18px;">
-    <div class="col-12"  style="padding-left: 5px; padding-right: 5px;">
+    <div class="col-12" style="padding-left: 5px; padding-right: 5px;">
         <div class="card shadow-sm">
             <div class="card-header bg-transparent">
-                <h5 class="card-title mb-0 fw-bold fs-8 text-white">Daily Loss Time @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(Model.SelectedMonth)</h5>
+                <h5 class="card-title mb-0 fw-bold fs-8 text-white">
+                    Daily Loss Time — @System.Globalization.CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(Model.SelectedMonth)
+                </h5>
             </div>
             <div class="card-body">
                 <canvas id="dailyLossChart" style="width: 100%; height: 350px;"></canvas>
@@ -640,7 +700,8 @@ input[type="checkbox"]:checked + .shift-button {
         </div>
     </div>
 </div>
-<!-- UPLOAD MODAL -->
+
+<!-- UPLOAD MODAL (Assembly only) -->
 <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -648,10 +709,9 @@ input[type="checkbox"]:checked + .shift-button {
                 <h5 class="modal-title" id="uploadModalLabel"><i class="fas fa-file-upload"></i> Upload Actual Loss Data Daily</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form method="post" enctype="multipart/form-data" asp-page-handler="ImportExcelActual">
+            <form id="uploadForm" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
                 <div class="modal-body">
-                   @*  <input type="hidden" name="SelectedYear" value="@Model.SelectedYear" />
-                    <input type="hidden" name="MachineLine" value="@Model.MachineLine" /> *@
                     <div class="mb-3">
                         <label class="form-label fw-bold">1. Choose Excel File</label>
                         <input type="file" name="UploadedExcel" class="form-control" accept=".xlsx" required />
@@ -659,12 +719,12 @@ input[type="checkbox"]:checked + .shift-button {
                     <div class="mb-3">
                         <label class="form-label fw-bold">2. Select Target Machine for Actual Data</label>
                         <select name="UploadMachineLine" class="form-select" required>
+                            <option value="">-- Pilih Machine --</option>
                             <option value="MCH1-01">MCH1-01 (CU)</option>
                             <option value="MCH1-02">MCH1-02 (CS)</option>
                         </select>
                         <div class="form-text text-muted">You must specify which machine this file belongs to.</div>
                     </div>
-                   
                     <hr />
                     <div class="row">
                         <div class="col-md-6 mb-3">
@@ -672,7 +732,7 @@ input[type="checkbox"]:checked + .shift-button {
                             <select id="TargetMonth" name="TargetMonth" class="form-select" required>
                                 @for (int i = 1; i <= 12; i++)
                                 {
-                                    <option value="@i">@CultureInfo.GetCultureInfo("en-US").DateTimeFormat.GetMonthName(i)</option>
+                                                    <option value="@i">@CultureInfo.GetCultureInfo("en-US").DateTimeFormat.GetMonthName(i)</option>
                                 }
                             </select>
                         </div>
@@ -681,7 +741,7 @@ input[type="checkbox"]:checked + .shift-button {
                             <select id="TargetYear" name="TargetYear" class="form-select" required>
                                 @for (int i = DateTime.Now.Year - 3; i <= DateTime.Now.Year + 5; i++)
                                 {
-                                    <option value="@i">@i</option>
+                                                    <option value="@i">@i</option>
                                 }
                             </select>
                         </div>
@@ -695,144 +755,16 @@ input[type="checkbox"]:checked + .shift-button {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-small text-white" style="background-color: rgb(25, 135, 84);">Import Actual Loss Data</button>
+                    <button type="button" id="btnSubmitUpload" class="btn btn-small text-white" style="background-color: rgb(25, 135, 84);">
+                        <i class="fas fa-file-upload me-2"></i>Import Actual Loss Data
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-<style>
-LOSS TIME SUMMARY - COMPACT & MODERN
-.loss-summary-compact {
-    font-size: 10px;
-}
 
-.loss-summary-compact .card {
-    background-color: rgba(255, 255, 255, 0.20) !important;
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;
-    border-radius: 12px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-}
-
-.loss-summary-compact .card-title {
-    font-size: 12px;
-    color: #ffffff;
-    font-weight: 700;
-    margin-bottom: 8px;
-}
-
-.loss-summary-compact .category-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 4px 8px;
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 6px;
-    margin: 3px;
-}
-
-.loss-summary-compact .category-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-}
-
-.loss-summary-compact .category-name {
-    font-size: 10px;
-    color: rgba(255, 255, 255, 0.85);
-    font-weight: 600;
-}
-
-.loss-summary-compact .category-value {
-    font-size: 11px;
-    color: #ffffff;
-    font-weight: 700;
-    margin-left: 4px;
-}
-
-.loss-summary-compact .grand-total {
-    padding-top: 8px;
-    border-top: 2px solid rgba(255, 255, 255, 0.2);
-    margin-top: 8px;
-}
-
-.loss-summary-compact .grand-total-label {
-    font-size: 11px;
-    color: rgba(255, 255, 255, 0.85);
-    font-weight: 600;
-}
-
-.loss-summary-compact .grand-total-value {
-    font-size: 12px;
-    color: #ffffff;
-    font-weight: 700;
-}
-</style>
-
-@*<div class="row mt-2 loss-summary-compact">
-    <div class="col-12">
-        <div class="card shadow-sm">
-            <div class="card-body" style="padding: 12px;">
-                <h6 class="card-title text-center">Total Loss Time Summary</h6>
-
-                <div class="d-flex justify-content-center flex-wrap">
-                    @{
-                        string[] allCategories = {
-                            "Change Model",
-                            "Material Shortage External",
-                            "MP Adjustment",
-                            "Material Shortage Internal",
-                            "Material Shortage Inhouse",
-                            "Quality Trouble",
-                            "Machine Trouble",
-                            "Rework",
-                            "Morning Assembly",
-                            "Reason Not Fill"
-                                    };
-
-                        foreach (var category in allCategories)
-                        {
-                            int categoryValue = Model.CategorySummary.ContainsKey(category) ? Model.CategorySummary[category] : 0;
-                            decimal minutes = Math.Round((decimal)categoryValue / 60, 2);
-
-                                    <div class="category-item">
-                                        <div class="category-dot" style="background-color: @GetCategoryColor(category);"></div>
-                                        <span class="category-name">@category:</span>
-                                        <span class="category-value">@minutes min</span>
-                                    </div>
-                        }
-                    }
-                </div>
-
-                <div class="grand-total text-center">
-                    <span class="grand-total-label">Grand Total:</span>
-                    <span class="grand-total-value">@Math.Round((decimal)Model.TotalDuration / 60, 2) min</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-@functions {
-    public string GetCategoryColor(string category)
-    {
-        switch (category)
-        {
-            case "Change Model": return "#4e73df";
-            case "Material Shortage External": return "#e74a3b";
-            case "MP Adjustment": return "#f6c23e";
-            case "Material Shortage Internal": return "#1cc88a";
-            case "Material Shortage Inhouse": return "#36b9cc";
-            case "Quality Trouble": return "#9c50f2";
-            case "Machine Trouble": return "#e27267";
-            case "Rework": return "#f39c12";
-            case "Morning Assembly": return "#5a5c69";
-            default: return "#858796";
-        }
-    }
-}*@
-
+<!-- DETAILED REASON MODAL -->
 <div class="modal fade" id="detailedReasonModal" tabindex="-1" aria-labelledby="detailedReasonModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content bg-dark text-white">
@@ -847,309 +779,191 @@ LOSS TIME SUMMARY - COMPACT & MODERN
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
-    </div
+    </div>
 </div>
+
 <script>
     console.log("🚀 Script START");
-    console.log("📦 Chart available?", typeof Chart !== 'undefined' ? 'YES' : 'NO');
 
-    // Global Config
     const isLightModeActive = () => document.body.classList.contains('light-mode');
 
     const getChartColors = () => {
         if (isLightModeActive()) {
-            return {
-                textColor: '#1a1a2e',
-                gridColor: 'rgba(0, 0, 0, 0.1)',
-                legendColor: '#1a1a2e',
-                tooltipBg: 'rgba(255, 255, 255, 0.9)',
-                tooltipBorder: 'rgba(0, 0, 0, 0.2)'
-            };
+            return { textColor: '#1a1a2e', gridColor: 'rgba(0,0,0,0.1)', legendColor: '#1a1a2e', tooltipBg: 'rgba(255,255,255,0.9)', tooltipBorder: 'rgba(0,0,0,0.2)' };
         } else {
-            return {
-                textColor: '#ffffff',
-                gridColor: 'rgba(255, 255, 255, 0.1)',
-                legendColor: '#ffffff',
-                tooltipBg: 'rgba(0, 0, 0, 0.8)',
-                tooltipBorder: 'rgba(255, 255, 255, 0.2)'
-            };
+            return { textColor: '#ffffff', gridColor: 'rgba(255,255,255,0.1)', legendColor: '#ffffff', tooltipBg: 'rgba(0,0,0,0.8)', tooltipBorder: 'rgba(255,255,255,0.2)' };
         }
     };
 
-    // Global Config
-   const isLightMode = document.body.classList.contains('light-mode');
-const chartTextColor = isLightMode ? '#1a1a2e' : '#ffffff';
-const chartGridColor = isLightMode ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)';
-    // Parse data dari server
+    function showCustomToast(message, type = 'success') {
+        const toastContainer = document.createElement('div');
+        toastContainer.className = `custom-toast ${type}`;
+
+        let icon = 'fas fa-check-circle';
+        if (type === 'error') icon = 'fas fa-exclamation-circle';
+        if (type === 'info') icon = 'fas fa-info-circle';
+
+        toastContainer.innerHTML = `
+            <i class="${icon}"></i>
+            <span>${message}</span>
+        `;
+
+        document.body.appendChild(toastContainer);
+
+        setTimeout(() => {
+            toastContainer.classList.add('hide');
+            setTimeout(() => toastContainer.remove(), 300);
+        }, 4000);
+    }
+
     let summaryChartData = null;
     let dailyChartData = null;
 
     try {
-        const rawSummary = '@Html.Raw(Model.ChartDataJson)';
-        console.log("📊 Raw Summary:", rawSummary.substring(0, 100) + "...");
-        summaryChartData = JSON.parse(rawSummary);
-        console.log("✅ Summary parsed:", summaryChartData);
+        summaryChartData = JSON.parse('@Html.Raw(Model.ChartDataJson)');
     } catch (e) {
         console.error("❌ Parse Summary Error:", e);
-        summaryChartData = {labels:[], fullLabels:[], shift1Data:[], shift2Data:[], shift3Data:[], lastMonthData:[]};
+        summaryChartData = { labels: [], fullLabels: [], shift1Data: [], shift2Data: [], shift3Data: [], lastMonthData: [] };
     }
 
     try {
-        const rawDaily = '@Html.Raw(Model.DailyChartDataJson)';
-        console.log("📊 Raw Daily:", rawDaily.substring(0, 100) + "...");
-        dailyChartData = JSON.parse(rawDaily);
-        console.log("✅ Daily parsed:", dailyChartData);
+        dailyChartData = JSON.parse('@Html.Raw(Model.DailyChartDataJson)');
     } catch (e) {
         console.error("❌ Parse Daily Error:", e);
-        dailyChartData = {labels:[], datasets:[]};
+        dailyChartData = { labels: [], datasets: [] };
     }
 
-    // Update dropdown style function
-   // Update dropdown style function
-function updateDropdownStyle() {
-    try {
-        const dropdowns = document.querySelectorAll('.filter-content .form-select');
-        dropdowns.forEach(dropdown => {
-            const dropdownName = dropdown.name;
-            const dropdownValue = dropdown.value;
+    function onSourceChange(val) {
+        const linePanel    = document.getElementById('lineFilterPanel');
+        const machinePanel = document.getElementById('machineFilterPanel');
+        const hiddenSrc    = document.getElementById('hiddenSelectedSource');
 
-            // ✅ KHUSUS LINE: Bold kalau bukan "All"
-            if (dropdownName === 'MachineLine') {
-                if (dropdownValue && dropdownValue !== 'All') {
-                    dropdown.classList.add('selected');
-                } else {
-                    dropdown.classList.remove('selected');
-                }
-            }
-            // ✅ KHUSUS MONTH: Selalu bold (user pasti pilih sesuatu)
-            else if (dropdownName === 'SelectedMonth') {
-                if (dropdownValue) {
-                    dropdown.classList.add('selected');
-                } else {
-                    dropdown.classList.remove('selected');
-                }
-            }
-            // ✅ KHUSUS YEAR: Selalu bold (user pasti pilih sesuatu)
-            else if (dropdownName === 'SelectedYear') {
-                if (dropdownValue) {
-                    dropdown.classList.add('selected');
-                } else {
-                    dropdown.classList.remove('selected');
-                }
-            }
-        });
-    } catch (e) {
-        console.error("❌ Dropdown error:", e);
-    }
-}
-    // Function to initialize charts
-    function initializeCharts() {
-        console.log("🎯 initializeCharts called");
-        console.log("📦 Chart available?", typeof Chart !== 'undefined' ? 'YES' : 'NO');
-
-        if (typeof Chart === 'undefined') {
-            console.error("❌ Chart.js NOT LOADED!");
-            return;
+        if (val === 'Machine') {
+            linePanel.classList.add('filter-panel-hidden');
+            machinePanel.classList.remove('filter-panel-hidden');
+        } else {
+            linePanel.classList.remove('filter-panel-hidden');
+            machinePanel.classList.add('filter-panel-hidden');
         }
+        if (hiddenSrc) hiddenSrc.value = val;
+    }
 
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.querySelector('form[method="post"]');
+        if (form) {
+            form.addEventListener('submit', function () {
+                const hidden = document.getElementById('hiddenSelectedSource');
+                const select = document.getElementById('SelectedSource');
+                if (hidden && select) hidden.value = select.value;
+            });
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        ['toastSuccess', 'toastError'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) setTimeout(() => el.style.display = 'none', 4000);
+        });
+    });
+
+    function updateDropdownStyle() {
         try {
-             const colors = getChartColors();
-            // ============ SUMMARY CHART ============
-            console.log("📍 Looking for lossTimeChart...");
+            const dropdowns = document.querySelectorAll('.filter-content .form-select');
+            dropdowns.forEach(dropdown => {
+                const v = dropdown.value;
+                if (v && v !== 'All') dropdown.classList.add('selected');
+                else dropdown.classList.remove('selected');
+            });
+        } catch (e) { console.error("❌ Dropdown error:", e); }
+    }
+
+    function initializeCharts() {
+        if (typeof Chart === 'undefined') { console.error("❌ Chart.js NOT LOADED!"); return; }
+        try {
+            const colors = getChartColors();
+
             const ctxSummary = document.getElementById('lossTimeChart');
-
             if (ctxSummary) {
-                console.log("✅ Canvas found!");
-                console.log("📊 Creating chart with data:", summaryChartData);
-
-                const summaryChart = new Chart(ctxSummary, {
+                new Chart(ctxSummary, {
                     type: 'bar',
                     data: {
                         labels: summaryChartData.labels || [],
                         datasets: [
-                            { 
-                                label: 'Last Month', 
-                                data: summaryChartData.lastMonthData || [], 
-                                backgroundColor: 'rgba(201, 203, 207, 0.95)', 
-                                stack: 'last' 
-                            },
-                            { 
-                                label: 'Shift 1', 
-                                data: summaryChartData.shift1Data || [], 
-                                backgroundColor: 'rgba(255, 99, 132, 0.95)', 
-                                stack: 'current' 
-                            },
-                            { 
-                                label: 'Shift 2', 
-                                data: summaryChartData.shift2Data || [], 
-                                backgroundColor: 'rgba(54, 162, 235, 0.95)', 
-                                stack: 'current' 
-                            },
-                            { 
-                                label: 'Shift 3', 
-                                data: summaryChartData.shift3Data || [], 
-                                backgroundColor: 'rgba(75, 192, 192, 0.95)', 
-                                stack: 'current' 
-                            }
+                            { label: 'Last Month', data: summaryChartData.lastMonthData || [], backgroundColor: 'rgba(201,203,207,0.95)', stack: 'last' },
+                            { label: 'Shift 1',    data: summaryChartData.shift1Data || [],    backgroundColor: 'rgba(255,99,132,0.95)',   stack: 'current' },
+                            { label: 'Shift 2',    data: summaryChartData.shift2Data || [],    backgroundColor: 'rgba(54,162,235,0.95)',   stack: 'current' },
+                            { label: 'Shift 3',    data: summaryChartData.shift3Data || [],    backgroundColor: 'rgba(75,192,192,0.95)',   stack: 'current' }
                         ]
                     },
                     options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
+                        responsive: true, maintainAspectRatio: false,
                         plugins: {
-                            legend: { 
-                                labels: { 
-                                    color: colors.legendColor,
-                                    font: { size: 12 }
-                                } 
-                            },
+                            legend: { labels: { color: colors.legendColor, font: { size: 12 } } },
                             tooltip: {
-                                bodyColor: colors.textColor,
-                                titleColor: colors.textColor,
-                                borderColor: colors.tooltipBorder,
-                                backgroundColor: colors.tooltipBg,
+                                bodyColor: colors.textColor, titleColor: colors.textColor,
+                                borderColor: colors.tooltipBorder, backgroundColor: colors.tooltipBg,
                                 callbacks: {
-                                    title: function (context) {
-                                        return summaryChartData.fullLabels[context[0].dataIndex] || '';
-                                    },
-                                    label: function (c) {
-                                        return `${c.dataset.label}: ${c.raw} min`;
-                                    }
+                                    title: (ctx) => summaryChartData.fullLabels[ctx[0].dataIndex] || '',
+                                    label: (c) => `${c.dataset.label}: ${c.raw} min`
                                 }
                             }
                         },
                         scales: {
-                            x: { 
-                                stacked: true,
-                                ticks: { color: colors.textColor }, 
-                                grid: { color: colors.gridColor },
-                                title: {
-                                    display: true,
-                                    text: 'Categories',
-                                    color: colors.textColor
-                                }
-                            },
-                            y: {
-                                beginAtZero: true,
-                                stacked: true,
-                                ticks: { color: colors.textColor },
-                                grid: { color: colors.gridColor },
-                                title: { 
-                                    display: true, 
-                                    text: 'Duration (Min)', 
-                                    color: colors.textColor 
-                                }
-                            }
-                        }
-                    }
-                      });
-                console.log("✅ Summary Chart created!", summaryChart);
-            } else {
-                console.error("❌ Canvas 'lossTimeChart' NOT FOUND!");
-            }
-
-            // ============ DAILY CHART ============
-            console.log("📍 Looking for dailyLossChart...");
-            const ctxDaily = document.getElementById('dailyLossChart');
-
-            if (ctxDaily) {
-                console.log("✅ Daily canvas found!");
-                console.log("📊 Creating daily chart with data:", dailyChartData);
-
-                const dailyChart = new Chart(ctxDaily, {
-                    type: 'bar',
-                    data: dailyChartData,
-                  options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { 
-                                position: 'top', 
-                                labels: { 
-                                    color: colors.legendColor,
-                                    font: { size: 12 }
-                                } 
-                            },
-                            tooltip: {
-                                bodyColor: colors.textColor,
-                                titleColor: colors.textColor,
-                                borderColor: colors.tooltipBorder,
-                                backgroundColor: colors.tooltipBg,
-                                mode: 'index',
-                                intersect: false,
-                                callbacks: { 
-                                    label: function(c) { 
-                                        return `${c.dataset.label}: ${c.raw} min`; 
-                                    } 
-                                }
-                            }
-                        },
-                        scales: {
-                            x: {
-                                stacked: true,
-                                ticks: { color: colors.textColor },
-                                grid: { color: colors.gridColor },
-                                title: { 
-                                    display: true, 
-                                    text: 'Day of Month', 
-                                    color: colors.textColor 
-                                }
-                            },
-                            y: {
-                                beginAtZero: true,
-                                stacked: true,
-                                ticks: { color: colors.textColor },
-                                grid: { color: colors.gridColor },
-                                title: { 
-                                    display: true, 
-                                    text: 'Duration (Minutes)', 
-                                    color: colors.textColor 
-                                }
-                            }
+                            x: { stacked: true, ticks: { color: colors.textColor }, grid: { color: colors.gridColor }, title: { display: true, text: 'Categories', color: colors.textColor } },
+                            y: { beginAtZero: true, stacked: true, ticks: { color: colors.textColor }, grid: { color: colors.gridColor }, title: { display: true, text: 'Duration (Min)', color: colors.textColor } }
                         }
                     }
                 });
-
-                console.log("✅ Daily Chart created!", dailyChart);
-            } else {
-                console.error("❌ Canvas 'dailyLossChart' NOT FOUND!");
             }
 
+            const ctxDaily = document.getElementById('dailyLossChart');
+            if (ctxDaily) {
+                new Chart(ctxDaily, {
+                    type: 'bar',
+                    data: dailyChartData,
+                    options: {
+                        responsive: true, maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'top', labels: { color: colors.legendColor, font: { size: 12 } } },
+                            tooltip: {
+                                bodyColor: colors.textColor, titleColor: colors.textColor,
+                                borderColor: colors.tooltipBorder, backgroundColor: colors.tooltipBg,
+                                mode: 'index', intersect: false,
+                                callbacks: { label: (c) => `${c.dataset.label}: ${c.raw} min` }
+                            }
+                        },
+                        scales: {
+                            x: { stacked: true, ticks: { color: colors.textColor }, grid: { color: colors.gridColor }, title: { display: true, text: 'Day of Month', color: colors.textColor } },
+                            y: { beginAtZero: true, stacked: true, ticks: { color: colors.textColor }, grid: { color: colors.gridColor }, title: { display: true, text: 'Duration (Minutes)', color: colors.textColor } }
+                        }
+                    }
+                });
+            }
         } catch (error) {
-            console.error("❌ Chart creation error:", error);
-            console.error("Error stack:", error.stack);
+            console.error("❌ Chart error:", error);
         }
     }
 
-    // Wait for everything to load
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log("🎯 DOM Ready via addEventListener");
-            setTimeout(initializeCharts, 100); // Delay 100ms buat pastiin Chart.js loaded
+        document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(initializeCharts, 100);
             initializeOtherFeatures();
         });
     } else {
-        console.log("🎯 DOM already ready");
         setTimeout(initializeCharts, 100);
         initializeOtherFeatures();
     }
 
     function initializeOtherFeatures() {
-        console.log("🔧 Initializing other features...");
-
-        // ============ SHIFT BUTTONS ============
         try {
             const shiftCheckboxes = document.querySelectorAll('input[name="SelectedShifts"]');
             shiftCheckboxes.forEach(checkbox => {
                 const button = document.querySelector(`label[for="${checkbox.id}"]`);
-                if (checkbox.checked && button) {
-                    button.classList.add('active');
-                }
+                if (checkbox.checked && button) button.classList.add('active');
             });
-
             const shiftButtons = document.querySelectorAll('.shift-button');
             shiftButtons.forEach(button => {
-                button.addEventListener('click', function(e) {
+                button.addEventListener('click', function (e) {
                     e.preventDefault();
                     const checkbox = document.getElementById(this.getAttribute('for'));
                     if (checkbox) {
@@ -1158,39 +972,90 @@ function updateDropdownStyle() {
                     }
                 });
             });
-            console.log("✅ Shift buttons OK");
-        } catch (e) {
-            console.error("❌ Shift error:", e);
-        }
+        } catch (e) { console.error("❌ Shift error:", e); }
 
-        // ============ DROPDOWN STYLE ============
         try {
             setTimeout(updateDropdownStyle, 50);
-            const dropdowns = document.querySelectorAll('.filter-content .form-select');
-            dropdowns.forEach(dropdown => {
-                dropdown.addEventListener('change', updateDropdownStyle);
-            });
-            console.log("✅ Dropdowns OK");
-        } catch (e) {
-            console.error("❌ Dropdown error:", e);
-        }
+            document.querySelectorAll('.filter-content .form-select').forEach(d => d.addEventListener('change', updateDropdownStyle));
+        } catch (e) { console.error("❌ Dropdown error:", e); }
 
-        // ============ MODAL ============
+        try {
+            const src = document.getElementById('SelectedSource');
+            if (src) onSourceChange(src.value);
+        } catch (e) { console.error("❌ Source init error:", e); }
+
         try {
             const detailedReasonModal = document.getElementById('detailedReasonModal');
             if (detailedReasonModal) {
                 detailedReasonModal.addEventListener('show.bs.modal', function (event) {
-                    var button = event.relatedTarget;
-                    var reason = button.getAttribute('data-reason');
-                    var modalBodyText = this.querySelector('.modal-body p#detailedReasonText');
-                    modalBodyText.textContent = (reason && reason.trim() !== '') ? reason : 'No detailed reason provided.';
+                    const reason = event.relatedTarget.getAttribute('data-reason');
+                    const p = this.querySelector('#detailedReasonText');
+                    p.textContent = (reason && reason.trim() !== '') ? reason : 'No detailed reason provided.';
                 });
-                console.log("✅ Modal OK");
             }
-        } catch (e) {
-            console.error("❌ Modal error:", e);
+        } catch (e) { console.error("❌ Modal error:", e); }
+    }
+
+    // UPLOAD HANDLER
+    document.getElementById('btnSubmitUpload')?.addEventListener('click', async function(e) {
+        e.preventDefault();
+
+        const form = document.getElementById('uploadForm');
+        if (!form) return;
+
+        const file = form.querySelector('input[name="UploadedExcel"]');
+        const machineLine = form.querySelector('select[name="UploadMachineLine"]');
+
+        if (!file.files || !file.files.length) {
+            showCustomToast('❌ Harap pilih file Excel terlebih dahulu', 'error');
+            return;
+        }
+        if (!machineLine.value) {
+            showCustomToast('❌ Harap pilih Machine Line', 'error');
+            return;
         }
 
-        console.log("🎉 All features initialized!");
-    }
+        this.disabled = true;
+        const originalHTML = this.innerHTML;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Importing...';
+
+        try {
+            const formData = new FormData(form);
+
+            // ✅ FIX: Ambil CSRF token dari hidden input dan kirim di header
+            const token = form.querySelector('input[name="__RequestVerificationToken"]')?.value;
+
+            const response = await fetch('?handler=ImportExcelActual', {
+                method: 'POST',
+                headers: {
+                    'RequestVerificationToken': token
+                },
+                body: formData
+            });
+
+            if (response.ok) {
+                showCustomToast('Data berhasil diimport', 'success');
+
+                try {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('uploadModal'));
+                    if (modal) modal.hide();
+                } catch (e) {}
+
+                form.reset();
+
+                setTimeout(() => {
+                    location.reload();
+                }, 1500);
+            } else {
+                showCustomToast('Gagal import data. Status: ' + response.status, 'error');
+                this.disabled = false;
+                this.innerHTML = originalHTML;
+            }
+        } catch (error) {
+            console.error('Upload error:', error);
+            showCustomToast('Error: ' + error.message, 'error');
+            this.disabled = false;
+            this.innerHTML = originalHTML;
+        }
+    });
 </script>

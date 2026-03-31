@@ -350,6 +350,64 @@ body.light-mode {
         background-color: rgba(100, 181, 246, 0.20) !important;
     }
 
+    /* ========== DETAILED REASON MODAL (Loss Time) ========== */
+    body.light-mode #detailedReasonModal .modal-content {
+        background-color: rgba(255, 255, 255, 0.95) !important;
+        color: #1a1a2e !important;
+        border: 1px solid rgba(0, 0, 0, 0.15) !important;
+    }
+
+    body.light-mode #detailedReasonModal .modal-header {
+        background-color: rgba(240, 245, 255, 0.95) !important;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+    }
+
+    body.light-mode #detailedReasonModal .modal-title {
+        color: #1a1a2e !important;
+    }
+
+    body.light-mode #detailedReasonModal .btn-close-white {
+        filter: invert(1) !important;
+    }
+
+    body.light-mode #detailedReasonModal .modal-body {
+        background-color: transparent !important;
+        color: #1a1a2e !important;
+    }
+
+    body.light-mode #detailedReasonModal #detailedReasonText {
+        color: #1a1a2e !important;
+    }
+
+    body.light-mode #detailedReasonModal .modal-footer {
+        background-color: rgba(240, 245, 255, 0.95) !important;
+        border-top: 1px solid rgba(0, 0, 0, 0.1) !important;
+    }
+
+    body.light-mode #detailedReasonModal .btn-secondary {
+        background-color: rgba(100, 110, 130, 0.85) !important;
+        border-color: rgba(80, 90, 110, 0.9) !important;
+        color: #ffffff !important;
+    }
+
+        body.light-mode #detailedReasonModal .btn-secondary:hover {
+            background-color: rgba(75, 85, 105, 0.95) !important;
+            color: #ffffff !important;
+        }
+
+    /* View button (btn-info) inside lossTimeTable */
+    body.light-mode #lossTimeTable .btn-info {
+        background-color: rgba(13, 110, 180, 0.85) !important;
+        border-color: rgba(13, 110, 180, 0.9) !important;
+        color: #ffffff !important;
+    }
+
+        body.light-mode #lossTimeTable .btn-info:hover {
+            background-color: rgba(9, 85, 145, 0.95) !important;
+            border-color: rgba(9, 85, 145, 1) !important;
+            color: #ffffff !important;
+        }
+
     /* ========== CARD ========== */
     body.light-mode .card {
         background: rgba(255, 255, 255, 0.55) !important;

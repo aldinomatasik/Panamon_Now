@@ -1,77 +1,78 @@
 ﻿@page
 @model RegisterModel
-
 @{
     ViewData["Title"] = "Register";
     Layout = "_AuthLayout";
 }
-
-<div class="container mt-5">
+<div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card shadow-lg border-0">
-                <div class="card-header bg-primary text-white text-center py-4">
-                    <h2>@ViewData["Title"]</h2>
-                    <p class="mb-0">Create a new account to get started</p>
+        <div class="col-md-9">
+            <div class="card shadow-lg border-0" style="background: transparent;">
+                <div class="text-center py-4">
+                    <h2 class="text-white">@ViewData["Title"]</h2>
+                    <p class="text-white-50 mb-0">Create a new account to get started</p>
                 </div>
                 <div class="card-body p-4">
                     <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
                         <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
-
-                        <div class="form-floating mb-3">
-                            <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                            <label asp-for="Input.Email" class="form-label">Email</label>
+                        <div class="mb-3">
+                            <input asp-for="Input.Email"
+                                   class="custom-input"
+                                   autocomplete="username"
+                                   aria-required="true"
+                                   placeholder="Email" />
                             <span asp-validation-for="Input.Email" class="text-danger"></span>
                         </div>
-
-                        <div class="form-floating mb-3">
-                            <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                            <label asp-for="Input.Password" class="form-label">Password</label>
+                        <div class="mb-3">
+                            <input asp-for="Input.Password"
+                                   type="password"
+                                   class="custom-input"
+                                   autocomplete="new-password"
+                                   aria-required="true"
+                                   placeholder="Password" />
                             <span asp-validation-for="Input.Password" class="text-danger"></span>
-                            <div class="form-text">
+                            <div class="form-text" style="color: rgba(255,255,255,0.5); font-size: 0.8rem; margin-top: 0.35rem;">
                                 Password must be at least 6 characters long.
                             </div>
                         </div>
-
-                        <div class="form-floating mb-4">
-                            <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                            <label asp-for="Input.ConfirmPassword" class="form-label">Confirm Password</label>
+                        <div class="mb-4">
+                            <input asp-for="Input.ConfirmPassword"
+                                   type="password"
+                                   class="custom-input"
+                                   autocomplete="new-password"
+                                   aria-required="true"
+                                   placeholder="Confirm Password" />
                             <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
                         </div>
-
-                        <div class="d-grid gap-2 mb-3">
+                        <div class="d-grid gap-2 mb-4">
                             <button id="registerSubmit" type="submit" class="btn btn-primary btn-lg">Register</button>
                         </div>
-
                         <div class="text-center">
-                            <p>
-                                Already have an account? <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl" class="text-decoration-none">Log in</a>
-                            </p>
+                            <span class="text-white-50">Already have an account?</span>
+                            <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl" class="text-decoration-none text-white fw-bold"> Log in</a>
                         </div>
                     </form>
                 </div>
-
                 @if (Model.ExternalLogins?.Count > 0)
                 {
-                    <div class="card-footer bg-light p-4">
-                        <h3 class="text-center mb-3">Use another service to register</h3>
-                        <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="text-center">
-                            <div>
+                        <div class="card-footer p-4" style="background: transparent; border-top: 1px solid rgba(255,255,255,0.15);">
+                            <h3 class="text-center mb-3 text-white" style="font-size: 1rem;">Use another service to register</h3>
+                            <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="text-center">
+                                <div>
                                 @foreach (var provider in Model.ExternalLogins!)
                                 {
-                                    <button type="submit" class="btn btn-outline-secondary mb-2 me-2 w-100" name="provider" value="@provider.Name" title="Register using your @provider.DisplayName account">
-                                        <i class="bi bi-@provider.Name.ToLower()"></i> @provider.DisplayName
-                                    </button>
+                                            <button type="submit" class="btn btn-outline-secondary mb-2 me-2 w-100" name="provider" value="@provider.Name" title="Register using your @provider.DisplayName account">
+                                                <i class="bi bi-@provider.Name.ToLower()"></i> @provider.DisplayName
+                                            </button>
                                 }
-                            </div>
-                        </form>
-                    </div>
+                                </div>
+                            </form>
+                        </div>
                 }
             </div>
         </div>
     </div>
 </div>
-
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+        <partial name="_ValidationScriptsPartial" />
 }

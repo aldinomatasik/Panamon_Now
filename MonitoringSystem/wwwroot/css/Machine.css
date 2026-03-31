@@ -485,6 +485,9 @@ body.light-mode .filter-content .btn-success {
 .machine-table-wrapper {
     flex: 1;
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
 }
 
 .machine-table-box {
@@ -492,16 +495,20 @@ body.light-mode .filter-content .btn-success {
     border: 2px solid rgba(255, 255, 255, 0.2);
     border-radius: 10px;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 120px);
 }
 
 .machine-table-header {
-    padding: 8px 12px 6px 12px;
+    padding: 10px 14px 8px 14px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     position: relative;
+    flex-shrink: 0; /* ← ADDED: header tidak ikut shrink */
 }
 
 .machine-table-title {
-    font-size: 0.8rem;
+    font-size: 0.9rem; /* ← INCREASED dari 0.8rem */
     font-weight: 700;
     color: #ffffff;
     letter-spacing: 0.3px;
@@ -509,7 +516,7 @@ body.light-mode .filter-content .btn-success {
 
 .machine-table-scroll {
     overflow-y: auto;
-    max-height: calc(100vh - 160px);
+    flex: 1; /* ← CHANGED: hapus max-height, pakai flex:1 */
     scrollbar-width: thin;
     scrollbar-color: rgba(255,255,255,0.2) transparent;
 }
@@ -517,7 +524,7 @@ body.light-mode .filter-content .btn-success {
 .machine-eff-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 11px;
+    font-size: 13px; /* ← INCREASED dari 11px */
     color: #eaeaea;
 }
 
@@ -527,11 +534,11 @@ body.light-mode .filter-content .btn-success {
         background-color: rgba(30, 40, 60, 1);
         color: #ffffff;
         font-weight: 700;
-        font-size: 11px;
-        padding: 7px 8px;
+        font-size: 13px; /* ← INCREASED dari 11px */
+        padding: 9px 10px; /* ← INCREASED dari 7px 8px */
         text-align: center;
         border-bottom: 2px solid rgba(100, 181, 246, 0.4);
-        border-right: 1px solid rgba(255, 255, 255, 0.1);
+        /*border-right: 1px solid rgba(255, 255, 255, 0.1);*/
         white-space: nowrap;
     }
 
@@ -540,10 +547,10 @@ body.light-mode .filter-content .btn-success {
         }
 
     .machine-eff-table tbody td {
-        padding: 5px 8px;
+        padding: 8px 10px; /* ← INCREASED dari 5px 8px */
         text-align: center;
         border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        border-right: 1px solid rgba(255, 255, 255, 0.06);
+        /*border-right: 1px solid rgba(255, 255, 255, 0.06);*/
         vertical-align: middle;
     }
 
@@ -573,7 +580,7 @@ body.light-mode .filter-content .btn-success {
     display: inline-block;
     padding: 2px 8px;
     border-radius: 999px;
-    font-size: 10px;
+    font-size: 11px; /* ← INCREASED dari 10px */
     font-weight: 700;
     letter-spacing: 0.3px;
     white-space: nowrap;
@@ -613,7 +620,7 @@ body.light-mode .filter-content .btn-success {
 .eff-bar {
     position: relative;
     background-color: rgba(199, 203, 255, 0.2);
-    height: 18px;
+    height: 20px; /* ← INCREASED dari 18px */
     border-radius: 3px;
     overflow: hidden;
     min-width: 60px;
@@ -635,7 +642,7 @@ body.light-mode .filter-content .btn-success {
     .eff-bar .eff-text {
         position: relative;
         z-index: 1;
-        font-size: 10px;
+        font-size: 11px; /* ← INCREASED dari 10px */
         font-weight: 700;
         color: #ffffff;
     }
@@ -644,7 +651,7 @@ body.light-mode .filter-content .btn-success {
     text-align: center !important;
     color: rgba(255, 255, 255, 0.35);
     padding: 2rem 0 !important;
-    font-size: 11px;
+    font-size: 13px; /* ← INCREASED dari 11px */
 }
 
 /* ========================================

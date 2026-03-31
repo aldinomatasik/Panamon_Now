@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
-using OfficeOpenXml;
 
 namespace MonitoringSystem.Controllers
 {
@@ -9,37 +8,39 @@ namespace MonitoringSystem.Controllers
     public class MachineController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public MachineController(IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
+        public MachineController(IConfiguration configuration)
         {
             _configuration = configuration;
-            _webHostEnvironment = webHostEnvironment;
         }
 
+        // ─── Helper: buka koneksi ke MachineDB ───────────────────────────────────
+        private SqlConnection OpenConn()
+        {
+            var connStr = _configuration.GetConnectionString("MachineConnection");
+            if (string.IsNullOrEmpty(connStr))
+                throw new InvalidOperationException("Connection string 'MachineConnection' tidak ditemukan.");
+            var conn = new SqlConnection(connStr);
+            conn.Open();
+            return conn;
+        }
+
+        // ─── GET /api/machine/efficiency?month=X&year=Y ───────────────────────────
+        // Ambil rata-rata OEE, OperatingRatio, Ability, Quality per machine per bulan
         [HttpGet("efficiency")]
-        public IActionResult GetMachineEfficiency(
-            [FromQuery] int month,
-            [FromQuery] int year)
+        public IActionResult GetMachineEfficiency([FromQuery] int month, [FromQuery] int year)
         {
             if (month < 1 || month > 12)
                 return BadRequest(new { error = "Bulan tidak valid (1–12)." });
-
             if (year < 2000 || year > 2100)
                 return BadRequest(new { error = "Tahun tidak valid." });
 
             var result = new List<object>();
             try
             {
-                var connStr = _configuration.GetConnectionString("DefaultConnection");
-                if (string.IsNullOrEmpty(connStr))
-                    return StatusCode(500, new { error = "Connection string tidak ditemukan." });
-
-                using var conn = new SqlConnection(connStr);
-                conn.Open();
-
+                using var conn = OpenConn();
                 var query = @"
-                    SELECT 
+                    SELECT
                         [MachineName],
                         ISNULL(CAST(ROUND(AVG(CAST([OEE]            AS FLOAT)), 2) AS VARCHAR), '-') AS [OEE],
                         ISNULL(CAST(ROUND(AVG(CAST([OperatingRatio] AS FLOAT)), 2) AS VARCHAR), '-') AS [OperatingRatio],
@@ -72,29 +73,19 @@ namespace MonitoringSystem.Controllers
 
                 return Ok(result);
             }
-            catch (SqlException sqlEx)
-            {
-                return StatusCode(500, new { error = $"Database error: {sqlEx.Message}" });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { error = ex.Message });
-            }
+            catch (SqlException sqlEx) { return StatusCode(500, new { error = $"Database error: {sqlEx.Message}" }); }
+            catch (Exception ex) { return StatusCode(500, new { error = ex.Message }); }
         }
 
+        // ─── GET /api/machine/list ─────────────────────────────────────────────────
+        // Daftar machine yang pernah ada di MachineEfficiency
         [HttpGet("list")]
         public IActionResult GetMachineList()
         {
             var result = new List<object>();
             try
             {
-                var connStr = _configuration.GetConnectionString("DefaultConnection");
-                if (string.IsNullOrEmpty(connStr))
-                    return StatusCode(500, new { error = "Connection string tidak ditemukan." });
-
-                using var conn = new SqlConnection(connStr);
-                conn.Open();
-
+                using var conn = OpenConn();
                 var query = @"
                     SELECT DISTINCT [MachineName]
                     FROM [dbo].[MachineEfficiency]
@@ -104,164 +95,102 @@ namespace MonitoringSystem.Controllers
                 using var cmd = new SqlCommand(query, conn);
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
-                {
-                    result.Add(new
-                    {
-                        machineName = reader["MachineName"]?.ToString() ?? "-"
-                    });
-                }
+                    result.Add(new { machineName = reader["MachineName"]?.ToString() ?? "-" });
 
                 return Ok(result);
             }
-            catch (SqlException sqlEx)
-            {
-                return StatusCode(500, new { error = $"Database error: {sqlEx.Message}" });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { error = ex.Message });
-            }
+            catch (SqlException sqlEx) { return StatusCode(500, new { error = $"Database error: {sqlEx.Message}" }); }
+            catch (Exception ex) { return StatusCode(500, new { error = ex.Message }); }
         }
 
-        [HttpGet("download-template")]
-        public IActionResult DownloadTemplate()
+        // ─── GET /api/machine/detail?machineName=X&month=Y&year=Z ─────────────────
+        // Detail harian 1 machine: OEE + breakdown loss per shift
+        [HttpGet("detail")]
+        public IActionResult GetMachineDetail(
+            [FromQuery] string machineName,
+            [FromQuery] int month,
+            [FromQuery] int year)
         {
-            var filePath = Path.Combine(
-                _webHostEnvironment.WebRootPath,
-                "data", "MachineEfficiency", "Machine_input_template.xlsx"
-            );
-
-            if (!System.IO.File.Exists(filePath))
-                return NotFound(new { error = "File template tidak ditemukan di server." });
-
-            var bytes = System.IO.File.ReadAllBytes(filePath);
-            return File(bytes,
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                "Machine_input_template.xlsx");
-        }
-
-        [HttpPost("import")]
-        public async Task<IActionResult> ImportMachineEfficiency(
-            [FromForm] IFormFile file,
-            [FromForm] string machineName,
-            [FromForm] int month,
-            [FromForm] int year)
-        {
-            if (file == null || file.Length == 0)
-                return BadRequest(new { error = "File tidak boleh kosong." });
-
             if (string.IsNullOrEmpty(machineName))
-                return BadRequest(new { error = "Nama machine harus dipilih." });
+                return BadRequest(new { error = "machineName wajib diisi." });
+            if (month < 1 || month > 12)
+                return BadRequest(new { error = "Bulan tidak valid." });
 
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-
-            var newData = new List<(double? Achievement, double? OperatingRatio, double? Quality, double? Ability, double? OEE, DateTime Date)>();
-
+            var result = new List<object>();
             try
             {
-                using var stream = new MemoryStream();
-                await file.CopyToAsync(stream);
+                using var conn = OpenConn();
+                var query = @"
+                    SELECT
+                        me.ID,
+                        me.MachineName,
+                        CONVERT(VARCHAR, me.[Date], 23)  AS [Date],
+                        me.Shift,
+                        me.OEE,
+                        me.OperatingRatio,
+                        me.Ability,
+                        me.Quality,
+                        me.Achievement,
+                        me.WorkingTime,
+                        me.PlanQty,
+                        me.GoodProductionQty,
+                        me.DefectQty,
+                        mel.LossCategory,
+                        mel.LossGroup,
+                        mel.LossMinutes
+                    FROM [dbo].[MachineEfficiency] me
+                    LEFT JOIN [dbo].[MachineEfficiencyLoss] mel ON mel.EfficiencyID = me.ID
+                    WHERE me.MachineName = @MachineName
+                      AND MONTH(me.[Date]) = @Month
+                      AND YEAR(me.[Date])  = @Year
+                    ORDER BY me.[Date], me.Shift, mel.LossGroup, mel.LossCategory";
 
-                using var package = new ExcelPackage(stream);
-                var sheet = package.Workbook.Worksheets[0];
-                int rowCount = sheet.Dimension.Rows;
+                using var cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@MachineName", machineName);
+                cmd.Parameters.AddWithValue("@Month", month);
+                cmd.Parameters.AddWithValue("@Year", year);
 
-                for (int row = 3; row <= rowCount; row++)
+                // Group by header ID, flatten loss items
+                var headers = new Dictionary<int, dynamic>();
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
                 {
-                    if (sheet.Cells[row, 3].Value == null) continue;
-
-                    for (int day = 1; day <= 31; day++)
+                    int id = Convert.ToInt32(reader["ID"]);
+                    if (!headers.ContainsKey(id))
                     {
-                        if (day > DateTime.DaysInMonth(year, month)) break;
-
-                        int baseCol = 3 + (day - 1) * 4;
-
-                        double? achievement = TryParseDouble(sheet.Cells[row, baseCol].Value);
-                        double? operatingRatio = TryParseDouble(sheet.Cells[row, baseCol + 1].Value);
-                        double? quality = TryParseDouble(sheet.Cells[row, baseCol + 2].Value);
-                        double? ability = TryParseDouble(sheet.Cells[row, baseCol + 3].Value);
-
-                        if ((achievement == null || achievement == 0) &&
-                            (operatingRatio == null || operatingRatio == 0) &&
-                            (quality == null || quality == 0) &&
-                            (ability == null || ability == 0))
-                            continue;
-
-                        double? oee = null;
-                        if (operatingRatio.HasValue && ability.HasValue && quality.HasValue)
+                        headers[id] = new
                         {
-                            oee = Math.Round(
-                                (operatingRatio.Value / 100.0) *
-                                (ability.Value / 100.0) *
-                                (quality.Value / 100.0) * 100.0, 2);
-                        }
-
-                        newData.Add((
-                            Achievement: achievement,
-                            OperatingRatio: operatingRatio,
-                            Quality: quality,
-                            Ability: ability,
-                            OEE: oee,
-                            Date: new DateTime(year, month, day)
-                        ));
+                            id = id,
+                            machineName = reader["MachineName"]?.ToString() ?? "-",
+                            date = reader["Date"]?.ToString() ?? "-",
+                            shift = reader["Shift"]?.ToString() ?? "-",
+                            oee = reader["OEE"] == DBNull.Value ? (double?)null : Convert.ToDouble(reader["OEE"]),
+                            operatingRatio = reader["OperatingRatio"] == DBNull.Value ? (double?)null : Convert.ToDouble(reader["OperatingRatio"]),
+                            ability = reader["Ability"] == DBNull.Value ? (double?)null : Convert.ToDouble(reader["Ability"]),
+                            quality = reader["Quality"] == DBNull.Value ? (double?)null : Convert.ToDouble(reader["Quality"]),
+                            achievement = reader["Achievement"] == DBNull.Value ? (double?)null : Convert.ToDouble(reader["Achievement"]),
+                            workingTime = reader["WorkingTime"] == DBNull.Value ? (double?)null : Convert.ToDouble(reader["WorkingTime"]),
+                            planQty = reader["PlanQty"] == DBNull.Value ? (double?)null : Convert.ToDouble(reader["PlanQty"]),
+                            goodProductionQty = reader["GoodProductionQty"] == DBNull.Value ? (double?)null : Convert.ToDouble(reader["GoodProductionQty"]),
+                            defectQty = reader["DefectQty"] == DBNull.Value ? (double?)null : Convert.ToDouble(reader["DefectQty"]),
+                            lossItems = new List<object>()
+                        };
+                    }
+                    if (reader["LossCategory"] != DBNull.Value)
+                    {
+                        ((List<object>)headers[id].lossItems).Add(new
+                        {
+                            lossCategory = reader["LossCategory"]?.ToString() ?? "",
+                            lossGroup = reader["LossGroup"]?.ToString() ?? "",
+                            lossMinutes = reader["LossMinutes"] == DBNull.Value ? (double?)null : Convert.ToDouble(reader["LossMinutes"])
+                        });
                     }
                 }
 
-                var connStr = _configuration.GetConnectionString("DefaultConnection");
-                using var conn = new SqlConnection(connStr);
-                conn.Open();
-
-                using (var deleteCmd = new SqlCommand(@"
-                    DELETE FROM [dbo].[MachineEfficiency]
-                    WHERE [MachineName] = @MachineName
-                      AND MONTH([Date]) = @Month
-                      AND YEAR([Date])  = @Year", conn))
-                {
-                    deleteCmd.Parameters.AddWithValue("@MachineName", machineName);
-                    deleteCmd.Parameters.AddWithValue("@Month", month);
-                    deleteCmd.Parameters.AddWithValue("@Year", year);
-                    deleteCmd.ExecuteNonQuery();
-                }
-
-                int insertedCount = 0;
-                foreach (var item in newData)
-                {
-                    using var insertCmd = new SqlCommand(@"
-                        INSERT INTO [dbo].[MachineEfficiency]
-                            ([MachineName], [Achievement], [OperatingRatio], [Quality], [Ability], [OEE], [Date])
-                        VALUES
-                            (@MachineName, @Achievement, @OperatingRatio, @Quality, @Ability, @OEE, @Date)", conn);
-
-                    insertCmd.Parameters.AddWithValue("@MachineName", machineName);
-                    insertCmd.Parameters.AddWithValue("@Achievement", (object?)item.Achievement ?? DBNull.Value);
-                    insertCmd.Parameters.AddWithValue("@OperatingRatio", (object?)item.OperatingRatio ?? DBNull.Value);
-                    insertCmd.Parameters.AddWithValue("@Quality", (object?)item.Quality ?? DBNull.Value);
-                    insertCmd.Parameters.AddWithValue("@Ability", (object?)item.Ability ?? DBNull.Value);
-                    insertCmd.Parameters.AddWithValue("@OEE", (object?)item.OEE ?? DBNull.Value);
-                    insertCmd.Parameters.AddWithValue("@Date", item.Date);
-
-                    insertCmd.ExecuteNonQuery();
-                    insertedCount++;
-                }
-
-                return Ok(new
-                {
-                    success = true,
-                    message = $"Berhasil import {insertedCount} data untuk {machineName} (Bulan {month}/{year})."
-                });
+                return Ok(headers.Values.ToList());
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { error = "Gagal Import: " + ex.Message });
-            }
-        }
-
-        private double? TryParseDouble(object? val)
-        {
-            if (val == null) return null;
-            if (double.TryParse(val.ToString(), out double result))
-                return result;
-            return null;
+            catch (SqlException sqlEx) { return StatusCode(500, new { error = $"Database error: {sqlEx.Message}" }); }
+            catch (Exception ex) { return StatusCode(500, new { error = ex.Message }); }
         }
     }
 }

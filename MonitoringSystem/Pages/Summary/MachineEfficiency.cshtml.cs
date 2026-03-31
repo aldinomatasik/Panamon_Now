@@ -10,6 +10,33 @@ namespace MonitoringSystem.Pages.Summary
         private readonly IConfiguration _config;
         private readonly IWebHostEnvironment _env;
 
+        // Loss category definitions (single source of truth)
+        private static readonly List<(string Col, string Group)> LossColumns = new()
+        {
+            ("QualityTrouble",           "WorkingLoss"),
+            ("ModelChangingLoss",        "WorkingLoss"),
+            ("MaterialShortageExternal", "WorkingLoss"),
+            ("MachineToolsTrouble",      "WorkingLoss"),
+            ("ManPowerAdjustment",       "WorkingLoss"),
+            ("MaterialShortageInhouse",  "WorkingLoss"),
+            ("MaterialShortageInternal", "WorkingLoss"),
+            ("SetRepairingLoss",         "WorkingLoss"),
+            ("GawseExternalBodies",      "WorkingLoss"),
+            ("Rework",                   "WorkingLoss"),
+            ("MoldChangingLoss",         "WorkingLoss"),
+            ("BreakTime",                "FixedLoss"),
+            ("CompanyActivity",          "FixedLoss"),
+            ("MorningAssembly",          "FixedLoss"),
+            ("Cleaning",                 "FixedLoss"),
+            ("StockOpname",              "FixedLoss"),
+            ("GeneralAssembly",          "FixedLoss"),
+            ("Maintenance",              "FixedLoss"),
+            ("TrialRun",                 "FixedLoss"),
+            ("TrainingEducation",        "FixedLoss"),
+            ("FreeTalkingQC",            "FixedLoss"),
+            ("NoProductionDay",          "FixedLoss"),
+        };
+
         public MachineEfficiencyModel(IConfiguration config, IWebHostEnvironment env)
         {
             _config = config;
@@ -19,233 +46,19 @@ namespace MonitoringSystem.Pages.Summary
         public void OnGet() { }
 
         // =====================================================
-        // API: /Summary/MachineEfficiency?handler=Machines
+        // HELPER: Normalisasi shift format
         // =====================================================
-        public JsonResult OnGetMachines()
+        private static string NormalizeShift(string? shift) => (shift ?? "") switch
         {
-            var machines = new List<object>();
-            try
-            {
-                string connStr = _config.GetConnectionString("DefaultConnection")!;
-                using var conn = new SqlConnection(connStr);
-                conn.Open();
-                string sql = @"SELECT ID, MachineName FROM [dbo].[Machine] ORDER BY MachineName";
-                using var cmd = new SqlCommand(sql, conn);
-                using var reader = cmd.ExecuteReader();
-                while (reader.Read())
-                    machines.Add(new { value = reader["ID"].ToString(), label = reader["MachineName"].ToString() });
-            }
-            catch (Exception ex) { return new JsonResult(new { error = ex.Message }); }
-            return new JsonResult(machines);
-        }
+            "1" or "Shift 1" => "Shift 1",
+            "2" or "Shift 2" => "Shift 2",
+            "3" or "Shift 3" => "Shift 3",
+            "NS" or "Non Shift" => "Non Shift",
+            var s => s
+        };
 
         // =====================================================
-        // API: ?handler=WorkingTime&machineName=X&date=Y&shift=Z
-        // =====================================================
-        public JsonResult OnGetWorkingTime(string machineName, DateTime date, string shift)
-        {
-            try
-            {
-                string connStr = _config.GetConnectionString("DefaultConnection")!;
-                using var conn = new SqlConnection(connStr);
-                conn.Open();
-                string sql = @"
-                    SELECT TOP 1 WorkingTime
-                    FROM [dbo].[MachineEfficiency]
-                    WHERE MachineName = @MachineName
-                      AND CAST([Date] AS DATE) = CAST(@Date AS DATE)
-                      AND Shift = @Shift
-                      AND WorkingTime IS NOT NULL
-                    ORDER BY ID DESC";
-                using var cmd = new SqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@MachineName", machineName ?? "");
-                cmd.Parameters.AddWithValue("@Date", date);
-                cmd.Parameters.AddWithValue("@Shift", shift ?? "");
-                var result = cmd.ExecuteScalar();
-                if (result != null && result != DBNull.Value)
-                    return new JsonResult(new { found = true, workingTime = Convert.ToDouble(result) });
-                return new JsonResult(new { found = false });
-            }
-            catch (Exception ex) { return new JsonResult(new { found = false, error = ex.Message }); }
-        }
-
-        // =====================================================
-        // API: ?handler=LoadExisting&machineName=X&date=Y&shift=Z
-        // Fetch semua data existing untuk pre-fill form
-        // Toleran terhadap berbagai format Shift di DB:
-        //   "Shift 1" / "1" / NULL (semua dianggap Shift 1), dst.
-        // =====================================================
-        public JsonResult OnGetLoadExisting(string machineName, DateTime date, string shift)
-        {
-            try
-            {
-                // Normalisasi shift: toleran format lama ("1","2","3","NS") & baru ("Shift 1" dst) & NULL
-                string sNew = shift switch
-                {
-                    "1" or "Shift 1" => "Shift 1",
-                    "2" or "Shift 2" => "Shift 2",
-                    "3" or "Shift 3" => "Shift 3",
-                    "NS" or "Non Shift" => "Non Shift",
-                    var s => s
-                };
-                string sOld = sNew switch
-                {
-                    "Shift 1" => "1",
-                    "Shift 2" => "2",
-                    "Shift 3" => "3",
-                    "Non Shift" => "NS",
-                    var s => s
-                };
-
-                string connStr = _config.GetConnectionString("DefaultConnection")!;
-                using var conn = new SqlConnection(connStr);
-                conn.Open();
-                string sql = @"
-                    SELECT TOP 1
-                        PlanQty, DefectQty, GoodProductionQty, WorkingTime,
-                        QualityTrouble, ModelChangingLoss, MaterialShortageExternal,
-                        MachineToolsTrouble, ManPowerAdjustment, MaterialShortageInhouse,
-                        MaterialShortageInternal, SetRepairingLoss, GawseExternalBodies,
-                        Rework, MoldChangingLoss, BreakTime, CompanyActivity, MorningAssembly,
-                        Cleaning, StockOpname, GeneralAssembly, Maintenance, TrialRun,
-                        TrainingEducation, FreeTalkingQC, NoProductionDay
-                    FROM [dbo].[MachineEfficiency]
-                    WHERE MachineName = @MachineName
-                      AND CAST([Date] AS DATE) = CAST(@Date AS DATE)
-                      AND (Shift = @ShiftNew OR Shift = @ShiftOld OR Shift IS NULL)
-                    ORDER BY ID DESC";
-                using var cmd = new SqlCommand(sql, conn);
-                cmd.Parameters.AddWithValue("@MachineName", machineName ?? "");
-                cmd.Parameters.AddWithValue("@Date", date);
-                cmd.Parameters.AddWithValue("@ShiftNew", sNew);
-                cmd.Parameters.AddWithValue("@ShiftOld", sOld);
-                using var reader = cmd.ExecuteReader();
-                if (reader.Read())
-                {
-                    double? G(string col) => reader[col] == DBNull.Value ? null : Convert.ToDouble(reader[col]);
-                    return new JsonResult(new
-                    {
-                        found = true,
-                        planQty = G("PlanQty"),
-                        defectQty = G("DefectQty"),
-                        goodProductionQty = G("GoodProductionQty"),
-                        workingTime = G("WorkingTime"),
-                        qualityTrouble = G("QualityTrouble"),
-                        modelChangingLoss = G("ModelChangingLoss"),
-                        materialShortageExternal = G("MaterialShortageExternal"),
-                        machineToolsTrouble = G("MachineToolsTrouble"),
-                        manPowerAdjustment = G("ManPowerAdjustment"),
-                        materialShortageInhouse = G("MaterialShortageInhouse"),
-                        materialShortageInternal = G("MaterialShortageInternal"),
-                        setRepairingLoss = G("SetRepairingLoss"),
-                        gawseExternalBodies = G("GawseExternalBodies"),
-                        rework = G("Rework"),
-                        moldChangingLoss = G("MoldChangingLoss"),
-                        breakTime = G("BreakTime"),
-                        companyActivity = G("CompanyActivity"),
-                        morningAssembly = G("MorningAssembly"),
-                        cleaning = G("Cleaning"),
-                        stockOpname = G("StockOpname"),
-                        generalAssembly = G("GeneralAssembly"),
-                        maintenance = G("Maintenance"),
-                        trialRun = G("TrialRun"),
-                        trainingEducation = G("TrainingEducation"),
-                        freeTalkingQC = G("FreeTalkingQC"),
-                        noProductionDay = G("NoProductionDay")
-                    });
-                }
-                return new JsonResult(new { found = false });
-            }
-            catch (Exception ex) { return new JsonResult(new { found = false, error = ex.Message }); }
-        }
-
-        // =====================================================
-        // API: /Summary/MachineEfficiency?handler=LossCategories
-        // =====================================================
-        public JsonResult OnGetLossCategories()
-        {
-            var workingLossCols = new List<string>
-            {
-                "QualityTrouble", "ModelChangingLoss", "MaterialShortageExternal",
-                "MachineToolsTrouble", "ManPowerAdjustment", "MaterialShortageInhouse",
-                "MaterialShortageInternal", "SetRepairingLoss", "GawseExternalBodies",
-                "Rework", "MoldChangingLoss"
-            };
-            var fixedLossCols = new List<string>
-            {
-                "BreakTime", "CompanyActivity", "MorningAssembly", "Cleaning",
-                "StockOpname", "GeneralAssembly", "Maintenance", "TrialRun",
-                "TrainingEducation", "FreeTalkingQC", "NoProductionDay"
-            };
-            var existingCols = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-            try
-            {
-                string connStr = _config.GetConnectionString("DefaultConnection")!;
-                using var conn = new SqlConnection(connStr);
-                conn.Open();
-                string sql = @"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='dbo' AND TABLE_NAME='MachineEfficiency'";
-                using var cmd = new SqlCommand(sql, conn);
-                using var reader = cmd.ExecuteReader();
-                while (reader.Read()) existingCols.Add(reader.GetString(0));
-            }
-            catch
-            {
-                existingCols.UnionWith(workingLossCols);
-                existingCols.UnionWith(fixedLossCols);
-            }
-            static string ToLabel(string col) =>
-                System.Text.RegularExpressions.Regex.Replace(col, @"(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", " ");
-            var workingLoss = workingLossCols.Where(c => existingCols.Contains(c)).Select(c => new { value = c, label = ToLabel(c) }).ToArray();
-            var fixedLoss = fixedLossCols.Where(c => existingCols.Contains(c)).Select(c => new { value = c, label = ToLabel(c) }).ToArray();
-            return new JsonResult(new { workingLoss, fixedLoss });
-        }
-
-        // =====================================================
-        // HELPER: tambah parameter ke SqlCommand
-        // =====================================================
-        private static void AddAllParams(SqlCommand cmd, MachineEfficiencyInput input,
-            double? quality, double? operatingRatio, double? ability, double? oee,
-            double? achievement, string? category)
-        {
-            cmd.Parameters.AddWithValue("@MachineName", input.MachineName ?? "");
-            cmd.Parameters.AddWithValue("@Date", input.Date);
-            cmd.Parameters.AddWithValue("@Shift", input.Shift ?? "");
-            cmd.Parameters.AddWithValue("@PlanQty", (object?)input.PlanQty ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@DefectQty", (object?)input.DefectQty ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@GoodProductionQty", (object?)input.GoodProductionQty ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@WorkingTime", (object?)input.WorkingTime ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@Quality", (object?)quality ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@OperatingRatio", (object?)operatingRatio ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@Ability", (object?)ability ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@OEE", (object?)oee ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@Achievement", (object?)achievement ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@Category", (object?)category ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@QualityTrouble", (object?)input.QualityTrouble ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@ModelChangingLoss", (object?)input.ModelChangingLoss ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@MaterialShortageExternal", (object?)input.MaterialShortageExternal ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@MachineToolsTrouble", (object?)input.MachineToolsTrouble ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@ManPowerAdjustment", (object?)input.ManPowerAdjustment ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@MaterialShortageInhouse", (object?)input.MaterialShortageInhouse ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@MaterialShortageInternal", (object?)input.MaterialShortageInternal ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@SetRepairingLoss", (object?)input.SetRepairingLoss ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@GawseExternalBodies", (object?)input.GawseExternalBodies ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@Rework", (object?)input.Rework ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@MoldChangingLoss", (object?)input.MoldChangingLoss ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@BreakTime", (object?)input.BreakTime ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@CompanyActivity", (object?)input.CompanyActivity ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@MorningAssembly", (object?)input.MorningAssembly ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@Cleaning", (object?)input.Cleaning ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@StockOpname", (object?)input.StockOpname ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@GeneralAssembly", (object?)input.GeneralAssembly ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@Maintenance", (object?)input.Maintenance ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@TrialRun", (object?)input.TrialRun ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@TrainingEducation", (object?)input.TrainingEducation ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@FreeTalkingQC", (object?)input.FreeTalkingQC ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("@NoProductionDay", (object?)input.NoProductionDay ?? DBNull.Value);
-        }
-
-        // =====================================================
-        // HELPER: hitung semua metric dari input
+        // HELPER: Hitung semua metric dari input
         // =====================================================
         private static (double? quality, double? operatingRatio, double? ability, double? oee, double? achievement, string? category)
             CalcMetrics(MachineEfficiencyInput input)
@@ -260,18 +73,7 @@ namespace MonitoringSystem.Pages.Summary
             double? operatingRatio = null;
             if (input.WorkingTime.HasValue && input.WorkingTime.Value > 0)
             {
-                double totalLoss =
-                    (input.QualityTrouble ?? 0) + (input.ModelChangingLoss ?? 0) +
-                    (input.MaterialShortageExternal ?? 0) + (input.MachineToolsTrouble ?? 0) +
-                    (input.ManPowerAdjustment ?? 0) + (input.MaterialShortageInhouse ?? 0) +
-                    (input.MaterialShortageInternal ?? 0) + (input.SetRepairingLoss ?? 0) +
-                    (input.GawseExternalBodies ?? 0) + (input.Rework ?? 0) +
-                    (input.MoldChangingLoss ?? 0) + (input.BreakTime ?? 0) +
-                    (input.CompanyActivity ?? 0) + (input.MorningAssembly ?? 0) +
-                    (input.Cleaning ?? 0) + (input.StockOpname ?? 0) +
-                    (input.GeneralAssembly ?? 0) + (input.Maintenance ?? 0) +
-                    (input.TrialRun ?? 0) + (input.TrainingEducation ?? 0) +
-                    (input.FreeTalkingQC ?? 0) + (input.NoProductionDay ?? 0);
+                double totalLoss = input.LossItems?.Sum(x => x.LossMinutes ?? 0) ?? 0;
                 operatingRatio = Math.Round(((input.WorkingTime.Value - totalLoss) / input.WorkingTime.Value) * 100.0, 2);
             }
 
@@ -295,134 +97,231 @@ namespace MonitoringSystem.Pages.Summary
         }
 
         // =====================================================
-        // API: /Summary/MachineEfficiency?handler=Submit
-        // UPSERT: UPDATE jika MachineName+Date+Shift sudah ada, INSERT jika belum
+        // API: ?handler=Machines
+        // =====================================================
+        public JsonResult OnGetMachines()
+        {
+            var machines = new List<object>();
+            try
+            {
+                using var conn = OpenConn();
+                using var cmd = new SqlCommand("SELECT DISTINCT MachineName FROM [dbo].[MachineEfficiency] WHERE MachineName IS NOT NULL ORDER BY MachineName", conn);
+                using var reader = cmd.ExecuteReader();
+                // BENAR - value pakai MachineName karena tidak ada kolom ID
+                while (reader.Read())
+                    machines.Add(new { value = reader["MachineName"].ToString(), label = reader["MachineName"].ToString() });
+            }
+            catch (Exception ex) { return new JsonResult(new { error = ex.Message }); }
+            return new JsonResult(machines);
+        }
+
+        // =====================================================
+        // API: ?handler=LossCategories
+        // =====================================================
+
+        public JsonResult OnGetLossCategories()
+        {
+            static string ToLabel(string col) =>
+                System.Text.RegularExpressions.Regex.Replace(col, @"(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])", " ");
+
+            var workingLoss = LossColumns
+                .Where(x => x.Group == "WorkingLoss")
+                .Select(x => new { value = x.Col, label = ToLabel(x.Col) });
+
+            var fixedLoss = LossColumns
+                .Where(x => x.Group == "FixedLoss")
+                .Select(x => new { value = x.Col, label = ToLabel(x.Col) });
+
+            return new JsonResult(new { workingLoss, fixedLoss });
+        }
+
+        // =====================================================
+        // API: ?handler=WorkingTime&machineName=X&date=Y&shift=Z
+        // =====================================================
+        public JsonResult OnGetWorkingTime(string machineName, DateTime date, string shift)
+        {
+            try
+            {
+                string shiftNorm = NormalizeShift(shift);
+                using var conn = OpenConn();
+                string sql = @"
+                    SELECT TOP 1 WorkingTime
+                    FROM [dbo].[MachineEfficiency]
+                    WHERE MachineName = @MachineName
+                      AND CAST([Date] AS DATE) = CAST(@Date AS DATE)
+                      AND Shift = @Shift
+                      AND WorkingTime IS NOT NULL
+                    ORDER BY ID DESC";
+                using var cmd = new SqlCommand(sql, conn);
+                cmd.Parameters.AddWithValue("@MachineName", machineName ?? "");
+                cmd.Parameters.AddWithValue("@Date", date);
+                cmd.Parameters.AddWithValue("@Shift", shiftNorm);
+                var result = cmd.ExecuteScalar();
+                if (result != null && result != DBNull.Value)
+                    return new JsonResult(new { found = true, workingTime = Convert.ToDouble(result) });
+                return new JsonResult(new { found = false });
+            }
+            catch (Exception ex) { return new JsonResult(new { found = false, error = ex.Message }); }
+        }
+
+        // =====================================================
+        // API: ?handler=LoadExisting&machineName=X&date=Y&shift=Z
+        // =====================================================
+        public JsonResult OnGetLoadExisting(string machineName, DateTime date, string shift)
+        {
+            try
+            {
+                string shiftNorm = NormalizeShift(shift);
+                using var conn = OpenConn();
+
+                // Ambil header
+                string sqlHeader = @"
+                    SELECT TOP 1 ID, PlanQty, DefectQty, GoodProductionQty, WorkingTime
+                    FROM [dbo].[MachineEfficiency]
+                    WHERE MachineName = @MachineName
+                      AND CAST([Date] AS DATE) = CAST(@Date AS DATE)
+                      AND Shift = @Shift
+                    ORDER BY ID DESC";
+                using var cmd = new SqlCommand(sqlHeader, conn);
+                cmd.Parameters.AddWithValue("@MachineName", machineName ?? "");
+                cmd.Parameters.AddWithValue("@Date", date);
+                cmd.Parameters.AddWithValue("@Shift", shiftNorm);
+                using var reader = cmd.ExecuteReader();
+
+                if (!reader.Read()) return new JsonResult(new { found = false });
+
+                int efficiencyId = Convert.ToInt32(reader["ID"]);
+                double? G(string col) => reader[col] == DBNull.Value ? null : Convert.ToDouble(reader[col]);
+                double? planQty = G("PlanQty");
+                double? defectQty = G("DefectQty");
+                double? goodProductionQty = G("GoodProductionQty");
+                double? workingTime = G("WorkingTime");
+                reader.Close();
+
+                // Ambil loss items
+                string sqlLoss = @"
+                    SELECT LossCategory, LossGroup, LossMinutes
+                    FROM [dbo].[MachineEfficiencyLoss]
+                    WHERE EfficiencyID = @EfficiencyID";
+                using var cmdLoss = new SqlCommand(sqlLoss, conn);
+                cmdLoss.Parameters.AddWithValue("@EfficiencyID", efficiencyId);
+                using var readerLoss = cmdLoss.ExecuteReader();
+
+                var lossDict = new Dictionary<string, double?>();
+                while (readerLoss.Read())
+                {
+                    string cat = readerLoss["LossCategory"]?.ToString() ?? "";
+                    double? min = readerLoss["LossMinutes"] == DBNull.Value ? null : Convert.ToDouble(readerLoss["LossMinutes"]);
+                    lossDict[cat] = min;
+                }
+
+                // Build response compatible dengan frontend lama
+                return new JsonResult(new
+                {
+                    found = true,
+                    planQty,
+                    defectQty,
+                    goodProductionQty,
+                    workingTime,
+                    qualityTrouble = lossDict.GetValueOrDefault("QualityTrouble"),
+                    modelChangingLoss = lossDict.GetValueOrDefault("ModelChangingLoss"),
+                    materialShortageExternal = lossDict.GetValueOrDefault("MaterialShortageExternal"),
+                    machineToolsTrouble = lossDict.GetValueOrDefault("MachineToolsTrouble"),
+                    manPowerAdjustment = lossDict.GetValueOrDefault("ManPowerAdjustment"),
+                    materialShortageInhouse = lossDict.GetValueOrDefault("MaterialShortageInhouse"),
+                    materialShortageInternal = lossDict.GetValueOrDefault("MaterialShortageInternal"),
+                    setRepairingLoss = lossDict.GetValueOrDefault("SetRepairingLoss"),
+                    gawseExternalBodies = lossDict.GetValueOrDefault("GawseExternalBodies"),
+                    rework = lossDict.GetValueOrDefault("Rework"),
+                    moldChangingLoss = lossDict.GetValueOrDefault("MoldChangingLoss"),
+                    breakTime = lossDict.GetValueOrDefault("BreakTime"),
+                    companyActivity = lossDict.GetValueOrDefault("CompanyActivity"),
+                    morningAssembly = lossDict.GetValueOrDefault("MorningAssembly"),
+                    cleaning = lossDict.GetValueOrDefault("Cleaning"),
+                    stockOpname = lossDict.GetValueOrDefault("StockOpname"),
+                    generalAssembly = lossDict.GetValueOrDefault("GeneralAssembly"),
+                    maintenance = lossDict.GetValueOrDefault("Maintenance"),
+                    trialRun = lossDict.GetValueOrDefault("TrialRun"),
+                    trainingEducation = lossDict.GetValueOrDefault("TrainingEducation"),
+                    freeTalkingQC = lossDict.GetValueOrDefault("FreeTalkingQC"),
+                    noProductionDay = lossDict.GetValueOrDefault("NoProductionDay"),
+                });
+            }
+            catch (Exception ex) { return new JsonResult(new { found = false, error = ex.Message }); }
+        }
+
+        // =====================================================
+        // API: ?handler=Submit (UPSERT)
         // =====================================================
         public JsonResult OnPostSubmit([FromBody] MachineEfficiencyInput input)
         {
             try
             {
+                input.Shift = NormalizeShift(input.Shift);
                 var (quality, operatingRatio, ability, oee, achievement, category) = CalcMetrics(input);
 
-                string connStr = _config.GetConnectionString("DefaultConnection")!;
-                using var conn = new SqlConnection(connStr);
-                conn.Open();
+                using var conn = OpenConn();
+                using var tx = conn.BeginTransaction();
 
-                // Normalisasi shift: frontend baru kirim "Shift 1" dst,
-                // tapi data lama di DB mungkin "1"/"2"/"3"/"NS"/NULL.
-                // Selalu simpan dalam format baru, tapi saat query cari semua alias.
-                string shiftNorm = (input.Shift ?? "") switch
-                {
-                    "1" or "Shift 1" => "Shift 1",
-                    "2" or "Shift 2" => "Shift 2",
-                    "3" or "Shift 3" => "Shift 3",
-                    "NS" or "Non Shift" => "Non Shift",
-                    var s => s
-                };
-                input.Shift = shiftNorm; // pastikan INSERT/UPDATE pakai format baru
-
-                string shiftOld = shiftNorm switch
-                {
-                    "Shift 1" => "1",
-                    "Shift 2" => "2",
-                    "Shift 3" => "3",
-                    "Non Shift" => "NS",
-                    var s => s
-                };
-
-                int existingCount = 0;
+                // Cek existing
+                int? existingId = null;
                 using (var checkCmd = new SqlCommand(@"
-                    SELECT COUNT(1) FROM [dbo].[MachineEfficiency]
-                    WHERE [MachineName] = @MachineName
+                    SELECT TOP 1 ID FROM [dbo].[MachineEfficiency]
+                    WHERE MachineName = @MachineName
                       AND CAST([Date] AS DATE) = CAST(@Date AS DATE)
-                      AND ([Shift] = @ShiftNew OR [Shift] = @ShiftOld OR [Shift] IS NULL)", conn))
+                      AND Shift = @Shift", conn, tx))
                 {
                     checkCmd.Parameters.AddWithValue("@MachineName", input.MachineName ?? "");
                     checkCmd.Parameters.AddWithValue("@Date", input.Date);
-                    checkCmd.Parameters.AddWithValue("@ShiftNew", shiftNorm);
-                    checkCmd.Parameters.AddWithValue("@ShiftOld", shiftOld);
-                    existingCount = (int)checkCmd.ExecuteScalar();
+                    checkCmd.Parameters.AddWithValue("@Shift", input.Shift ?? "");
+                    var result = checkCmd.ExecuteScalar();
+                    if (result != null && result != DBNull.Value)
+                        existingId = Convert.ToInt32(result);
                 }
 
-                string sql;
-                if (existingCount > 0)
+                int efficiencyId;
+                if (existingId.HasValue)
                 {
-                    sql = @"
+                    // UPDATE header
+                    using var updateCmd = new SqlCommand(@"
                         UPDATE [dbo].[MachineEfficiency] SET
-                            [PlanQty]                  = @PlanQty,
-                            [DefectQty]                = @DefectQty,
-                            [GoodProductionQty]        = @GoodProductionQty,
-                            [WorkingTime]              = @WorkingTime,
-                            [Quality]                  = @Quality,
-                            [OperatingRatio]           = @OperatingRatio,
-                            [Ability]                  = @Ability,
-                            [OEE]                      = @OEE,
-                            [Achievement]              = @Achievement,
-                            [Category]                 = @Category,
-                            [QualityTrouble]           = @QualityTrouble,
-                            [ModelChangingLoss]        = @ModelChangingLoss,
-                            [MaterialShortageExternal] = @MaterialShortageExternal,
-                            [MachineToolsTrouble]      = @MachineToolsTrouble,
-                            [ManPowerAdjustment]       = @ManPowerAdjustment,
-                            [MaterialShortageInhouse]  = @MaterialShortageInhouse,
-                            [MaterialShortageInternal] = @MaterialShortageInternal,
-                            [SetRepairingLoss]         = @SetRepairingLoss,
-                            [GawseExternalBodies]      = @GawseExternalBodies,
-                            [Rework]                   = @Rework,
-                            [MoldChangingLoss]         = @MoldChangingLoss,
-                            [BreakTime]                = @BreakTime,
-                            [CompanyActivity]          = @CompanyActivity,
-                            [MorningAssembly]          = @MorningAssembly,
-                            [Cleaning]                 = @Cleaning,
-                            [StockOpname]              = @StockOpname,
-                            [GeneralAssembly]          = @GeneralAssembly,
-                            [Maintenance]              = @Maintenance,
-                            [TrialRun]                 = @TrialRun,
-                            [TrainingEducation]        = @TrainingEducation,
-                            [FreeTalkingQC]            = @FreeTalkingQC,
-                            [NoProductionDay]          = @NoProductionDay
-                        WHERE [MachineName] = @MachineName
-                          AND CAST([Date] AS DATE) = CAST(@Date AS DATE)
-                          AND ([Shift] = @ShiftNew OR [Shift] = @ShiftOld OR [Shift] IS NULL)";
+                            WorkingTime = @WorkingTime, PlanQty = @PlanQty,
+                            GoodProductionQty = @GoodProductionQty, DefectQty = @DefectQty,
+                            OEE = @OEE, OperatingRatio = @OperatingRatio,
+                            Ability = @Ability, Quality = @Quality,
+                            Achievement = @Achievement, Category = @Category
+                        WHERE ID = @ID", conn, tx);
+                    AddHeaderParams(updateCmd, input, quality, operatingRatio, ability, oee, achievement, category);
+                    updateCmd.Parameters.AddWithValue("@ID", existingId.Value);
+                    updateCmd.ExecuteNonQuery();
+
+                    // Hapus loss lama
+                    using var delLoss = new SqlCommand("DELETE FROM [dbo].[MachineEfficiencyLoss] WHERE EfficiencyID = @ID", conn, tx);
+                    delLoss.Parameters.AddWithValue("@ID", existingId.Value);
+                    delLoss.ExecuteNonQuery();
+
+                    efficiencyId = existingId.Value;
                 }
                 else
                 {
-                    sql = @"
+                    // INSERT header
+                    using var insertCmd = new SqlCommand(@"
                         INSERT INTO [dbo].[MachineEfficiency]
-                            ([MachineName],[Date],[Shift],
-                             [PlanQty],[DefectQty],[GoodProductionQty],[WorkingTime],
-                             [Quality],[OperatingRatio],[Ability],[OEE],[Achievement],[Category],
-                             [QualityTrouble],[ModelChangingLoss],[MaterialShortageExternal],
-                             [MachineToolsTrouble],[ManPowerAdjustment],[MaterialShortageInhouse],
-                             [MaterialShortageInternal],[SetRepairingLoss],[GawseExternalBodies],
-                             [Rework],[MoldChangingLoss],
-                             [BreakTime],[CompanyActivity],[MorningAssembly],[Cleaning],
-                             [StockOpname],[GeneralAssembly],[Maintenance],[TrialRun],
-                             [TrainingEducation],[FreeTalkingQC],[NoProductionDay])
+                            (MachineName, Date, Shift, WorkingTime, PlanQty, GoodProductionQty, DefectQty,
+                             OEE, OperatingRatio, Ability, Quality, Achievement, Category)
                         VALUES
-                            (@MachineName,@Date,@Shift,
-                             @PlanQty,@DefectQty,@GoodProductionQty,@WorkingTime,
-                             @Quality,@OperatingRatio,@Ability,@OEE,@Achievement,@Category,
-                             @QualityTrouble,@ModelChangingLoss,@MaterialShortageExternal,
-                             @MachineToolsTrouble,@ManPowerAdjustment,@MaterialShortageInhouse,
-                             @MaterialShortageInternal,@SetRepairingLoss,@GawseExternalBodies,
-                             @Rework,@MoldChangingLoss,
-                             @BreakTime,@CompanyActivity,@MorningAssembly,@Cleaning,
-                             @StockOpname,@GeneralAssembly,@Maintenance,@TrialRun,
-                             @TrainingEducation,@FreeTalkingQC,@NoProductionDay)";
+                            (@MachineName, @Date, @Shift, @WorkingTime, @PlanQty, @GoodProductionQty, @DefectQty,
+                             @OEE, @OperatingRatio, @Ability, @Quality, @Achievement, @Category);
+                        SELECT SCOPE_IDENTITY();", conn, tx);
+                    AddHeaderParams(insertCmd, input, quality, operatingRatio, ability, oee, achievement, category);
+                    efficiencyId = Convert.ToInt32(insertCmd.ExecuteScalar());
                 }
 
-                using var cmd = new SqlCommand(sql, conn);
-                AddAllParams(cmd, input, quality, operatingRatio, ability, oee, achievement, category);
-                // Untuk WHERE clause UPDATE: tambahkan ShiftNew & ShiftOld
-                if (existingCount > 0)
-                {
-                    cmd.Parameters.AddWithValue("@ShiftNew", shiftNorm);
-                    cmd.Parameters.AddWithValue("@ShiftOld", shiftOld);
-                }
-                cmd.ExecuteNonQuery();
+                // INSERT loss items
+                InsertLossItems(conn, tx, efficiencyId, input.LossItems);
 
-                return new JsonResult(new { success = true, action = existingCount > 0 ? "updated" : "inserted" });
+                tx.Commit();
+                return new JsonResult(new { success = true, action = existingId.HasValue ? "updated" : "inserted" });
             }
             catch (Exception ex)
             {
@@ -431,25 +330,7 @@ namespace MonitoringSystem.Pages.Summary
         }
 
         // =====================================================
-        // API: ?handler=DownloadTemplate
-        // =====================================================
-        public IActionResult OnGetDownloadTemplate()
-        {
-            var possibleNames = new[] { "TemplateMachine.xlsx", "Machine_input_template.xlsx", "template.xlsx" };
-            string? filePath = null;
-            foreach (var name in possibleNames)
-            {
-                var candidate = Path.Combine(_env.WebRootPath, "data", "MachineEfficiency", name);
-                if (System.IO.File.Exists(candidate)) { filePath = candidate; break; }
-            }
-            if (filePath == null)
-                return new NotFoundObjectResult(new { error = "File template tidak ditemukan di server." });
-            var bytes = System.IO.File.ReadAllBytes(filePath);
-            return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "TemplateMachine.xlsx");
-        }
-
-        // =====================================================
-        // API: ?handler=ImportExcel  (POST, multipart/form-data)
+        // API: ?handler=ImportExcel
         // =====================================================
         public async Task<JsonResult> OnPostImportExcel(IFormFile file, string machineName, int month, int year)
         {
@@ -504,44 +385,41 @@ namespace MonitoringSystem.Pages.Summary
                     for (int shiftIndex = 0; shiftIndex < 4; shiftIndex++)
                     {
                         int col = 3 + (day - 1) * 4 + shiftIndex;
+                        double? D(int row) => TryParseDouble(sheet.Cells[row, col].Value);
 
-                        double? planQty = TryParseDouble(sheet.Cells[ROW_PLAN, col].Value);
-                        double? goodProductionQty = TryParseDouble(sheet.Cells[ROW_GOOD_PRODUCTION_QTY, col].Value);
-                        double? defectQty = TryParseDouble(sheet.Cells[ROW_DEFECT_QTY, col].Value);
-                        double? workingTime = TryParseDouble(sheet.Cells[ROW_WORKING_TIME, col].Value);
-                        double? qualityTrouble = TryParseDouble(sheet.Cells[ROW_QUALITY_TROUBLE, col].Value);
-                        double? modelChangingLoss = TryParseDouble(sheet.Cells[ROW_MODEL_CHANGING_LOSS, col].Value);
-                        double? materialShortageExt = TryParseDouble(sheet.Cells[ROW_MATERIAL_SHORTAGE_EXT, col].Value);
-                        double? machineToolsTrouble = TryParseDouble(sheet.Cells[ROW_MACHINE_TOOLS_TROUBLE, col].Value);
-                        double? manPowerAdjustment = TryParseDouble(sheet.Cells[ROW_MAN_POWER_ADJUSTMENT, col].Value);
-                        double? materialShortageInhouse = TryParseDouble(sheet.Cells[ROW_MATERIAL_SHORTAGE_INHOUSE, col].Value);
-                        double? materialShortageInternal = TryParseDouble(sheet.Cells[ROW_MATERIAL_SHORTAGE_INTERNAL, col].Value);
-                        double? setRepairingLoss = TryParseDouble(sheet.Cells[ROW_SET_REPAIRING_LOSS, col].Value);
-                        double? gawseExternalBodies = TryParseDouble(sheet.Cells[ROW_GAWSE_EXTERNAL_BODIES, col].Value);
-                        double? rework = TryParseDouble(sheet.Cells[ROW_REWORK, col].Value);
-                        double? moldChangingLoss = TryParseDouble(sheet.Cells[ROW_MOLD_CHANGING_LOSS, col].Value);
-                        double? breakTime = TryParseDouble(sheet.Cells[ROW_BREAK_TIME, col].Value);
-                        double? companyActivity = TryParseDouble(sheet.Cells[ROW_COMPANY_ACTIVITY, col].Value);
-                        double? morningAssembly = TryParseDouble(sheet.Cells[ROW_MORNING_ASSEMBLY, col].Value);
-                        double? cleaning = TryParseDouble(sheet.Cells[ROW_CLEANING, col].Value);
-                        double? stockOpname = TryParseDouble(sheet.Cells[ROW_STOCK_OPNAME, col].Value);
-                        double? generalAssembly = TryParseDouble(sheet.Cells[ROW_GENERAL_ASSEMBLY, col].Value);
-                        double? maintenance = TryParseDouble(sheet.Cells[ROW_MAINTENANCE, col].Value);
-                        double? trialRun = TryParseDouble(sheet.Cells[ROW_TRIAL_RUN, col].Value);
-                        double? trainingEducation = TryParseDouble(sheet.Cells[ROW_TRAINING_EDUCATION, col].Value);
-                        double? freeTalkingQC = TryParseDouble(sheet.Cells[ROW_FREE_TALKING_QC, col].Value);
-                        double? noProductionDay = TryParseDouble(sheet.Cells[ROW_NO_PRODUCTION_DAY, col].Value);
+                        var lossItems = new List<LossItem>();
+                        void AddLoss(string cat, string grp, double? min) { if (min.HasValue) lossItems.Add(new LossItem { LossCategory = cat, LossGroup = grp, LossMinutes = min }); }
 
-                        bool hasAnyData =
-                            planQty.HasValue || goodProductionQty.HasValue || defectQty.HasValue || workingTime.HasValue ||
-                            qualityTrouble.HasValue || modelChangingLoss.HasValue || materialShortageExt.HasValue ||
-                            machineToolsTrouble.HasValue || manPowerAdjustment.HasValue || materialShortageInhouse.HasValue ||
-                            materialShortageInternal.HasValue || setRepairingLoss.HasValue || gawseExternalBodies.HasValue ||
-                            rework.HasValue || moldChangingLoss.HasValue || breakTime.HasValue || companyActivity.HasValue ||
-                            morningAssembly.HasValue || cleaning.HasValue || stockOpname.HasValue || generalAssembly.HasValue ||
-                            maintenance.HasValue || trialRun.HasValue || trainingEducation.HasValue ||
-                            freeTalkingQC.HasValue || noProductionDay.HasValue;
+                        AddLoss("QualityTrouble", "WorkingLoss", D(ROW_QUALITY_TROUBLE));
+                        AddLoss("ModelChangingLoss", "WorkingLoss", D(ROW_MODEL_CHANGING_LOSS));
+                        AddLoss("MaterialShortageExternal", "WorkingLoss", D(ROW_MATERIAL_SHORTAGE_EXT));
+                        AddLoss("MachineToolsTrouble", "WorkingLoss", D(ROW_MACHINE_TOOLS_TROUBLE));
+                        AddLoss("ManPowerAdjustment", "WorkingLoss", D(ROW_MAN_POWER_ADJUSTMENT));
+                        AddLoss("MaterialShortageInhouse", "WorkingLoss", D(ROW_MATERIAL_SHORTAGE_INHOUSE));
+                        AddLoss("MaterialShortageInternal", "WorkingLoss", D(ROW_MATERIAL_SHORTAGE_INTERNAL));
+                        AddLoss("SetRepairingLoss", "WorkingLoss", D(ROW_SET_REPAIRING_LOSS));
+                        AddLoss("GawseExternalBodies", "WorkingLoss", D(ROW_GAWSE_EXTERNAL_BODIES));
+                        AddLoss("Rework", "WorkingLoss", D(ROW_REWORK));
+                        AddLoss("MoldChangingLoss", "WorkingLoss", D(ROW_MOLD_CHANGING_LOSS));
+                        AddLoss("BreakTime", "FixedLoss", D(ROW_BREAK_TIME));
+                        AddLoss("CompanyActivity", "FixedLoss", D(ROW_COMPANY_ACTIVITY));
+                        AddLoss("MorningAssembly", "FixedLoss", D(ROW_MORNING_ASSEMBLY));
+                        AddLoss("Cleaning", "FixedLoss", D(ROW_CLEANING));
+                        AddLoss("StockOpname", "FixedLoss", D(ROW_STOCK_OPNAME));
+                        AddLoss("GeneralAssembly", "FixedLoss", D(ROW_GENERAL_ASSEMBLY));
+                        AddLoss("Maintenance", "FixedLoss", D(ROW_MAINTENANCE));
+                        AddLoss("TrialRun", "FixedLoss", D(ROW_TRIAL_RUN));
+                        AddLoss("TrainingEducation", "FixedLoss", D(ROW_TRAINING_EDUCATION));
+                        AddLoss("FreeTalkingQC", "FixedLoss", D(ROW_FREE_TALKING_QC));
+                        AddLoss("NoProductionDay", "FixedLoss", D(ROW_NO_PRODUCTION_DAY));
 
+                        double? planQty = D(ROW_PLAN);
+                        double? goodQty = D(ROW_GOOD_PRODUCTION_QTY);
+                        double? defectQty = D(ROW_DEFECT_QTY);
+                        double? workingTime = D(ROW_WORKING_TIME);
+
+                        bool hasAnyData = planQty.HasValue || goodQty.HasValue || defectQty.HasValue
+                            || workingTime.HasValue || lossItems.Count > 0;
                         if (!hasAnyData) continue;
 
                         newData.Add(new MachineEfficiencyInput
@@ -550,47 +428,54 @@ namespace MonitoringSystem.Pages.Summary
                             Date = new DateTime(year, month, day),
                             Shift = shifts[shiftIndex],
                             PlanQty = planQty,
-                            GoodProductionQty = goodProductionQty,
+                            GoodProductionQty = goodQty,
                             DefectQty = defectQty,
                             WorkingTime = workingTime,
-                            QualityTrouble = qualityTrouble,
-                            ModelChangingLoss = modelChangingLoss,
-                            MaterialShortageExternal = materialShortageExt,
-                            MachineToolsTrouble = machineToolsTrouble,
-                            ManPowerAdjustment = manPowerAdjustment,
-                            MaterialShortageInhouse = materialShortageInhouse,
-                            MaterialShortageInternal = materialShortageInternal,
-                            SetRepairingLoss = setRepairingLoss,
-                            GawseExternalBodies = gawseExternalBodies,
-                            Rework = rework,
-                            MoldChangingLoss = moldChangingLoss,
-                            BreakTime = breakTime,
-                            CompanyActivity = companyActivity,
-                            MorningAssembly = morningAssembly,
-                            Cleaning = cleaning,
-                            StockOpname = stockOpname,
-                            GeneralAssembly = generalAssembly,
-                            Maintenance = maintenance,
-                            TrialRun = trialRun,
-                            TrainingEducation = trainingEducation,
-                            FreeTalkingQC = freeTalkingQC,
-                            NoProductionDay = noProductionDay,
+                            LossItems = lossItems
                         });
                     }
                 }
 
-                string connStr = _config.GetConnectionString("DefaultConnection")!;
-                using var conn = new SqlConnection(connStr);
-                conn.Open();
+                // ✅ BARU — hapus hanya Date+Shift yang ada di Excel
+                using var conn = OpenConn();
+                using var tx = conn.BeginTransaction();
 
-                using (var deleteCmd = new SqlCommand(@"
-                    DELETE FROM [dbo].[MachineEfficiency]
-                    WHERE [MachineName]=@MachineName AND MONTH([Date])=@Month AND YEAR([Date])=@Year", conn))
+                foreach (var item in newData)
                 {
-                    deleteCmd.Parameters.AddWithValue("@MachineName", machineName);
-                    deleteCmd.Parameters.AddWithValue("@Month", month);
-                    deleteCmd.Parameters.AddWithValue("@Year", year);
-                    deleteCmd.ExecuteNonQuery();
+                    // Cari existing ID untuk Date + Shift ini
+                    int? existingId = null;
+                    using (var checkCmd = new SqlCommand(@"
+        SELECT TOP 1 ID FROM [dbo].[MachineEfficiency]
+        WHERE MachineName = @MachineName
+          AND CAST([Date] AS DATE) = CAST(@Date AS DATE)
+          AND Shift = @Shift", conn, tx))
+                    {
+                        checkCmd.Parameters.AddWithValue("@MachineName", machineName);
+                        checkCmd.Parameters.AddWithValue("@Date", item.Date);
+                        checkCmd.Parameters.AddWithValue("@Shift", item.Shift ?? "");
+                        var result = checkCmd.ExecuteScalar();
+                        if (result != null && result != DBNull.Value)
+                            existingId = Convert.ToInt32(result);
+                    }
+
+                    if (existingId.HasValue)
+                    {
+                        // Hapus loss lama untuk hari+shift ini saja
+                        using var delLoss = new SqlCommand(@"
+            DELETE FROM [dbo].[MachineEfficiencyLoss]
+            WHERE EfficiencyID = @ID", conn, tx);
+                        delLoss.Parameters.AddWithValue("@ID", existingId.Value);
+                        delLoss.ExecuteNonQuery();
+
+                        // Hapus header lama untuk hari+shift ini saja
+                        using var delHeader = new SqlCommand(@"
+            DELETE FROM [dbo].[MachineEfficiency]
+            WHERE ID = @ID", conn, tx);
+                        delHeader.Parameters.AddWithValue("@ID", existingId.Value);
+                        delHeader.ExecuteNonQuery();
+
+                        Console.WriteLine($"[ImportExcel] Replaced: {machineName} {item.Date:yyyy-MM-dd} {item.Shift}");
+                    }
                 }
 
                 int insertedCount = 0;
@@ -600,45 +485,26 @@ namespace MonitoringSystem.Pages.Summary
 
                     using var insertCmd = new SqlCommand(@"
                         INSERT INTO [dbo].[MachineEfficiency]
-                            ([MachineName],[Date],[Shift],
-                             [PlanQty],[DefectQty],[GoodProductionQty],[WorkingTime],
-                             [Quality],[OperatingRatio],[Ability],[OEE],[Achievement],[Category],
-                             [QualityTrouble],[ModelChangingLoss],[MaterialShortageExternal],
-                             [MachineToolsTrouble],[ManPowerAdjustment],[MaterialShortageInhouse],
-                             [MaterialShortageInternal],[SetRepairingLoss],[GawseExternalBodies],
-                             [Rework],[MoldChangingLoss],
-                             [BreakTime],[CompanyActivity],[MorningAssembly],[Cleaning],
-                             [StockOpname],[GeneralAssembly],[Maintenance],[TrialRun],
-                             [TrainingEducation],[FreeTalkingQC],[NoProductionDay])
+                            (MachineName, Date, Shift, WorkingTime, PlanQty, GoodProductionQty, DefectQty,
+                             OEE, OperatingRatio, Ability, Quality, Achievement, Category)
                         VALUES
-                            (@MachineName,@Date,@Shift,
-                             @PlanQty,@DefectQty,@GoodProductionQty,@WorkingTime,
-                             @Quality,@OperatingRatio,@Ability,@OEE,@Achievement,@Category,
-                             @QualityTrouble,@ModelChangingLoss,@MaterialShortageExternal,
-                             @MachineToolsTrouble,@ManPowerAdjustment,@MaterialShortageInhouse,
-                             @MaterialShortageInternal,@SetRepairingLoss,@GawseExternalBodies,
-                             @Rework,@MoldChangingLoss,
-                             @BreakTime,@CompanyActivity,@MorningAssembly,@Cleaning,
-                             @StockOpname,@GeneralAssembly,@Maintenance,@TrialRun,
-                             @TrainingEducation,@FreeTalkingQC,@NoProductionDay)", conn);
+                            (@MachineName, @Date, @Shift, @WorkingTime, @PlanQty, @GoodProductionQty, @DefectQty,
+                             @OEE, @OperatingRatio, @Ability, @Quality, @Achievement, @Category);
+                        SELECT SCOPE_IDENTITY();", conn, tx);
+                    AddHeaderParams(insertCmd, item, quality, operatingRatio, ability, oee, achievement, category);
+                    int efficiencyId = Convert.ToInt32(insertCmd.ExecuteScalar());
 
-                    AddAllParams(insertCmd, item, quality, operatingRatio, ability, oee, achievement, category);
-                    insertCmd.ExecuteNonQuery();
+                    InsertLossItems(conn, tx, efficiencyId, item.LossItems);
                     insertedCount++;
                 }
 
+                tx.Commit();
                 return new JsonResult(new { success = true, message = $"Berhasil import {insertedCount} data untuk {machineName} (Bulan {month}/{year})." });
             }
             catch (Exception ex)
             {
                 return new JsonResult(new { success = false, error = "Gagal Import: " + ex.Message });
             }
-        }
-
-        private static double? TryParseDouble(object? val)
-        {
-            if (val == null) return null;
-            return double.TryParse(val.ToString(), out double result) ? result : null;
         }
 
         // =====================================================
@@ -649,13 +515,14 @@ namespace MonitoringSystem.Pages.Summary
             var result = new List<object>();
             try
             {
-                string connStr = _config.GetConnectionString("DefaultConnection")!;
-                using var conn = new SqlConnection(connStr);
-                conn.Open();
-                string sql = @"SELECT DISTINCT [MachineName] FROM [dbo].[MachineEfficiency] WHERE [MachineName] IS NOT NULL AND [MachineName]!='' ORDER BY [MachineName]";
-                using var cmd = new SqlCommand(sql, conn);
+                using var conn = OpenConn();
+                using var cmd = new SqlCommand(@"
+                    SELECT DISTINCT MachineName FROM [dbo].[MachineEfficiency]
+                    WHERE MachineName IS NOT NULL AND MachineName != ''
+                    ORDER BY MachineName", conn);
                 using var reader = cmd.ExecuteReader();
-                while (reader.Read()) result.Add(new { machineName = reader["MachineName"]?.ToString() ?? "-" });
+                while (reader.Read())
+                    result.Add(new { machineName = reader["MachineName"]?.ToString() ?? "-" });
                 return new JsonResult(result);
             }
             catch (Exception ex) { return new JsonResult(new { error = ex.Message }); }
@@ -672,20 +539,18 @@ namespace MonitoringSystem.Pages.Summary
             var result = new List<object>();
             try
             {
-                string connStr = _config.GetConnectionString("DefaultConnection")!;
-                using var conn = new SqlConnection(connStr);
-                conn.Open();
+                using var conn = OpenConn();
                 string sql = @"
-                    SELECT [MachineName],
-                        ISNULL(CAST([OEE] AS VARCHAR),'-') AS [OEE],
-                        ISNULL(CAST([OperatingRatio] AS VARCHAR),'-') AS [OperatingRatio],
-                        ISNULL(CAST([Ability] AS VARCHAR),'-') AS [Ability],
-                        ISNULL(CAST([Quality] AS VARCHAR),'-') AS [Quality],
-                        ISNULL(CAST([Achievement] AS VARCHAR),'-') AS [Achievement],
-                        CONVERT(VARCHAR,[Date],23) AS [Date]
+                    SELECT MachineName,
+                        ISNULL(CAST(OEE AS VARCHAR),'-') AS OEE,
+                        ISNULL(CAST(OperatingRatio AS VARCHAR),'-') AS OperatingRatio,
+                        ISNULL(CAST(Ability AS VARCHAR),'-') AS Ability,
+                        ISNULL(CAST(Quality AS VARCHAR),'-') AS Quality,
+                        ISNULL(CAST(Achievement AS VARCHAR),'-') AS Achievement,
+                        CONVERT(VARCHAR, Date, 23) AS Date
                     FROM [dbo].[MachineEfficiency]
-                    WHERE MONTH([Date])=@Month AND YEAR([Date])=@Year
-                    ORDER BY [MachineName],[Date]";
+                    WHERE MONTH(Date) = @Month AND YEAR(Date) = @Year
+                    ORDER BY MachineName, Date";
                 using var cmd = new SqlCommand(sql, conn);
                 cmd.Parameters.AddWithValue("@Month", month);
                 cmd.Parameters.AddWithValue("@Year", year);
@@ -706,6 +571,94 @@ namespace MonitoringSystem.Pages.Summary
             catch (Exception ex) { return new JsonResult(new { error = ex.Message }); }
         }
 
+        // =====================================================
+        // HELPER: Insert loss items ke MachineEfficiencyLoss
+        // =====================================================
+        private static void InsertLossItems(SqlConnection conn, SqlTransaction tx, int efficiencyId, List<LossItem>? lossItems)
+        {
+            if (lossItems == null || lossItems.Count == 0) return;
+            foreach (var loss in lossItems.Where(l => l.LossMinutes.HasValue))
+            {
+                using var cmd = new SqlCommand(@"
+                    INSERT INTO [dbo].[MachineEfficiencyLoss] (EfficiencyID, LossCategory, LossGroup, LossMinutes)
+                    VALUES (@EfficiencyID, @LossCategory, @LossGroup, @LossMinutes)", conn, tx);
+                cmd.Parameters.AddWithValue("@EfficiencyID", efficiencyId);
+                cmd.Parameters.AddWithValue("@LossCategory", loss.LossCategory ?? "");
+                cmd.Parameters.AddWithValue("@LossGroup", loss.LossGroup ?? "");
+                cmd.Parameters.AddWithValue("@LossMinutes", (object?)loss.LossMinutes ?? DBNull.Value);
+                cmd.ExecuteNonQuery();
+            }
+        }
+
+        // =====================================================
+        // HELPER: Tambah header params ke SqlCommand
+        // =====================================================
+        private static void AddHeaderParams(SqlCommand cmd, MachineEfficiencyInput input,
+            double? quality, double? operatingRatio, double? ability, double? oee,
+            double? achievement, string? category)
+        {
+            cmd.Parameters.AddWithValue("@MachineName", input.MachineName ?? "");
+            cmd.Parameters.AddWithValue("@Date", input.Date);
+            cmd.Parameters.AddWithValue("@Shift", input.Shift ?? "");
+            cmd.Parameters.AddWithValue("@WorkingTime", (object?)input.WorkingTime ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@PlanQty", (object?)input.PlanQty ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@GoodProductionQty", (object?)input.GoodProductionQty ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@DefectQty", (object?)input.DefectQty ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@OEE", (object?)oee ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@OperatingRatio", (object?)operatingRatio ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@Ability", (object?)ability ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@Quality", (object?)quality ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@Achievement", (object?)achievement ?? DBNull.Value);
+            cmd.Parameters.AddWithValue("@Category", (object?)category ?? DBNull.Value);
+        }
+
+        // =====================================================
+        // HELPER: Open DB connection
+        // =====================================================
+        private SqlConnection OpenConn()
+        {
+            var conn = new SqlConnection(_config.GetConnectionString("MachineConnection")!);
+            conn.Open();
+            return conn;
+        }
+
+        // =====================================================
+        // HELPER: Parse double dari Excel cell
+        // =====================================================
+        private static double? TryParseDouble(object? val)
+        {
+            if (val == null) return null;
+            return double.TryParse(val.ToString(), out double result) ? result : null;
+        }
+
+        // =====================================================
+        // API: ?handler=DownloadTemplate
+        // =====================================================
+        public IActionResult OnGetDownloadTemplate()
+        {
+            var possibleNames = new[] { "TemplateMachine.xlsx", "Machine_input_template.xlsx", "template.xlsx" };
+            string? filePath = null;
+            foreach (var name in possibleNames)
+            {
+                var candidate = Path.Combine(_env.WebRootPath, "data", "MachineEfficiency", name);
+                if (System.IO.File.Exists(candidate)) { filePath = candidate; break; }
+            }
+            if (filePath == null)
+                return new NotFoundObjectResult(new { error = "File template tidak ditemukan di server." });
+            var bytes = System.IO.File.ReadAllBytes(filePath);
+            return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "TemplateMachine.xlsx");
+        }
+
+        // =====================================================
+        // Models
+        // =====================================================
+        public class LossItem
+        {
+            public string? LossCategory { get; set; }
+            public string? LossGroup { get; set; }
+            public double? LossMinutes { get; set; }
+        }
+
         public class MachineEfficiencyInput
         {
             public string? MachineName { get; set; }
@@ -715,28 +668,7 @@ namespace MonitoringSystem.Pages.Summary
             public double? DefectQty { get; set; }
             public double? GoodProductionQty { get; set; }
             public double? WorkingTime { get; set; }
-            public double? QualityTrouble { get; set; }
-            public double? ModelChangingLoss { get; set; }
-            public double? MaterialShortageExternal { get; set; }
-            public double? MachineToolsTrouble { get; set; }
-            public double? ManPowerAdjustment { get; set; }
-            public double? MaterialShortageInhouse { get; set; }
-            public double? MaterialShortageInternal { get; set; }
-            public double? SetRepairingLoss { get; set; }
-            public double? GawseExternalBodies { get; set; }
-            public double? Rework { get; set; }
-            public double? MoldChangingLoss { get; set; }
-            public double? BreakTime { get; set; }
-            public double? CompanyActivity { get; set; }
-            public double? MorningAssembly { get; set; }
-            public double? Cleaning { get; set; }
-            public double? StockOpname { get; set; }
-            public double? GeneralAssembly { get; set; }
-            public double? Maintenance { get; set; }
-            public double? TrialRun { get; set; }
-            public double? TrainingEducation { get; set; }
-            public double? FreeTalkingQC { get; set; }
-            public double? NoProductionDay { get; set; }
+            public List<LossItem>? LossItems { get; set; }
         }
     }
 }

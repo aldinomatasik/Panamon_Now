@@ -1,4 +1,6 @@
 ﻿using Azure;
+using DocumentFormat.OpenXml.Bibliography;
+using DocumentFormat.OpenXml.Math;
 using DocumentFormat.OpenXml.Spreadsheet;
 using DocumentFormat.OpenXml.Wordprocessing;
 using Microsoft.AspNetCore.Mvc;
@@ -176,57 +178,53 @@ namespace MonitoringSystem.Pages.ProductionReport
         {(MachineLine != "All" ? "AND pr.MachineCode = @MachineLine" : "AND pr.MachineCode IN ('MCH1-01', 'MCH1-02')")}
         GROUP BY DAY(pp.CurrentDate)";
 
-            string actualSql = $@"
-WITH ShiftData AS (
-    SELECT 
-        CAST(SDate AS DATE) AS ReportDate, 
-        SDate, 
-        TotalUnit, 
-        NoOfOperator,
+            
+string actualSql = $@"
+WITH ShiftData AS(
+    SELECT
+        CASE
+            WHEN CAST(SDate AS TIME) < '07:00:00'
+            THEN CAST(DATEADD(DAY, -1, SDate) AS DATE)
+            ELSE CAST(SDate AS DATE)
+        END AS ReportDate,
+            SDate,
+            TotalUnit,
+            NoOfOperator,
         ShiftMode,
-        
-       -- Flag: Apakah ini overtime atau normal shift?
-CASE 
-    WHEN ShiftMode = 'OVERTIME' THEN 1
-    ELSE 0
-END as IsOvertimeFlag
-        
+        CASE WHEN ShiftMode = 'OVERTIME' THEN 1 ELSE 0 END as IsOvertimeFlag
     FROM oeesn
-    WHERE YEAR(SDate) = @SelectedYear 
-      AND MONTH(SDate) = @SelectedMonth 
-      {dateFilter}
-      {(MachineLine != "All" ? "AND MachineCode = @MachineLine" : "AND MachineCode IN ('MCH1-01', 'MCH1-02')")}
+    WHERE(
+        (YEAR(SDate) = @SelectedYear AND MONTH(SDate) = @SelectedMonth
+         AND CAST(SDate AS TIME) >= '07:00:00')
+        OR
+        (SDate >= DATEADD(DAY, 1, DATEFROMPARTS(@SelectedYear, @SelectedMonth, 1))
+         AND SDate < DATEADD(MONTH, 1, DATEFROMPARTS(@SelectedYear, @SelectedMonth, 1))
+         AND CAST(SDate AS TIME) < '07:00:00')
+    )
+      { dateFilter}
+            { (MachineLine != "All" ? "AND MachineCode = @MachineLine" : "AND MachineCode IN ('MCH1-01', 'MCH1-02')")}
 ),
-ShiftDataFiltered AS (
-    SELECT * FROM ShiftData
-    {shiftSelectionSql}
+ShiftDataFiltered AS(
+    SELECT* FROM ShiftData
+    { shiftSelectionSql}
 ),
-DailyAggregates AS (
+DailyAggregates AS(
     SELECT ReportDate,
-       -- Normal shift data
-MAX(CASE WHEN ShiftMode = 'SHIFT 1' THEN TotalUnit END) as S1_Unit,
-MAX(CASE WHEN ShiftMode = 'SHIFT 1' THEN CAST(SDate AS TIME) END) as S1_Time,
-
-MAX(CASE WHEN ShiftMode = 'SHIFT 2' THEN TotalUnit END) as S2_Unit,
-MAX(CASE WHEN ShiftMode = 'SHIFT 2' THEN CAST(SDate AS TIME) END) as S2_Time,
-
-MAX(CASE WHEN ShiftMode = 'SHIFT 3' THEN TotalUnit END) as S3_Unit,
-MAX(CASE WHEN ShiftMode = 'SHIFT 3' THEN CAST(SDate AS TIME) END) as S3_Time,
-
--- ⭐ TAMBAH 2 BARIS INI
-MAX(CASE WHEN ShiftMode = 'NON-SHIFT' THEN TotalUnit END) as NS_Unit,
-MAX(CASE WHEN ShiftMode = 'NON-SHIFT' THEN CAST(SDate AS TIME) END) as NS_Time,
-
-        -- Overtime data (OVERTIME)
-MAX(CASE WHEN ShiftMode = 'OVERTIME' THEN TotalUnit END) as OT_Unit,
-MAX(CASE WHEN ShiftMode = 'OVERTIME' THEN CAST(SDate AS TIME) END) as OT_Time,
-        
+        MAX(CASE WHEN ShiftMode = 'SHIFT 1' THEN TotalUnit END) as S1_Unit,
+        MAX(CASE WHEN ShiftMode = 'SHIFT 1' THEN CAST(SDate AS TIME) END) as S1_Time,
+        MAX(CASE WHEN ShiftMode = 'SHIFT 2' THEN TotalUnit END) as S2_Unit,
+        MAX(CASE WHEN ShiftMode = 'SHIFT 2' THEN CAST(SDate AS TIME) END) as S2_Time,
+        MAX(CASE WHEN ShiftMode = 'SHIFT 3' THEN TotalUnit END) as S3_Unit,
+        MAX(CASE WHEN ShiftMode = 'SHIFT 3' THEN CAST(SDate AS TIME) END) as S3_Time,
+        MAX(CASE WHEN ShiftMode = 'NON-SHIFT' THEN TotalUnit END) as NS_Unit,
+        MAX(CASE WHEN ShiftMode = 'NON-SHIFT' THEN CAST(SDate AS TIME) END) as NS_Time,
+        MAX(CASE WHEN ShiftMode = 'OVERTIME' THEN TotalUnit END) as OT_Unit,
+        MAX(CASE WHEN ShiftMode = 'OVERTIME' THEN CAST(SDate AS TIME) END) as OT_Time,
         MAX(NoOfOperator) as MaxOp
-    FROM ShiftDataFiltered 
+    FROM ShiftDataFiltered
     GROUP BY ReportDate
 )
-SELECT DAY(ReportDate) as Day, * FROM DailyAggregates";
-
+SELECT DAY(ReportDate) as Day, *FROM DailyAggregates";
             try
             {
                 using (var conn = new SqlConnection(this.connectionString))
@@ -468,8 +466,15 @@ SELECT DAY(ReportDate) as Day, * FROM DailyAggregates";
                             while (reader.Read())
                             {
                                 var fullDate = (DateTime)reader["FullDate"];
-                                var day = fullDate.Day;
                                 var startTime = (TimeSpan)reader["StartTime"];
+
+                                // Shift 3 adjustment: jam 00:00 - 06:59 dianggap milik hari sebelumnya
+                                if (startTime >= TimeSpan.Zero && startTime < new TimeSpan(7, 0, 0))
+                                {
+                                    fullDate = fullDate.AddDays(-1);
+                                }
+
+                                var day = fullDate.Day;
                                 var endTime = (TimeSpan)reader["EndTime"];
                                 var duration = Convert.ToInt32(reader["Duration"]);
 

@@ -219,11 +219,7 @@
                 </div>
             </div>
         </div>
-        <!-- ── Badge status: tampil setelah machine/shift/date dipilih ── -->
-        <div id="existingDataBadge" style="display:none; margin-top:10px; padding-left:4px;">
-            <span id="existingBadgeInner"></span>
         </div>
-    </div>
 
     <div class="section-divider">
         <i class="bi bi-clock-history me-2"></i>Loss Time
@@ -281,11 +277,35 @@
 <script>
     let firstMachineValue = '';
     const SHIFT_WORKING_TIME = { '1': 458, '2': 393, '3': 398, 'NS': 473 };
-
-    // Mapping shift value (dropdown) → DB string
     const SHIFT_MAP = { '1': 'Shift 1', '2': 'Shift 2', '3': 'Shift 3', 'NS': 'Non Shift' };
 
-    // Mapping camelCase JS key → DB column name (untuk pre-fill loss rows)
+    // LossGroup lookup — dipakai saat build payload lossItems
+    const LOSS_GROUP_MAP = {
+        QualityTrouble:           'WorkingLoss',
+        ModelChangingLoss:        'WorkingLoss',
+        MaterialShortageExternal: 'WorkingLoss',
+        MachineToolsTrouble:      'WorkingLoss',
+        ManPowerAdjustment:       'WorkingLoss',
+        MaterialShortageInhouse:  'WorkingLoss',
+        MaterialShortageInternal: 'WorkingLoss',
+        SetRepairingLoss:         'WorkingLoss',
+        GawseExternalBodies:      'WorkingLoss',
+        Rework:                   'WorkingLoss',
+        MoldChangingLoss:         'WorkingLoss',
+        BreakTime:                'FixedLoss',
+        CompanyActivity:          'FixedLoss',
+        MorningAssembly:          'FixedLoss',
+        Cleaning:                 'FixedLoss',
+        StockOpname:              'FixedLoss',
+        GeneralAssembly:          'FixedLoss',
+        Maintenance:              'FixedLoss',
+        TrialRun:                 'FixedLoss',
+        TrainingEducation:        'FixedLoss',
+        FreeTalkingQC:            'FixedLoss',
+        NoProductionDay:          'FixedLoss',
+    };
+
+    // Mapping camelCase response JSON → DB column name (untuk pre-fill loss rows dari LoadExisting)
     const LOSS_COL_MAP = {
         qualityTrouble:           'QualityTrouble',
         modelChangingLoss:        'ModelChangingLoss',
@@ -311,39 +331,13 @@
         noProductionDay:          'NoProductionDay',
     };
 
-    // ─── Helper: tanggal hari ini dalam format YYYY-MM-DD ─────────
     function todayISO() {
         const now = new Date();
-        const y = now.getFullYear();
-        const m = String(now.getMonth() + 1).padStart(2, '0');
-        const d = String(now.getDate()).padStart(2, '0');
-        return `${y}-${m}-${d}`;
+        return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
     }
 
-    // ─── Badge helpers ────────────────────────────────────────────
-    function showBadge(isExisting) {
-        const badge = document.getElementById('existingDataBadge');
-        const inner = document.getElementById('existingBadgeInner');
-        const light = document.documentElement.classList.contains('light-mode');
-        if (isExisting) {
-            inner.innerHTML = `<i class="bi bi-pencil-square me-1"></i>Data sudah ada — akan di-<b>UPDATE</b>`;
-            inner.style.cssText = light
-                ? 'display:inline-flex;align-items:center;gap:4px;padding:4px 14px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(255,193,7,0.18);border:1.5px solid rgba(200,150,0,0.5);color:rgba(140,100,0,0.95);'
-                : 'display:inline-flex;align-items:center;gap:4px;padding:4px 14px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(255,193,7,0.12);border:1.5px solid rgba(255,193,7,0.5);color:#ffd54f;';
-        } else {
-            inner.innerHTML = `<i class="bi bi-plus-circle me-1"></i>Data baru — akan di-<b>INSERT</b>`;
-            inner.style.cssText = light
-                ? 'display:inline-flex;align-items:center;gap:4px;padding:4px 14px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(25,135,84,0.10);border:1.5px solid rgba(25,135,84,0.5);color:rgba(18,100,60,0.95);'
-                : 'display:inline-flex;align-items:center;gap:4px;padding:4px 14px;border-radius:999px;font-size:11px;font-weight:700;background:rgba(129,199,132,0.10);border:1.5px solid rgba(129,199,132,0.45);color:#81c784;';
-        }
-        badge.style.display = 'block';
-    }
 
-    function hideBadge() {
-        document.getElementById('existingDataBadge').style.display = 'none';
-    }
 
-    // ─── Load existing data & pre-fill seluruh form ───────────────
     async function loadExistingData() {
         const machineSel  = document.getElementById('inputMachine');
         const machineName = machineSel.options[machineSel.selectedIndex]?.text ?? '';
@@ -353,7 +347,7 @@
         const defaultWT   = SHIFT_WORKING_TIME[shiftRaw] ?? 458;
 
         if (!machineName || machineName === 'Loading...' || !date || !shiftRaw) {
-            hideBadge();
+
             document.getElementById('inputActual').value = defaultWT;
             recalc();
             return;
@@ -368,13 +362,11 @@
             const data = await res.json();
 
             if (data.found) {
-                // ── Pre-fill field utama ──
                 document.getElementById('inputPlan').value   = data.planQty           ?? '';
                 document.getElementById('inputNG').value     = data.defectQty         ?? '';
                 document.getElementById('inputQty').value    = data.goodProductionQty ?? '';
                 document.getElementById('inputActual').value = data.workingTime       ?? defaultWT;
 
-                // ── Pre-fill loss rows dari data yang ada ──
                 document.getElementById('loss-time-body').innerHTML = '';
                 lossRowCount = 0;
 
@@ -387,33 +379,16 @@
                         addLossRow();
                         const tbody   = document.getElementById('loss-time-body');
                         const lastRow = tbody.lastElementChild;
-                        // Set nilai dropdown
-                        const wrapper  = lastRow.querySelector('.csd-wrapper');
-                        const hidden   = lastRow.querySelector('.loss-cat');
-                        const trigger  = lastRow.querySelector('.csd-trigger');
-                        if (wrapper && hidden && trigger) {
-                            hidden.value = entry.dbCol;
-                            wrapper.dataset.value = entry.dbCol;
-                            // Cari label dari lossCategories
-                            let label = entry.dbCol;
-                            for (const group of lossCategories) {
-                                const found = group.items.find(i => i.value === entry.dbCol);
-                                if (found) { label = found.label; break; }
-                            }
-                            trigger.textContent = label;
-                        }
-                        // Set menit
+                        const wrapper = lastRow.querySelector('.csd-wrapper');
+                        if (wrapper) _csdSetValue(wrapper.id, entry.dbCol);
                         const minInput = lastRow.querySelector('.loss-min');
                         if (minInput) minInput.value = entry.val;
                     }
                 } else {
-                    // Ada record di DB tapi semua loss = null → beri 5 baris kosong
                     for (let i = 0; i < 5; i++) addLossRow();
                 }
 
-                //showBadge(true);
             } else {
-                // Tidak ada data → kosongkan form, isi working time default
                 document.getElementById('inputPlan').value   = '';
                 document.getElementById('inputNG').value     = '';
                 document.getElementById('inputQty').value    = '';
@@ -421,19 +396,14 @@
                 document.getElementById('loss-time-body').innerHTML = '';
                 lossRowCount = 0;
                 for (let i = 0; i < 5; i++) addLossRow();
-                //showBadge(false);
+
             }
         } catch (e) {
             console.warn('loadExistingData error:', e);
             document.getElementById('inputActual').value = defaultWT;
-            hideBadge();
+
         }
         recalc();
-    }
-
-    // fetchWorkingTime sekarang cukup memanggil loadExistingData
-    async function fetchWorkingTime() {
-        await loadExistingData();
     }
 
     async function loadMachines() {
@@ -496,15 +466,14 @@
         }
     }
 
-    /* =====================================================
-       CUSTOM SELECT DROPDOWN SYSTEM — FIXED (teleport to body)
-       ===================================================== */
+    /* ===================================================
+       CUSTOM SELECT DROPDOWN
+       =================================================== */
     let _activeDropId = null;
     let lossRowCount  = 0;
     let submitCount   = 0;
-
-    let _floatDrop = null;
-    let _floatWid  = null;
+    let _floatDrop    = null;
+    let _floatWid     = null;
 
     function _ensureFloatDrop() {
         if (_floatDrop) return;
@@ -512,7 +481,7 @@
         _floatDrop.id = 'csd-float-panel';
         _floatDrop.className = 'csd-dropdown';
         document.body.appendChild(_floatDrop);
-        _floatDrop.addEventListener('mousedown', function(e) { e.preventDefault(); });
+        _floatDrop.addEventListener('mousedown', e => e.preventDefault());
         _floatDrop.addEventListener('click', function(e) {
             const opt = e.target.closest('.csd-option');
             if (!opt || !_floatWid) return;
@@ -538,9 +507,8 @@
         let html = '';
         for (const group of lossCategories) {
             html += `<div class="csd-group-label">${group.group}</div>`;
-            for (const cat of group.items) {
+            for (const cat of group.items)
                 html += `<div class="csd-option" data-value="${cat.value}">${cat.label}</div>`;
-            }
         }
         _floatDrop.innerHTML = html;
         const curVal = wrapper.dataset.value;
@@ -556,26 +524,21 @@
     function _closeFloat() {
         if (!_floatDrop) return;
         _floatDrop.classList.remove('open');
-        if (_floatWid) {
-            const w = document.getElementById(_floatWid);
-            if (w) w.querySelector('.csd-trigger')?.classList.remove('open');
-        }
-        _floatWid     = null;
-        _activeDropId = null;
+        if (_floatWid) { const w = document.getElementById(_floatWid); if (w) w.querySelector('.csd-trigger')?.classList.remove('open'); }
+        _floatWid = null; _activeDropId = null;
     }
 
     function _repositionFloat() {
         if (!_floatWid || !_floatDrop) return;
         const wrapper = document.getElementById(_floatWid);
         if (!wrapper) return;
-        const trigger = wrapper.querySelector('.csd-trigger');
-        const r = trigger.getBoundingClientRect();
-        const dropH  = _floatDrop.offsetHeight || 240;
+        const r = wrapper.querySelector('.csd-trigger').getBoundingClientRect();
+        const dropH = _floatDrop.offsetHeight || 240;
         const spaceB = window.innerHeight - r.bottom - 4;
         const spaceT = r.top - 4;
-        const goUp   = spaceB < dropH && spaceT > spaceB;
-        _floatDrop.style.left      = r.left + 'px';
-        _floatDrop.style.width     = r.width + 'px';
+        const goUp = spaceB < dropH && spaceT > spaceB;
+        _floatDrop.style.left = r.left + 'px';
+        _floatDrop.style.width = r.width + 'px';
         _floatDrop.style.maxHeight = Math.min(240, goUp ? spaceT : spaceB) + 'px';
         if (goUp) { _floatDrop.style.top = ''; _floatDrop.style.bottom = (window.innerHeight - r.top + 2) + 'px'; }
         else       { _floatDrop.style.bottom = ''; _floatDrop.style.top = (r.bottom + 2) + 'px'; }
@@ -598,19 +561,30 @@
         _openFloat(wid);
     }
 
-    document.addEventListener('click', function(e) {
-        if (!_floatDrop) return;
-        if (_floatDrop.contains(e.target)) return;
-        if (_floatWid) {
-            const w = document.getElementById(_floatWid);
-            if (w && w.contains(e.target)) return;
+    // Set nilai custom dropdown secara programatik (untuk prefill)
+    function _csdSetValue(wid, value) {
+        const wrapper = document.getElementById(wid);
+        if (!wrapper) return;
+        const hidden  = wrapper.querySelector(".loss-cat");
+        const trigger = wrapper.querySelector(".csd-trigger");
+        let label = value;
+        for (const group of lossCategories) {
+            const found = group.items.find(i => i.value === value);
+            if (found) { label = found.label; break; }
         }
+        wrapper.dataset.value = value;
+        if (hidden)  hidden.value        = value;
+        if (trigger) trigger.textContent = label;
+    }
+
+    document.addEventListener('click', function(e) {
+        if (!_floatDrop || _floatDrop.contains(e.target)) return;
+        if (_floatWid && document.getElementById(_floatWid)?.contains(e.target)) return;
         _closeFloat();
     });
-
-    window.addEventListener('scroll', function() { _repositionFloat(); }, true);
-    window.addEventListener('resize', function() { _repositionFloat(); });
-    /* ===================================================== */
+    window.addEventListener('scroll', () => _repositionFloat(), true);
+    window.addEventListener('resize', () => _repositionFloat());
+    /* =================================================== */
 
     function isLight() { return document.documentElement.classList.contains('light-mode'); }
 
@@ -657,12 +631,6 @@
         });
         const dd = document.getElementById('displayDate');
         if (dd) dd.style.color = isLight() ? 'rgba(8,65,150,0.95)' : '#64b5f6';
-        // Refresh warna badge juga saat mode berubah
-        const badge = document.getElementById('existingDataBadge');
-        if (badge && badge.style.display !== 'none') {
-            const isUpdate = document.getElementById('existingBadgeInner').textContent.includes('UPDATE');
-            showBadge(isUpdate);
-        }
     }
 
     function recalc() {
@@ -698,59 +666,51 @@
         document.getElementById('loss-time-body').innerHTML = '';
         lossRowCount = 0;
         for (let i = 0; i < 5; i++) addLossRow();
-        hideBadge();
+
         doSearch();
     }
 
+    // ─── SUBMIT — kirim format lossItems array (sesuai backend baru) ───
     async function handleSubmit() {
         if (!document.getElementById('inputPlan').value) {
             alert('Mohon isi Plan terlebih dahulu.'); return;
         }
-        const lossData = {};
+
+        // Kumpulkan loss rows → lossItems array, gabungkan duplikat kategori
+        const lossMap = {};
         document.querySelectorAll('#loss-time-body tr').forEach(row => {
             const cat = row.querySelector('.loss-cat')?.value;
-            const min = parseFloat(row.querySelector('.loss-min')?.value) || null;
-            if (cat && min) lossData[cat] = (lossData[cat] || 0) + min;
+            const min = parseFloat(row.querySelector('.loss-min')?.value) || 0;
+            if (cat && min > 0) lossMap[cat] = (lossMap[cat] || 0) + min;
         });
+
+        const lossItems = Object.entries(lossMap).map(([cat, min]) => ({
+            lossCategory: cat,
+            lossGroup:    LOSS_GROUP_MAP[cat] ?? 'WorkingLoss',
+            lossMinutes:  min
+        }));
+
         const machineSel = document.getElementById('inputMachine');
         const shiftRaw   = document.getElementById('inputShift').value;
+
+        // ✅ Format payload baru — sesuai MachineEfficiencyInput di backend
         const payload = {
-            machineName:              machineSel.options[machineSel.selectedIndex]?.text ?? '',
-            date:                     document.getElementById('filterDate').value,
-            shift:                    SHIFT_MAP[shiftRaw] ?? shiftRaw,
-            planQty:                  parseFloat(document.getElementById('inputPlan').value)   || null,
-            defectQty:                parseFloat(document.getElementById('inputNG').value)     || null,
-            goodProductionQty:        parseFloat(document.getElementById('inputQty').value)    || null,
-            workingTime:              parseFloat(document.getElementById('inputActual').value) || null,
-            qualityTrouble:           lossData['QualityTrouble']           ?? null,
-            modelChangingLoss:        lossData['ModelChangingLoss']        ?? null,
-            materialShortageExternal: lossData['MaterialShortageExternal'] ?? null,
-            machineToolsTrouble:      lossData['MachineToolsTrouble']      ?? null,
-            manPowerAdjustment:       lossData['ManPowerAdjustment']       ?? null,
-            materialShortageInhouse:  lossData['MaterialShortageInhouse']  ?? null,
-            materialShortageInternal: lossData['MaterialShortageInternal'] ?? null,
-            setRepairingLoss:         lossData['SetRepairingLoss']         ?? null,
-            gawseExternalBodies:      lossData['GawseExternalBodies']      ?? null,
-            rework:                   lossData['Rework']                   ?? null,
-            moldChangingLoss:         lossData['MoldChangingLoss']         ?? null,
-            breakTime:                lossData['BreakTime']                ?? null,
-            companyActivity:          lossData['CompanyActivity']          ?? null,
-            morningAssembly:          lossData['MorningAssembly']          ?? null,
-            cleaning:                 lossData['Cleaning']                 ?? null,
-            stockOpname:              lossData['StockOpname']              ?? null,
-            generalAssembly:          lossData['GeneralAssembly']          ?? null,
-            maintenance:              lossData['Maintenance']              ?? null,
-            trialRun:                 lossData['TrialRun']                 ?? null,
-            trainingEducation:        lossData['TrainingEducation']        ?? null,
-            freeTalkingQC:            lossData['FreeTalkingQC']            ?? null,
-            noProductionDay:          lossData['NoProductionDay']          ?? null
+            machineName:       machineSel.options[machineSel.selectedIndex]?.text ?? '',
+            date:              document.getElementById('filterDate').value,
+            shift:             SHIFT_MAP[shiftRaw] ?? shiftRaw,
+            planQty:           parseFloat(document.getElementById('inputPlan').value)   || null,
+            defectQty:         parseFloat(document.getElementById('inputNG').value)     || null,
+            goodProductionQty: parseFloat(document.getElementById('inputQty').value)    || null,
+            workingTime:       parseFloat(document.getElementById('inputActual').value) || null,
+            lossItems:         lossItems   // ← array, bukan flat fields
         };
+
         try {
             const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '';
             const res = await fetch('?handler=Submit', {
-                method: 'POST',
+                method:  'POST',
                 headers: { 'Content-Type': 'application/json', 'RequestVerificationToken': token },
-                body: JSON.stringify(payload)
+                body:    JSON.stringify(payload)
             });
             const result = await res.json();
             if (result.success) {
@@ -758,7 +718,6 @@
                 document.getElementById('submitCount').textContent = submitCount;
                 const action = result.action === 'updated' ? 'diperbarui' : 'disimpan';
                 alert(`Data berhasil ${action}!`);
-                // Refresh badge setelah submit berhasil
                 await loadExistingData();
             } else { alert('Gagal submit: ' + result.error); }
         } catch (e) { alert('Error: ' + e.message); }
@@ -768,7 +727,7 @@
         document.getElementById('filterDate').value = todayISO();
         await loadMachines();
         await loadLossCategories();
-        doSearch();   // doSearch() memanggil loadExistingData() — jadi tidak perlu addLossRow manual di sini
+        doSearch();
         refreshRowColors();
         new MutationObserver(() => refreshRowColors())
             .observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
@@ -848,6 +807,7 @@
         const sel = document.getElementById('importMachineSelect');
         try {
             const res = await fetch('?handler=MachineList', { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+            const machines = await res.json();
             const machines = await res.json();
             sel.innerHTML = '<option value="" disabled selected>-- Pilih Machine --</option>'
                 + machines.map(m => `<option value="${m.machineName}">${m.machineName}</option>`).join('');
